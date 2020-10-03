@@ -1,30 +1,32 @@
 import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native';
 import {Ionicons} from '@expo/vector-icons'
+
 
 export default class ChatScreen extends React.Component {
   state={
-    name:""
+
   }
-  continue=() =>
+  SignIn=() =>
   {
-    this.props.navigation.navigate("Chat",{name:this.state.name})
+    this.props.navigation.navigate("SignIn")
+  }
+  SignUp=()=>
+  {
+    this.props.navigation.navigate("SignUp")
   }
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.circle}></View>
         <View style={{marginHorizontal:32, marginVertical:32}}>
-          <Text style={styles.header}>UserName</Text>
-          <TextInput style={styles.input} 
-                      placeholder="ex: Thành Trung"
-                      onChangeText={name=>{
-                        this.setState({name});
-                      }}
-                      value={this.state.name}/>
-          <View style={{alignItems:"flex-end",marginTop:64}}>
-            <TouchableOpacity style={styles.continue} onPress={this.continue}>
-                  <Ionicons name="md-arrow-round-forward" size={24} color="#FFF"/>
+          <Text style={styles.header}>TickNTalk</Text>
+          <View style={{marginLeft:32,marginTop:64}}>
+            <TouchableOpacity style={styles.SignInButton} onPress={this.SignIn}>
+                  <Text color="#000" fontFamily="SegeoUI">Đăng nhập</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.SignUpButton} onPress={this.SignUp}>
+                  <Text color="#000" fontFamily="SegeoUI">Đăng ký</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -32,7 +34,8 @@ export default class ChatScreen extends React.Component {
     );
   }
 }
-
+const windowWidth=Dimensions.get('window').width;
+const windowHeight=Dimensions.get('window').height;
 const styles= StyleSheet.create({
     container:{ 
         flex:1,
@@ -51,7 +54,8 @@ const styles= StyleSheet.create({
       fontWeight:"800",
       fontSize:30,
       color:"#000",
-      marginTop:32
+      marginTop:windowHeight/8,
+      marginHorizontal:windowWidth/4
     },
     input:{
         marginTop:15,
@@ -63,12 +67,22 @@ const styles= StyleSheet.create({
         color: "#514E5A",
         fontWeight:"600"
     },
-    continue:{
-      width:70,
-      height:70,
-      borderRadius:70/2,
+    SignInButton:{
+      width:300,
+      height:100,
+      borderRadius:70/3,
       backgroundColor:"#9075E3",
       alignItems:"center",
-      justifyContent:"center"
+      justifyContent:"center",
+      marginTop: 32
+    },
+    SignUpButton:{
+      width:300,
+      height:100,
+      borderRadius:70/3,
+      backgroundColor:"#9075E3",
+      alignItems:"center",
+      justifyContent:"center",
+      marginTop: 32,
     },
 });

@@ -1,17 +1,10 @@
-import {createAppContainer} from 'react-navigation'
-import {createStackNavigator} from 'react-navigation-stack'
-import React from 'react-native'
- 
-import LoginScreen from './screens/LoginScreen'
-import ChatScreen from './screens/ChatScreen'
-
-const AppNavigator = createStackNavigator(
-  {
-    Login: LoginScreen,
-    Chat:ChatScreen,
-  },
-  {
-    headerMode:"none"
+import React, { Component } from 'react'
+import { Text, View } from 'react-native'
+import TabNavigation from './screens/TabNavigation'
+export default class App extends Component {
+  render() {
+    return (
+      <TabNavigation/>
+    )
   }
-);
-export default createAppContainer(AppNavigator);
+}
