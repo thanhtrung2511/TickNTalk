@@ -28,11 +28,9 @@ export default class RoomChatManagements extends React.Component {
                       }}
                       value={this.state.username}>
                 </TextInput>
-                <Button
-                    style={{fontSize: 10, color: 'green',backgroundColor:'red', borderColor:"#BAB7C3",marginTop:32}}
-                    styleDisabled={{color: 'red'}}
-                    title="Tạo nhóm">
-                </Button>
+                <TouchableOpacity style={styles.createRoom}>
+                  <Text style={{fontWeight:"600",color:"white"}}>Tạo nhóm</Text>
+                </TouchableOpacity>
                 </View>
                 <FlatList style={styles.ChatBox} onPress={this.ChatScreenNav}>
                 </FlatList>
@@ -59,7 +57,7 @@ export default class RoomChatManagements extends React.Component {
         header:{
           fontWeight:"800",
           fontSize:30,
-          color:"#E5E5E5",
+          color:"#FFFFFF",
           
         },
         input:{
@@ -104,5 +102,14 @@ export default class RoomChatManagements extends React.Component {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
+          },
+          createRoom:{
+            alignItems:'center',
+            marginTop:10,
+            justifyContent:"center",
+            backgroundColor: '#787FF6',
+            width:windowWidth/4.5,
+            borderRadius: 70/5
+            
           }
     });

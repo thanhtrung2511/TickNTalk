@@ -52,7 +52,7 @@ export default class ChatFeed extends React.Component {
         header:{
           fontWeight:"800",
           fontSize:30,
-          color:"#E5E5E5",
+          color:"#FFFFFF",
           
         },
         input:{

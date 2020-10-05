@@ -1,61 +1,49 @@
 import React, { Component } from 'react'
-import { Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,FlatList } from 'react-native'
+import { Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,FlatList, Image } from 'react-native'
 import { SafeAreaView,NavigationContainer } from 'react-native-safe-area-context'
 import { EvilIcons } from '@expo/vector-icons';
 
 export default class ChatFeed extends React.Component {
     
     state={
-        username:"",
+        username:"Phương Vy",
         password:"",
         repassword:"",
         Email:""
     }
-    ChatScreenNav=()=>
+    EditInfo=()=>
     {
-      this.props.navigation.navigate("Chat")
+      
+    }
+    LogOut=()=>
+    {
+      this.props.navigation.navigate("Login")
     }
     render() {
         return (
           <SafeAreaView style={styles.container}>
               <Text style={styles.header}>Thông tin cá nhân</Text>                        
               <View style={{marginLeft:32,marginTop:16,flexDirection:'column'}} justifyContent="center">
-                <TextInput style={styles.input}
-                      placeholder="Tìm kiếm bạn bè"
-                      onChangeText={username=>{
-                        this.setState({username});
-                      }}
-                      value={this.state.username}>
-                </TextInput>
-                <View style={styles.ChatBox} onPress={this.ChatScreenNav}>
-                <TouchableOpacity style={styles.input}
-                      placeholder="Tên đăng nhập"
-                      onChangeText={username=>{
-                        this.setState({username});
-                      }}
-                      value={this.state.username}/>
-                <TouchableOpacity style={styles.input} 
-                      secureTextEntry={true}
-                      placeholder="Mật khẩu"
-                      onChangeText={password=>{
-                        this.setState({password});
-                      }}
-                      value={this.state.password}/>
-                <TouchableOpacity style={styles.input} 
-                      secureTextEntry={true}
-                      placeholder="Nhậo lại mật khẩu"
-                      onChangeText={repassword=>{
-                        this.setState({repassword});
-                      }}
-                      value={this.state.repassword}/>
-                <TouchableOpacity style={styles.input} 
-                      secureTextEntry={true}
-                      placeholder="Email"
-                      onChangeText={Email=>{
-                        this.setState({Email});
-                      }}
-                      value={this.state.Email}/>   
+                <View style={{flexDirection:'row',marginLeft:-32,padding:64,backgroundColor:'white', borderRadius:70/5}}>
+                  <Image style={styles.tinyLogo}
+                        source={require('../assets/a.png')}/>
+                  <View style={{marginLeft:16, marginTop:16,flexDirection:'column'}}>
+                    <Text style={{fontWeight:'800'}}>Phương Vy</Text>
+                    <Text>test@gmail.com</Text>
+                  </View>
                 </View>
+                <TouchableOpacity style={styles.input}>
+                  <Text style={{marginLeft:16,fontWeight:'700'}}>Cập nhật ảnh đại diện</Text>  
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.input}>
+                  <Text style={{marginLeft:16,fontWeight:'700'}}>Đổi mật khẩu</Text>  
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.input}>
+                  <Text style={{marginLeft:16,fontWeight:'700'}}>Chỉnh sửa thông tin cá nhân</Text>  
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.input} onPress={this.LogOut}>
+                  <Text style={{marginLeft:16,fontWeight:'700'}}>Đăng xuất</Text>  
+                </TouchableOpacity> 
               </View>
           </SafeAreaView>
         );
@@ -79,11 +67,11 @@ export default class ChatFeed extends React.Component {
         header:{
           fontWeight:"800",
           fontSize:30,
-          color:"#E5E5E5",
+          color:"#FFFFFF",
           
         },
         input:{
-            marginTop:10,
+            
             height:50,
             marginLeft:-32,
             width:windowWidth/1.11,
@@ -91,17 +79,20 @@ export default class ChatFeed extends React.Component {
             borderRadius:70/5,
             backgroundColor:"#FFE5D8",
             color: "#514E5A",
-            fontWeight:"600",
-            textAlign: "left"
+            alignItems:"flex-start",
+            justifyContent:"center",
+            marginTop: 16
+            
         },
-        SignUpButton:{
-          width:300,
-          height:50,
-          borderRadius:70/3,
+        tinyLogo:{
+          width:150,
+          height:150,
+          borderRadius:70/0.5,
           backgroundColor:"#9075E3",
           alignItems:"center",
           justifyContent:"center",
-          marginTop: 16
+          marginTop: -32,
+          marginLeft:-32,
         },
         hello:{
           fontWeight:"800",

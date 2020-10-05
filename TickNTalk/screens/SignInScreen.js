@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity } from 'react-native'
-import TabNavigation from './TabNavigation'
-import {AppRegistry} from 'react-native'
+
 export default class SignInScreen extends React.Component {
     state={
         username:"",
@@ -9,7 +8,7 @@ export default class SignInScreen extends React.Component {
     }
     SignInContinue=() =>
     {
-      this.props.navigation.navigate("ChatFeed",{username:this.state.username},{password:this.state.password})
+      this.props.navigation.navigate("Dashboard",{username:this.state.username},{password:this.state.password})
     }
     SignUp=()=>
     {

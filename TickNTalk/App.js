@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { Text, View } from 'react-native'
-import TabNavigation from './screens/TabNavigation'
+import ScreenNavigation from './screens/ScreenNavigation'
 export default class App extends Component {
   render() {
     return (
-      <TabNavigation/>
+      <ScreenNavigation/>
     )
   }
 }
