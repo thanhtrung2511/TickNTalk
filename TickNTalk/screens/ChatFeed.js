@@ -46,7 +46,7 @@ export default class ChatFeed extends React.Component {
             width:windowWidth/1.11,
             height:windowHeight/1.11,
             marginLeft:-32,
-            backgroundColor: "#FFFF",
+            backgroundColor: "#FFFFFF",
             borderRadius:70/5,
         },
         header:{

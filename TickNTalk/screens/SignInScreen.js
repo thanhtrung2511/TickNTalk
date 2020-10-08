@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity } from 'react-native'
+import { Image,Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,SafeAreaView } from 'react-native'
 
 export default class SignInScreen extends React.Component {
     state={
@@ -16,12 +16,12 @@ export default class SignInScreen extends React.Component {
     }
     render() {
         return (
-          <View style={styles.container}>
-            <View style={styles.circle}></View>
-            <View style={{marginHorizontal:32, marginVertical:32}}>
-              <Text style={styles.header}>TickNTalk</Text>
+          <SafeAreaView style={styles.container}>
+            <View style={{alignItems:"center"}}>
+              <Image style={styles.tinyLogo}
+                        source={require('../assets/Logo.png')}/>
               <Text style={styles.hello}>Đăng nhập tài khoản của bạn</Text>
-              <View style={{marginLeft:32,marginTop:32}} justifyContent="center">
+              <View style={{alignItems:'center'}} justifyContent="center">
                 <TextInput style={styles.input}
                       placeholder="Tên đăng nhập"
                       onChangeText={username=>{
@@ -38,12 +38,19 @@ export default class SignInScreen extends React.Component {
                 <Text style={styles.FogetPassword}>Quên mật khẩu?</Text>
                 
               </View>
-              <View style={{marginLeft:32,marginTop:32}}>
+              <View style={{marginLeft:16,marginTop:32,alignItems:"center"}}>
                 <TouchableOpacity style={styles.SignInButton} onPress={this.SignInContinue} >
-                      <Text color="#000" fontFamily="SegeoUI">Đăng nhập</Text>
+                      <Text style={{fontWeight:"700", fontSize:20, color:'white'}}>Đăng nhập</Text>
                 </TouchableOpacity>
+                <View style={{flexDirection:'row',marginTop:32}}> 
+                <View style={{width:windowWidth/2.5,height:1,backgroundColor:'black'}}>
+                </View>
+                <Text style={{marginTop:-10,fontWeight:"700", fontSize:15, color:'black'}}>Hoặc</Text>
+                <View style={{width:windowWidth/2.5,height:1,backgroundColor:'black'}}>
+                </View>
+                </View>
                 <TouchableOpacity style={styles.SignInButton}>
-                      <Text color="#000" fontFamily="SegeoUI">Đăng nhập với Google</Text>
+                      <Text style={{fontWeight:"700", fontSize:20, color:'white'}}>Đăng nhập với Google</Text>
                 </TouchableOpacity>
                 
               </View>
@@ -52,7 +59,7 @@ export default class SignInScreen extends React.Component {
               <Text style={styles.SignUpText} onPress={this.SignUp}>Đăng ký tại đây</Text>
               </View>
             </View>
-          </View>
+          </SafeAreaView>
         );
       }
 }
@@ -61,23 +68,13 @@ export default class SignInScreen extends React.Component {
     const styles= StyleSheet.create({
         container:{ 
             flex:1,
-            backgroundColor:"#Dddddd"
-        },
-        circle:{
-            width:500,
-            height:500,
-            borderRadius: 500/2,
-            backgroundColor: "#99FFFF",
-            position: "absolute",
-            left:-120,
-            top:-20,
+            backgroundColor:"#FFFFFF"
         },
         header:{
           fontWeight:"800",
           fontSize:30,
           color:"#000",
-          marginTop:windowHeight/8,
-          marginHorizontal:windowWidth/4
+  
         },
         input:{
             marginTop:16,
@@ -94,7 +91,7 @@ export default class SignInScreen extends React.Component {
           width:300,
           height:50,
           borderRadius:70/3,
-          backgroundColor:"#9075E3",
+          backgroundColor:"lightpink",
           alignItems:"center",
           justifyContent:"center",
           marginTop: 16
@@ -102,18 +99,17 @@ export default class SignInScreen extends React.Component {
         FogetPassword:{
           marginTop:32,
           marginLeft:200,
-          color: "#120C6E",
+          color: "blue",
         },
         hello:{
           fontWeight:"800",
           fontSize:16,
-          color:"#9B9B9B",
-          marginTop:windowHeight/8,
-          marginLeft:32,
+          color:"#000000",
+          marginTop:64
         },
         SignUpText:{
           
-          color: "#120C6E",
+          color: "blue",
           marginLeft:10
         },
         SignUp:{
@@ -126,5 +122,11 @@ export default class SignInScreen extends React.Component {
           flexDirection: "row",
           justifyContent: 'center',
           alignItems: 'center',
-        }
+        },
+        tinyLogo:{
+          width:200,
+          height:200,
+          alignItems:"center",
+          justifyContent:"center",
+        },
     });

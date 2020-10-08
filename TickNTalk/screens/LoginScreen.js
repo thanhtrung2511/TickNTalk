@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions,SafeAreaView } from 'react-native';
 import {Ionicons} from '@expo/vector-icons'
 
 
@@ -17,20 +17,21 @@ export default class ChatScreen extends React.Component {
   }
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.circle}></View>
-        <View style={{marginHorizontal:32, marginVertical:32}}>
-          <Text style={styles.header}>TickNTalk</Text>
-          <View style={{marginLeft:32,marginTop:64}}>
+      <SafeAreaView style={styles.container}>
+        <View style={{alignItems:"center"}}>
+          <Image style={styles.tinyLogo}
+                        source={require('../assets/Logo.png')}/>
+          <Text style={styles.header}>TICKnTALK</Text>
+          <View style={{ marginLeft:32, paddingVertical:100 }}>
             <TouchableOpacity style={styles.SignInButton} onPress={this.SignIn}>
-                  <Text color="#000" fontFamily="SegeoUI">Đăng nhập</Text>
+                  <Text style={{fontSize:30, fontWeight:'700',color:"#FFFFFF"}} >Đăng nhập</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.SignUpButton} onPress={this.SignUp}>
-                  <Text color="#000" fontFamily="SegeoUI">Đăng ký</Text>
+                  <Text style={{fontSize:30, fontWeight:'700',color:"#FFFFFF"}}>Đăng ký</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -39,22 +40,14 @@ const windowHeight=Dimensions.get('window').height;
 const styles= StyleSheet.create({
     container:{ 
         flex:1,
-        backgroundColor:"#Dddddd"
-    },
-    circle:{
-        width:500,
-        height:500,
-        borderRadius: 500/2,
-        backgroundColor: "#99FFFF",
-        position: "absolute",
-        left:-120,
-        top:-20,
+        backgroundColor:"#FFFFFF"
     },
     header:{
       fontWeight:"800",
       fontSize:30,
       color:"#000",
-      marginTop:windowHeight/8,
+      fontFamily:'Thonburi',
+      fontStyle:"italic",
       marginHorizontal:windowWidth/4
     },
     input:{
@@ -69,20 +62,25 @@ const styles= StyleSheet.create({
     },
     SignInButton:{
       width:300,
-      height:100,
-      borderRadius:70/3,
-      backgroundColor:"#9075E3",
+      height:70,
+      borderRadius:70/2,
+      backgroundColor:"lightpink",
       alignItems:"center",
       justifyContent:"center",
-      marginTop: 32
     },
     SignUpButton:{
       width:300,
-      height:100,
-      borderRadius:70/3,
-      backgroundColor:"#9075E3",
+      height:70,
+      borderRadius:70/2,
+      backgroundColor:"lightpink",
       alignItems:"center",
       justifyContent:"center",
       marginTop: 32,
+    },
+    tinyLogo:{
+      width:300,
+      height:300,
+      alignItems:"center",
+      justifyContent:"center",
     },
 });

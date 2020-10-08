@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity } from 'react-native'
+import { Image,SafeAreaView,Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity } from 'react-native'
 
 export default class SignUpScreen extends React.Component {
     state={
@@ -15,12 +15,12 @@ export default class SignUpScreen extends React.Component {
     }
     render() {
         return (
-          <View style={styles.container}>
-            <View style={styles.circle}></View>
-            <View style={{marginHorizontal:32, marginVertical:32}}>
-              <Text style={styles.header}>TickNTalk</Text>
+          <SafeAreaView style={styles.container}>
+          <View style={{alignItems:"center"}}>
+            <Image style={styles.tinyLogo}
+                        source={require('../assets/Logo.png')}/>
               <Text style={styles.hello}>Đăng ký tài khoản mới</Text>
-              <View style={{marginLeft:32,marginTop:32}} justifyContent="center">
+              <View style={{alignItems:"center"}} justifyContent="center">
                 <TextInput style={styles.input}
                       placeholder="Tên đăng nhập"
                       onChangeText={username=>{
@@ -50,21 +50,27 @@ export default class SignUpScreen extends React.Component {
                       value={this.state.Email}/>      
                 
               </View>
-              <View style={{marginLeft:32,marginTop:32}}>
+              <View style={{marginTop:32,alignItems:'center'}}>
                 <TouchableOpacity style={styles.SignUpButton}  onPress={this.SignIn}>
-                      <Text color="#000" fontFamily="SegeoUI">Đăng ký</Text>
+                      <Text style={{fontWeight:"700", fontSize:20, color:'white'}}>Đăng ký</Text>
                 </TouchableOpacity>
+                <View style={{flexDirection:'row',marginTop:32}}> 
+                <View style={{width:windowWidth/2.5,height:1,backgroundColor:'black'}}>
+                </View>
+                <Text style={{marginTop:-10,fontWeight:"700", fontSize:15, color:'black'}}>Hoặc</Text>
+                <View style={{width:windowWidth/2.5,height:1,backgroundColor:'black'}}>
+                </View>
+                </View>
                 <TouchableOpacity style={styles.SignUpButton}>
-                      <Text color="#000" fontFamily="SegeoUI">Đăng ký với Google</Text>
+                      <Text style={{fontWeight:"700", fontSize:20, color:'white'}}>Đăng ký với Google</Text>
                 </TouchableOpacity>
-                
               </View>
               <View style={styles.Extra}>
                 <Text style={styles.SignIn}>Bạn đã có tài khoản?</Text>
                 <Text style={styles.SignInText} onPress={this.SignIn}>Đăng nhập tại đây</Text>
               </View>
             </View>
-          </View>
+          </SafeAreaView>
         );
       }
 }
@@ -73,16 +79,7 @@ export default class SignUpScreen extends React.Component {
     const styles= StyleSheet.create({
         container:{ 
             flex:1,
-            backgroundColor:"#Dddddd"
-        },
-        circle:{
-            width:500,
-            height:500,
-            borderRadius: 500/2,
-            backgroundColor: "#99FFFF",
-            position: "absolute",
-            left:-120,
-            top:-20,
+            backgroundColor:"#FFFFFF"
         },
         header:{
           fontWeight:"800",
@@ -106,7 +103,7 @@ export default class SignUpScreen extends React.Component {
           width:300,
           height:50,
           borderRadius:70/3,
-          backgroundColor:"#9075E3",
+          backgroundColor:"lightpink",
           alignItems:"center",
           justifyContent:"center",
           marginTop: 16
@@ -114,14 +111,13 @@ export default class SignUpScreen extends React.Component {
         hello:{
           fontWeight:"800",
           fontSize:16,
-          color:"#9B9B9B",
-          marginTop:windowHeight/8,
-          marginLeft:32,
+          color:"#000000",
+          marginTop:64,
         },
         SignInText:{
           
           marginLeft:10,
-          color: "#120C6E",
+          color: "blue",
         },
         SignIn:{
           
@@ -132,5 +128,11 @@ export default class SignUpScreen extends React.Component {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-          }
+        },
+        tinyLogo:{
+          width:200,
+          height:200,
+          alignItems:"center",
+          justifyContent:"center",
+        },
     });
