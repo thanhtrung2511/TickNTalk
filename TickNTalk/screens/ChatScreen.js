@@ -11,7 +11,7 @@ export default class ChatScreen extends React.Component {
   get user(){
     return {
       _id: Fire.uid,
-      name: this.props.navigation.state.params.name
+      name: "Phuong Vy" //this.props.navigation.state.params.name
     }
   }
   componentDidMount(){

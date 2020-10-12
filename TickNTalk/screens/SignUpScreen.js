@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image,SafeAreaView,Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity } from 'react-native'
+import { Image,SafeAreaView,Text,TextInput, View,ScrollView, Dimensions,StyleSheet, TouchableOpacity } from 'react-native'
 
 export default class SignUpScreen extends React.Component {
     state={
@@ -16,11 +16,12 @@ export default class SignUpScreen extends React.Component {
     render() {
         return (
           <SafeAreaView style={styles.container}>
-          <View style={{alignItems:"center"}}>
-            <Image style={styles.tinyLogo}
+          <View style={{alignItems:'center'}}>
+              <ScrollView>
+              <View style={{alignItems:"center"}} justifyContent="center">
+              <Image style={styles.tinyLogo}
                         source={require('../assets/Logo.png')}/>
               <Text style={styles.hello}>Đăng ký tài khoản mới</Text>
-              <View style={{alignItems:"center"}} justifyContent="center">
                 <TextInput style={styles.input}
                       placeholder="Tên đăng nhập"
                       onChangeText={username=>{
@@ -69,6 +70,7 @@ export default class SignUpScreen extends React.Component {
                 <Text style={styles.SignIn}>Bạn đã có tài khoản?</Text>
                 <Text style={styles.SignInText} onPress={this.SignIn}>Đăng nhập tại đây</Text>
               </View>
+              </ScrollView>
             </View>
           </SafeAreaView>
         );
@@ -85,8 +87,7 @@ export default class SignUpScreen extends React.Component {
           fontWeight:"800",
           fontSize:30,
           color:"#000",
-          marginTop:windowHeight/8,
-          marginHorizontal:windowWidth/4
+          marginTop:32,
         },
         input:{
             marginTop:16,
@@ -112,7 +113,7 @@ export default class SignUpScreen extends React.Component {
           fontWeight:"800",
           fontSize:16,
           color:"#000000",
-          marginTop:64,
+          marginTop:16,
         },
         SignInText:{
           

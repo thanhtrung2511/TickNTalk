@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,FlatList } from 'react-native'
+import { Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,FlatList, ViewBase } from 'react-native'
 import { SafeAreaView,NavigationContainer } from 'react-native-safe-area-context'
 import { EvilIcons } from '@expo/vector-icons';
 
@@ -13,7 +13,7 @@ export default class ChatFeed extends React.Component {
     }
     ChatScreenNav=()=>
     {
-      this.props.navigation.navigate("Chat")
+      this.props.navigation.navigate("ChatScr")
     }
     render() {
         return (
@@ -27,8 +27,11 @@ export default class ChatFeed extends React.Component {
                       }}
                       value={this.state.username}>
                 </TextInput>
-                <FlatList style={styles.ChatBox} onPress={this.ChatScreenNav}>
-                </FlatList>
+                <View style={styles.ChatBox} >
+                  <TouchableOpacity style={styles.SignUpButton} onPress={this.ChatScreenNav}>
+                      <Text>Press</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
           </SafeAreaView>
         );
@@ -44,7 +47,7 @@ export default class ChatFeed extends React.Component {
         },
         ChatBox:{
             width:windowWidth/1.11,
-            height:windowHeight/1.11,
+            height:windowHeight/1.5,
             marginLeft:-32,
             backgroundColor: "#FFFFFF",
             borderRadius:70/5,
