@@ -27,11 +27,16 @@ export default class ChatFeed extends React.Component {
                       }}
                       value={this.state.username}>
                 </TextInput>
-                <View style={styles.ChatBox} >
-                  <TouchableOpacity style={styles.SignUpButton} onPress={this.ChatScreenNav}>
-                      <Text>Press</Text>
-                  </TouchableOpacity>
-                </View>
+                <FlatList style={styles.ChatBox} 
+                          renderItem={({item,index})=>{
+                            return(
+                              <FlatListItem>
+                                <Text>press</Text>
+                                </FlatListItem>
+                            )
+                          }}
+                >
+                </FlatList>
               </View>
           </SafeAreaView>
         );

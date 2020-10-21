@@ -23,7 +23,7 @@ export default class ChatScreen extends React.Component {
   }
   componentWillUnmount(){
     Fire.off();
-  }
+  }i
   render() {
     
     const chat=<GiftedChat messages={this.state.messages} onSend={Fire.send} user={this.user}/>;

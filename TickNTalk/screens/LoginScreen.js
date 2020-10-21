@@ -22,7 +22,7 @@ export default class ChatScreen extends React.Component {
           <Image style={styles.tinyLogo}
                         source={require('../assets/Logo.png')}/>
           <Text style={styles.header}>TICKnTALK</Text>
-          <View style={{ marginLeft:32, paddingVertical:100 }}>
+          <View style={{ alignItems:'center', paddingVertical:100 }}>
             <TouchableOpacity style={styles.SignInButton} onPress={this.SignIn}>
                   <Text style={{fontSize:30, fontWeight:'700',color:"#FFFFFF"}} >Đăng nhập</Text>
             </TouchableOpacity>

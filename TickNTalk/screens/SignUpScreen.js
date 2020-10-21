@@ -1,17 +1,58 @@
 import React, { Component } from 'react'
 import { Image,SafeAreaView,Text,TextInput, View,ScrollView, Dimensions,StyleSheet, TouchableOpacity } from 'react-native'
-
+import firebase from 'firebase'
 export default class SignUpScreen extends React.Component {
     state={
-        username:"",
-        password:"",
-        repassword:"",
-        Email:""
+        typedPassword:"",
+        typedRepassword:"",
+        typedEmail:"",
+        typedPhone:"",
+        user:null,
+        showError:' ',
+        canCreateAccount:false,
+        SignUpColor:'red',
     }
     SignIn=()=>
     {
       this.props.navigation.navigate("SignIn")
-
+    }
+  
+   
+    SignUpWithEmailAndPassword=()=>{
+      
+      firebase.auth().createUserWithEmailAndPassword(this.state.typedEmail,this.state.typedPassword)
+      .then((loggedInUser)=>
+      {
+        
+        this.setState({showError: 'Đã tạo tài khoản thành công'});
+        this.setState({SignUpColor:'green'})
+            this.setState({user: loggedInUser});
+      })
+      .catch((error)=>{
+        if (error !=null)
+        this.setState({showError: `${error}`,SignUpColor:'red'})
+      })
+      
+    }
+    CheckAccount=()=>
+    {
+      if (this.state.typedEmail != "" && this.state.typedPassword != "" && this.state.typedRepassword!="" && this.state.typedPhone!="")
+      {
+        console.log(this.state.typedRepassword,this.state.typedPassword);
+        this.state.typedPassword != this.state.typedRepassword ?             
+          this.setState(
+            {showError: "Mật khẩu nhập lại không khớp",SignUpColor:'red'}
+          )
+        : this.setState({showError : ' ',canCreateAccount:true});
+        console.log(this.state.typedRepassword, this.state.typedPassword);
+      }
+      else  this.setState({showError: 'Lỗi! Chưa điền thông tin đầy đủ',SignUpColor:'red'})
+      console.log(this.state.canCreateAccount)
+      if (this.state.canCreateAccount)
+        {
+          this.SignUpWithEmailAndPassword();
+        }
+      
     }
     render() {
         return (
@@ -22,37 +63,50 @@ export default class SignUpScreen extends React.Component {
               <Image style={styles.tinyLogo}
                         source={require('../assets/Logo.png')}/>
               <Text style={styles.hello}>Đăng ký tài khoản mới</Text>
-                <TextInput style={styles.input}
-                      placeholder="Tên đăng nhập"
-                      onChangeText={username=>{
-                        this.setState({username});
+                  <TextInput style={styles.input} 
+                        secureTextEntry={false}
+                        keyboardType='email-address'
+                        placeholder="Email"
+                        onChangeText={typedEmail=>{
+                          this.setState({typedEmail});
+                        }}
+                        value={this.state.typedEmail}/> 
+                  <TextInput style={styles.input} 
+                        secureTextEntry={true}
+                        placeholder="Mật khẩu"
+                        
+                        onChangeText={typedPassword=>{
+                          this.setState({typedPassword});
+                          this.setState({showError: ' '})
+                        }}
+                        value={this.state.typedPassword}/>
+                        
+                  <TextInput style={styles.input} 
+                        secureTextEntry={true}
+                      placeholder="Nhập lại mật khẩu"               
+                      onChangeText={typedRepassword=>{
+                        this.setState({typedRepassword});
+                        this.setState({showError: ' '})
                       }}
-                      value={this.state.username}/>
-                <TextInput style={styles.input} 
-                      secureTextEntry={true}
-                      placeholder="Mật khẩu"
-                      onChangeText={password=>{
-                        this.setState({password});
+
+                      value={this.state.typedRepassword}/>
+                  <TextInput style={styles.input} 
+                        
+                        keyboardType="phone-pad"
+                      placeholder="Số điện thoại"
+                      onChangeText={typedPhone=>{
+                        this.setState({typedPhone});
+                        this.setState({showError: ' '})
                       }}
-                      value={this.state.password}/>
-                <TextInput style={styles.input} 
-                      secureTextEntry={true}
-                      placeholder="Nhập lại mật khẩu"
-                      onChangeText={repassword=>{
-                        this.setState({repassword});
-                      }}
-                      value={this.state.repassword}/>
-                <TextInput style={styles.input} 
-                      secureTextEntry={false}
-                      placeholder="Email"
-                      onChangeText={Email=>{
-                        this.setState({Email});
-                      }}
-                      value={this.state.Email}/>      
-                
+
+                      value={this.state.typedPhone}/>
+                <Text style={{color:this.state.SignUpColor}} >
+                 { this.state.showError 
+                 }
+                </Text>
               </View>
               <View style={{marginTop:32,alignItems:'center'}}>
-                <TouchableOpacity style={styles.SignUpButton}  onPress={this.SignIn}>
+                <TouchableOpacity style={styles.SignUpButton}  onPress={this.CheckAccount}>
                       <Text style={{fontWeight:"700", fontSize:20, color:'white'}}>Đăng ký</Text>
                 </TouchableOpacity>
                 <View style={{flexDirection:'row',marginTop:32}}> 
