@@ -73,5 +73,6 @@ const firebaseConfig={
 //        return (firebase.auth().currentUser || {}).uid;
 //    };
 // }
-
-export default firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
+export const rootRef= firebase.database().ref();
+export const UserRef=rootRef.child('user');

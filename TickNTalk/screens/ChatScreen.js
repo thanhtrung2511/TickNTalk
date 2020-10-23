@@ -40,13 +40,4 @@ export default class ChatScreen extends React.Component {
   }
 }
 
-const styles= StyleSheet.create({
-  header:{ 
-      width:600,
-      height:50,
-      backgroundColor: "#99FFFF",
-      position: "absolute",
-  },
-})
-
 

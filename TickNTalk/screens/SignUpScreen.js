@@ -1,16 +1,23 @@
 import React, { Component } from 'react'
-import { Image,SafeAreaView,Text,TextInput, View,ScrollView, Dimensions,StyleSheet, TouchableOpacity } from 'react-native'
+import { Image,SafeAreaView,Text,TextInput, View,ScrollView, TouchableOpacity } from 'react-native'
 import firebase from 'firebase'
+import {UserRef} from '../Fire'
+import styles from '../components/SignUp/Styles'
+
 export default class SignUpScreen extends React.Component {
     state={
         typedPassword:"",
         typedRepassword:"",
         typedEmail:"",
         typedPhone:"",
+        typedFullName:"",
         user:null,
         showError:' ',
         canCreateAccount:false,
         SignUpColor:'red',
+    }
+    AddUserToDatabase=()=>{
+        var UserName
     }
     SignIn=()=>
     {
@@ -23,10 +30,14 @@ export default class SignUpScreen extends React.Component {
       firebase.auth().createUserWithEmailAndPassword(this.state.typedEmail,this.state.typedPassword)
       .then((loggedInUser)=>
       {
-        
         this.setState({showError: 'Đã tạo tài khoản thành công'});
         this.setState({SignUpColor:'green'})
-            this.setState({user: loggedInUser});
+        this.setState({user: loggedInUser});
+        UserRef.push({
+          fullName:this.state.typedFullName,
+          Phone: this.state.typedPhone,
+          Email:this.state.typedEmail,
+      });
       })
       .catch((error)=>{
         if (error !=null)
@@ -36,12 +47,12 @@ export default class SignUpScreen extends React.Component {
     }
     CheckAccount=()=>
     {
-      if (this.state.typedEmail != "" && this.state.typedPassword != "" && this.state.typedRepassword!="" && this.state.typedPhone!="")
+      if (this.state.typedEmail != "" && this.state.typedPassword != "" && 
+          this.state.typedRepassword!="" && this.state.typedPhone!="" && this.state.typedFullName!="")
       {
-        console.log(this.state.typedRepassword,this.state.typedPassword);
-        this.state.typedPassword != this.state.typedRepassword ?             
+        this.state.typedPassword.toString() != this.state.typedRepassword.toString() ?             
           this.setState(
-            {showError: "Mật khẩu nhập lại không khớp",SignUpColor:'red'}
+            {showError: "Mật khẩu nhập lại không khớp",SignUpColor:'red',canCreateAccount:false}
           )
         : this.setState({showError : ' ',canCreateAccount:true});
         console.log(this.state.typedRepassword, this.state.typedPassword);
@@ -52,7 +63,6 @@ export default class SignUpScreen extends React.Component {
         {
           this.SignUpWithEmailAndPassword();
         }
-      
     }
     render() {
         return (
@@ -65,12 +75,19 @@ export default class SignUpScreen extends React.Component {
               <Text style={styles.hello}>Đăng ký tài khoản mới</Text>
                   <TextInput style={styles.input} 
                         secureTextEntry={false}
+                        placeholder="Họ và Tên"
+                        onChangeText={typedFullName=>{
+                          this.setState({typedFullName});
+                        }}
+                        value={this.state.typedFullName}/>
+                  <TextInput style={styles.input} 
+                        secureTextEntry={false}
                         keyboardType='email-address'
                         placeholder="Email"
                         onChangeText={typedEmail=>{
                           this.setState({typedEmail});
                         }}
-                        value={this.state.typedEmail}/> 
+                        value={this.state.typedEmail}/>  
                   <TextInput style={styles.input} 
                         secureTextEntry={true}
                         placeholder="Mật khẩu"
@@ -98,11 +115,9 @@ export default class SignUpScreen extends React.Component {
                         this.setState({typedPhone});
                         this.setState({showError: ' '})
                       }}
-
                       value={this.state.typedPhone}/>
                 <Text style={{color:this.state.SignUpColor}} >
-                 { this.state.showError 
-                 }
+                 { this.state.showError }
                 </Text>
               </View>
               <View style={{marginTop:32,alignItems:'center'}}>
@@ -110,10 +125,10 @@ export default class SignUpScreen extends React.Component {
                       <Text style={{fontWeight:"700", fontSize:20, color:'white'}}>Đăng ký</Text>
                 </TouchableOpacity>
                 <View style={{flexDirection:'row',marginTop:32}}> 
-                <View style={{width:windowWidth/2.5,height:1,backgroundColor:'black'}}>
+                <View style={{width:30,height:1,backgroundColor:'black'}}>
                 </View>
                 <Text style={{marginTop:-10,fontWeight:"700", fontSize:15, color:'black'}}>Hoặc</Text>
-                <View style={{width:windowWidth/2.5,height:1,backgroundColor:'black'}}>
+                <View style={{width:30,height:1,backgroundColor:'black'}}>
                 </View>
                 </View>
                 <TouchableOpacity style={styles.SignUpButton}>
@@ -130,64 +145,4 @@ export default class SignUpScreen extends React.Component {
         );
       }
 }
-    const windowWidth=Dimensions.get('window').width;
-    const windowHeight=Dimensions.get('window').height;
-    const styles= StyleSheet.create({
-        container:{ 
-            flex:1,
-            backgroundColor:"#FFFFFF"
-        },
-        header:{
-          fontWeight:"800",
-          fontSize:30,
-          color:"#000",
-          marginTop:32,
-        },
-        input:{
-            marginTop:16,
-            height:50,
-            width:300,
-            borderColor:"#BAB7C3",
-            borderRadius:70/3,
-            backgroundColor:"#FFE5D8",
-            color: "#514E5A",
-            fontWeight:"600",
-            textAlign: "center"
-        },
-        SignUpButton:{
-          width:300,
-          height:50,
-          borderRadius:70/3,
-          backgroundColor:"lightpink",
-          alignItems:"center",
-          justifyContent:"center",
-          marginTop: 16
-        },
-        hello:{
-          fontWeight:"800",
-          fontSize:16,
-          color:"#000000",
-          marginTop:16,
-        },
-        SignInText:{
-          
-          marginLeft:10,
-          color: "blue",
-        },
-        SignIn:{
-          
-          color: "#9B9B9B",
-        },
-        Extra:{
-            marginTop:16,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        tinyLogo:{
-          width:200,
-          height:200,
-          alignItems:"center",
-          justifyContent:"center",
-        },
-    });
+    
