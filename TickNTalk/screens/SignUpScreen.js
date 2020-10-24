@@ -17,27 +17,39 @@ export default class SignUpScreen extends React.Component {
         SignUpColor:'red',
     }
     AddUserToDatabase=()=>{
-        var UserName
+      UserRef.push({
+        fullName:this.state.typedFullName,
+        Phone: this.state.typedPhone,
+        Email:this.state.typedEmail,
+    });
     }
     SignIn=()=>
     {
+      this.ResetFields()
       this.props.navigation.navigate("SignIn")
     }
-  
+    ResetFields=()=>
+    {
+      this.setState({
+        typedPassword:"",
+        typedRepassword:"",
+        typedEmail:"",
+        typedPhone:"",
+        typedFullName:"",
+        user:null,
+        showError:' ',
+        canCreateAccount:false,
+        SignUpColor:'red',
+    })
+    }
    
     SignUpWithEmailAndPassword=()=>{
       
       firebase.auth().createUserWithEmailAndPassword(this.state.typedEmail,this.state.typedPassword)
       .then((loggedInUser)=>
       {
-        this.setState({showError: 'Đã tạo tài khoản thành công'});
-        this.setState({SignUpColor:'green'})
-        this.setState({user: loggedInUser});
-        UserRef.push({
-          fullName:this.state.typedFullName,
-          Phone: this.state.typedPhone,
-          Email:this.state.typedEmail,
-      });
+        this.setState({showError: 'Đã tạo tài khoản thành công',SignUpColor:'green',user: loggedInUser});
+        this.AddUserToDatabase();
       })
       .catch((error)=>{
         if (error !=null)
@@ -50,7 +62,7 @@ export default class SignUpScreen extends React.Component {
       if (this.state.typedEmail != "" && this.state.typedPassword != "" && 
           this.state.typedRepassword!="" && this.state.typedPhone!="" && this.state.typedFullName!="")
       {
-        this.state.typedPassword.toString() != this.state.typedRepassword.toString() ?             
+        this.state.typedPassword.toString() !== this.state.typedRepassword.toString() ?             
           this.setState(
             {showError: "Mật khẩu nhập lại không khớp",SignUpColor:'red',canCreateAccount:false}
           )

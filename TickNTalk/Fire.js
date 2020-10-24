@@ -10,6 +10,10 @@ const firebaseConfig={
                 appId: "1:767529054937:web:84218fd9c62b42e90d84c8",
                 measurementId: "G-NBES9LJYEK",
 };
+firebase.initializeApp(firebaseConfig);
+export const rootRef= firebase.database().ref();
+export const UserRef=rootRef.child('user');
+
 // class Fire{
 //     constructor(){
 //         this.init()
@@ -73,6 +77,3 @@ const firebaseConfig={
 //        return (firebase.auth().currentUser || {}).uid;
 //    };
 // }
-firebase.initializeApp(firebaseConfig);
-export const rootRef= firebase.database().ref();
-export const UserRef=rootRef.child('user');
