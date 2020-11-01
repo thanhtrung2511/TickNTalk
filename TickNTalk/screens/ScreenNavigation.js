@@ -13,7 +13,7 @@ import RoomChatManagement from './RoomChatManagement'
 import SignInScreen from './SignInScreen'
 import SignUpScreen from './SignUpScreen'
 
-import { AntDesign } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -43,7 +43,7 @@ const TabNavigator= createBottomTabNavigator(
                 inactiveTintColor: 'gray'
             },
             tabBarIcon: ({ focused, tintColor }) => (
-                <AntDesign name="message1" size={24} color="black" />
+                <MaterialIcons name="message" size={24} color="black" />
               )
         }
     },

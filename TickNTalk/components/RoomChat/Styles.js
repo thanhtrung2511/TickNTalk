@@ -25,7 +25,7 @@ const windowWidth=Dimensions.get('window').width;
             marginTop:10,
             height:50,
             marginLeft:-32,
-            width:windowWidth/1.5,
+            width:320,
             borderColor:"#BAB7C3",
             borderRadius:70/5,
             backgroundColor:"#FFE5D8",
@@ -67,9 +67,10 @@ const windowWidth=Dimensions.get('window').width;
           createRoom:{
             alignItems:'center',
             marginTop:10,
+            flexDirection:'row',
             justifyContent:"center",
-            backgroundColor: '#787FF6',
-            width:windowWidth/4.5,
+            backgroundColor: 'rgba(0, 0, 0, 0)',
+            width:50,
             borderRadius: 70/5
             
           }

@@ -3,7 +3,7 @@ import { Button,Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,Fl
 import { SafeAreaView,NavigationContainer } from 'react-native-safe-area-context'
 import { EvilIcons } from '@expo/vector-icons';
 import styles from '../components/RoomChat/Styles'
-
+import { MaterialIcons } from '@expo/vector-icons';
 export default class RoomChatManagements extends React.Component {
     
     state={
@@ -30,7 +30,7 @@ export default class RoomChatManagements extends React.Component {
                       value={this.state.username}>
                 </TextInput>
                 <TouchableOpacity style={styles.createRoom}>
-                  <Text style={{fontWeight:"600",color:"white"}}>Tạo nhóm</Text>
+                  <MaterialIcons name='group-add' size={33} color={'black'}></MaterialIcons>
                 </TouchableOpacity>
                 </View>
                 <FlatList style={styles.ChatBox} onPress={this.ChatScreenNav}>
