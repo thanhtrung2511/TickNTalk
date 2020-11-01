@@ -16,10 +16,17 @@ export default class ChatFeed extends React.Component {
     {
       
     }
+
+    Change_pass=()=>
+    {
+      this.props.navigation.navigate("ChangePass")
+    }
     LogOut=()=>
     {
       this.props.navigation.navigate("Login")
     }
+
+
     render() {
         return (
           <SafeAreaView style={styles.container}>
@@ -36,7 +43,7 @@ export default class ChatFeed extends React.Component {
                 <TouchableOpacity style={styles.input}>
                   <Text style={{marginLeft:16,fontWeight:'700'}}>Cập nhật ảnh đại diện</Text>  
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.input}>
+                <TouchableOpacity style={styles.input}  onPress={this.Change_pass}>
                   <Text style={{marginLeft:16,fontWeight:'700'}}>Đổi mật khẩu</Text>  
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.input}>
