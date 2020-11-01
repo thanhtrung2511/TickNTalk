@@ -12,6 +12,7 @@
     "@react-native-firebase/app": "^8.4.6",
     "@react-native-firebase/storage": "^7.4.10",
     "expo": "^38.0.8",
+    "expo-cli": "^3.28.2",
     "expo-status-bar": "^1.0.2",
     "firebase": "^7.9.0",
     "react": "~16.11.0",
