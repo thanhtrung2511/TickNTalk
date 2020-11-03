@@ -16,6 +16,10 @@ export default class ChatFeed extends React.Component {
         Email:"",
         listUsers:["hihi", "haha", "hoho"],   
     }
+    componentDidMount=()=>
+    {
+      this.FetchListUsers();
+    }
     ChatScreenNav=()=>
     {
       this.props.navigation.navigate("ChatScr")
