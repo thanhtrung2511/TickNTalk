@@ -11,7 +11,7 @@
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-firebase/app": "^8.4.6",
     "@react-native-firebase/storage": "^7.4.10",
-    "expo": "^38.0.8",
+    "expo": "^39.0.3",
     "expo-cli": "^3.28.2",
     "expo-status-bar": "^1.0.2",
     "firebase": "^7.9.0",
@@ -34,7 +34,10 @@
     "react-navigation-stack": "^2.8.2",
     "react-navigation-tabs": "^2.9.2",
     "react-redux": "^7.2.1",
-    "redux": "^4.0.5"
+    "react-redux-firebase": "^3.7.0",
+    "react-router-dom": "^5.2.0",
+    "redux": "^4.0.5",
+    "redux-firestore": "^0.14.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",

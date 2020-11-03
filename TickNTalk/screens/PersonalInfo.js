@@ -4,14 +4,19 @@ import { SafeAreaView,NavigationContainer } from 'react-native-safe-area-context
 import { EvilIcons } from '@expo/vector-icons';
 import styles from '../components/PersonalInFo/Styles'
 
+
 export default class ChatFeed extends React.Component {
     
     state={
         username:"Phương Vy",
         password:"",
         repassword:"",
-        Email:""
+        Email:"",
+        user:{}
     }
+
+    
+
     EditInfo=()=>
     {
       

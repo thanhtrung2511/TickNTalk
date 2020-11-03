@@ -1,4 +1,5 @@
-import firebase from 'firebase'
+import firebase from 'firebase';
+import "firebase/firestore"
 
 const firebaseConfig={
     apiKey: "AIzaSyCOz8WmtZbnGoBHXE6Mt4MXWRgOVlfGLm8",
@@ -10,10 +11,13 @@ const firebaseConfig={
                 appId: "1:767529054937:web:84218fd9c62b42e90d84c8",
                 measurementId: "G-NBES9LJYEK",
 };
-firebase.initializeApp(firebaseConfig);
+
+const app=firebase.initializeApp(firebaseConfig);
 export const rootRef= firebase.database().ref();
 export const UserRef=rootRef.child('user');
-
+const db= firebase.firestore(app);
+export const usersRef = db.collection('users');
+export {firebase};
 // class Fire{
 //     constructor(){
 //         this.init()
