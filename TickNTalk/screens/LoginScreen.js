@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Component }from 'react';
 import { View, Text, TouchableOpacity, Image,SafeAreaView } from 'react-native';
 import styles from '../components/Login/Styles'
-
+import MessageCard from '../components/MessageCard/MessageCard'
 export default class ChatScreen extends React.Component {
   state={
 
@@ -29,6 +29,12 @@ export default class ChatScreen extends React.Component {
                   <Text style={{fontSize:30, fontWeight:'700',color:"#FFFFFF"}}>Đăng ký</Text>
             </TouchableOpacity>
           </View>
+          <MessageCard 
+            ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
+            Name='Trung'
+            LastestChat='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+            >
+          </MessageCard>
         </View>
       </SafeAreaView>
     );
