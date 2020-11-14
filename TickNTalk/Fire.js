@@ -74,5 +74,9 @@ const firebaseConfig={
 //    };
 // }
 firebase.initializeApp(firebaseConfig);
-export const rootRef= firebase.database().ref();
-export const UserRef=rootRef.child('user');
+// const db = firebase.firestore();
+
+export const rootRef = firebase.database().ref();
+export const UserRef = rootRef.child('user');
+export const RoomRef = rootRef.child('room');
+// console.log(RoomRef);

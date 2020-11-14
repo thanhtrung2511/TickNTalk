@@ -1,55 +1,53 @@
-import React, { Component } from 'react'
+import React, { Component, Children } from 'react'
 import { Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,FlatList, ViewBase } from 'react-native'
 import { SafeAreaView,NavigationContainer } from 'react-native-safe-area-context'
 import { EvilIcons } from '@expo/vector-icons';
 import styles from '../components/ChatFeed/Styles'
 import firebase from 'firebase'
-import { UserRef } from '../Fire';
+import { UserRef, RoomRef } from '../Fire';
 import { Card } from 'react-native-paper';
 
 export default class ChatFeed extends React.Component {
     
     state={
         usernameToSearch:"",
-        password:"",
-        repassword:"",
         Email:"",
-        listUsers:["hihi", "haha", "hoho"],   
+        listRooms:["hihi", "haha", "hoho"],   
     }
     ChatScreenNav=()=>
     {
       this.props.navigation.navigate("ChatScr")
     }
+  
+    componentDidMount()
+    {
+      this.FetchListRooms();
+    }
 
     async OnChangeSearchText(usernameToSearch)
     {
-      //console.log(usernameToSearch)
       await this.setState({usernameToSearch}) // to do later :)
-      this.FetchListUsers();
     }
   
-    FetchListUsers()
+    FetchListRooms()
     {
-      UserRef.on(
+      RoomRef.on(
         'value',
         (snapshot) => {
           var li = [];     
 
           snapshot.forEach( (child) => {
             li.push({
-              //key: child.key,
-              //username: child.val().Identifier,
-              // this.state.usernameToSearch
-              Email: child.toJSON().Email,
-              Phone: child.toJSON().Phone,
-              fullName: child.toJSON().fullName,
+              RoomName: child.toJSON().RoomName,
+              CreatedDate: child.toJSON().CreatedDate,
+              Members: child.toJSON().Members,
             });
           })
           
           // firebase.auth().get
           // dirty code
-          li.sort((x,y) => (x.fullName > y.fullName)); 
-          this.setState({listUsers: li});
+          li.sort((x,y) => (x.RoomName > y.RoomName)); 
+          this.setState({listRooms: li});
         }
       )
 
@@ -68,11 +66,11 @@ export default class ChatFeed extends React.Component {
                       /*value={this.state.usernameToSearch}*/>
                 </TextInput>
                 <FlatList style={styles.ChatBox} 
-                  data={this.state.listUsers}
+                  data={this.state.listRooms}
                   renderItem={({item,index})=>{
                     return(
                       <SafeAreaView>
-                          <Text>{index+1}. {item.fullName}</Text>
+                          <Text>{index+1}. {item.RoomName}</Text>
                       </SafeAreaView>
                     )
                   }}
