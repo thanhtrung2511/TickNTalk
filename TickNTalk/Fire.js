@@ -12,8 +12,32 @@ const firebaseConfig={
                 measurementId: "G-NBES9LJYEK",
 };
 
-const app=firebase.initializeApp(firebaseConfig);
-export const rootRef= firebase.database().ref();
-export const UserRef=rootRef.child('user');
+//        return{
+//            _id,
+//            createdAt,
+//            text,
+//            user
+//        }
+//    };
+//    get = callback=>{
+//        this.db.on('child_added',snapshot => callback(this.parse(snapshot)));
+//    };
 
-export {firebase};
+//    off(){
+//        this.db.off();
+//    };
+//    get db(){
+//        return firebase.database().ref("messages");
+//    };
+//    get uid(){
+//        return (firebase.auth().currentUser || {}).uid;
+//    };
+// }
+firebase.initializeApp(firebaseConfig);
+// const db = firebase.firestore();
+
+export const rootRef = firebase.database().ref();
+export const UserRef = rootRef.child('user');
+export const RoomRef = rootRef.child('room');
+// console.log(RoomRef);
+

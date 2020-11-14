@@ -1,61 +1,99 @@
+
 import React, { Component } from 'react'
 import { Text,TextInput, View,FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+
 import { EvilIcons } from '@expo/vector-icons';
 import {styles} from '../components/Basic/Basic'
 import firebase from 'firebase'
-//import { UserRef } from '../Fire';
-import { Card } from 'react-native-paper';
 
-export default class ChatFeed extends React.Component {
+import { UserRef, RoomRef } from '../Fire';
+
+import { Card } from 'react-native-paper';
+import { connect } from 'react-redux'
+
+export class ChatFeed extends React.Component {
     
     state={
-        usernameToSearch:"",
-        password:"",
-        repassword:"",
-        Email:"",
-        listUsers:["hihi", "haha", "hoho"],   
+      toSearchText:"",
+      listRooms: [],
+      filteredRooms: [],
     }
     componentDidMount=()=>
     {
-      this.FetchListUsers();
+      this.FetchListRooms();
     }
     ChatScreenNav=()=>
     {
       this.props.navigation.navigate("ChatScr")
     }
-
-    async OnChangeSearchText(usernameToSearch)
+  
+    componentDidMount()
     {
-      //console.log(usernameToSearch)
-      await this.setState({usernameToSearch}) // to do later :)
-      this.FetchListUsers();
+      this.FetchListRooms();
+    }
+
+    isMatchedRoom(room, toSearchText)
+    {
+      // check by roomname first
+      if(room.RoomName.includes(toSearchText) === true)
+        return true;
+
+      var result = false;
+
+      // check if the room has the searched username or email
+      Object.values(room.Members).forEach((email) => {
+        if(email != this.props.loggedInEmail)
+        {
+          // foreach user ref, find the ones that matched the email or username
+          if(email.includes(toSearchText))
+            result = true;
+        }
+      });
+      
+      return result;
+    }
+
+    onChangeSearchText(toSearchText)
+    {
+      // this.state.filteredRooms =  this.state.listRooms.filter(this.isMatchedRoom);
+      var li = [];
+      
+      this.state.listRooms.forEach((room) => {
+        var matched = this.isMatchedRoom(room, toSearchText);
+        
+        if(matched)
+        {
+          li.push(room);
+        }
+      });
+      
+      this.setState({filteredRooms: li});
     }
   
-    FetchListUsers()
+    FetchListRooms()
     {
-      // UserRef.on(
-      //   'value',
-      //   (snapshot) => {
-      //     var li = [];     
 
-      //     snapshot.forEach( (child) => {
-      //       li.push({
-      //         //key: child.key,
-      //         //username: child.val().Identifier,
-      //         // this.state.usernameToSearch
-      //         Email: child.toJSON().Email,
-      //         Phone: child.toJSON().Phone,
-      //         fullName: child.toJSON().fullName,
-      //       });
-      //     })
+      RoomRef.on(
+        'value',
+        (snapshot) => {
+          var li = [];     
+
+          snapshot.forEach( (child) => {
+            li.push({
+              RoomName: child.toJSON().RoomName,
+              CreatedDate: child.toJSON().CreatedDate,
+              Members: child.toJSON().Members,
+            });
+          })
           
-      //     // firebase.auth().get
-      //     // dirty code
-      //     li.sort((x,y) => (x.fullName > y.fullName)); 
-      //     this.setState({listUsers: li});
-      //   }
-      // )
+          // firebase.auth().get
+          // dirty code
+          li.sort((x,y) => (x.RoomName > y.RoomName)); 
+          this.setState({listRooms: li});
+        }
+      )
+
 
     }
 
@@ -67,16 +105,15 @@ export default class ChatFeed extends React.Component {
                 <TextInput style={styles.input}
                       placeholder="Tìm kiếm bạn bè.."
                       onChangeText={Text=>{
-                        this.OnChangeSearchText(Text);
-                      }}
-                      /*value={this.state.usernameToSearch}*/>
+                        this.onChangeSearchText(Text);
+                      }}>
                 </TextInput>
                 <FlatList style={styles.ChatBox} 
-                  data={this.state.listUsers}
+                  data={this.state.filteredRooms}
                   renderItem={({item,index})=>{
                     return(
                       <SafeAreaView>
-                          <Text>{index+1}. {item.fullName}</Text>
+                          <Text>{index+1}. {item.RoomName}</Text>
                       </SafeAreaView>
                     )
                   }}
@@ -88,3 +125,18 @@ export default class ChatFeed extends React.Component {
       }
 }
     
+
+const mapStateToProps = (state) => {
+  return{
+      loggedInEmail: state.emailReducer,
+  }
+};
+
+const mapDispatchToProps = (dispatch) =>{
+  return {
+      Update: (loggedInEmail) => {
+        dispatch(ChangeEmailAction(loggedInEmail));
+      }
+  };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(ChatFeed);
