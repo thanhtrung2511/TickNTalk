@@ -10,20 +10,23 @@ import {
 } from 'react-native';
 import firebase from 'firebase';
 import {UserRef} from '../Fire';
-import {usersRef} from '../Fire';
 import styles from '../components/SignUp/Styles';
 
 export default class SignUpScreen extends React.Component {
-  state = {
+  constructor(props)
+  {
+    super(props);
+    this.state = {
     typedPassword: '',
     typedRepassword: '',
     typedEmail: '',
     typedPhone: '',
-    typedFullName: '',
-    user: null,
+    typedName: '',
+    user: null, 
     showError: ' ',
     canCreateAccount: false,
     SignUpColor: 'red',
+  }
   };
 
   SignIn = () => {
@@ -36,7 +39,7 @@ export default class SignUpScreen extends React.Component {
       typedRepassword: '',
       typedEmail: '',
       typedPhone: '',
-      typedFullName: '',
+      typedName: '',
       user: null,
       showError: ' ',
       canCreateAccount: false,
@@ -44,13 +47,16 @@ export default class SignUpScreen extends React.Component {
     });
   };
 
-  AddUserToDatabase = () => {
-    usersRef.doc (resp.user.uid).set ({
-      Name: this.state.typedFullName,
-      Phone: this.state.typedPhone,
-      Email: this.state.typedEmail,
+  AddUserToDatabase=()=>{
+      UserRef.push({
+        Name:this.state.typedName,
+        Phone: this.state.typedPhone,
+        Email:this.state.typedEmail,
+        Gender:"",
+        Birthday:"10/08/2000",
+        urlAva:"",
     });
-  };
+  }
 
   SignUpWithEmailAndPassword = () => {
     //   firebase.auth().createUserWithEmailAndPassword(
@@ -74,16 +80,13 @@ export default class SignUpScreen extends React.Component {
         this.state.typedPassword
       )
       .then (resp => {
-        usersRef.doc (resp.user.uid).set ({
-          Name: this.state.typedFullName,
-          Phone: this.state.typedPhone,
-          Email: this.state.typedEmail,
-        });
+       
         this.setState ({
           showError: 'Đã tạo tài khoản thành công',
           SignUpColor: 'green',
           user: resp,
         });
+        this.AddUserToDatabase();
       })
       .catch (error => {
         if (error != null)
@@ -96,7 +99,7 @@ export default class SignUpScreen extends React.Component {
       this.state.typedPassword != '' &&
       this.state.typedRepassword != '' &&
       this.state.typedPhone != '' &&
-      this.state.typedFullName != ''
+      this.state.typedName != ''
     ) {
       this.state.typedPassword.toString () !==
         this.state.typedRepassword.toString ()
@@ -132,10 +135,10 @@ export default class SignUpScreen extends React.Component {
                 style={styles.input}
                 secureTextEntry={false}
                 placeholder="Họ và Tên"
-                onChangeText={typedFullName => {
-                  this.setState ({typedFullName});
+                onChangeText={typedName => {
+                  this.setState ({typedName});
                 }}
-                value={this.state.typedFullName}
+                value={this.state.typedName}
               />
               <TextInput
                 style={styles.input}

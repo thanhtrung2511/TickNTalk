@@ -4,7 +4,7 @@ import { SafeAreaView,NavigationContainer } from 'react-native-safe-area-context
 import { EvilIcons } from '@expo/vector-icons';
 import styles from '../components/ChatFeed/Styles'
 import firebase from 'firebase'
-import { UserRef } from '../Fire';
+//import { UserRef } from '../Fire';
 import { Card } from 'react-native-paper';
 
 export default class ChatFeed extends React.Component {
@@ -34,28 +34,28 @@ export default class ChatFeed extends React.Component {
   
     FetchListUsers()
     {
-      UserRef.on(
-        'value',
-        (snapshot) => {
-          var li = [];     
+      // UserRef.on(
+      //   'value',
+      //   (snapshot) => {
+      //     var li = [];     
 
-          snapshot.forEach( (child) => {
-            li.push({
-              //key: child.key,
-              //username: child.val().Identifier,
-              // this.state.usernameToSearch
-              Email: child.toJSON().Email,
-              Phone: child.toJSON().Phone,
-              fullName: child.toJSON().fullName,
-            });
-          })
+      //     snapshot.forEach( (child) => {
+      //       li.push({
+      //         //key: child.key,
+      //         //username: child.val().Identifier,
+      //         // this.state.usernameToSearch
+      //         Email: child.toJSON().Email,
+      //         Phone: child.toJSON().Phone,
+      //         fullName: child.toJSON().fullName,
+      //       });
+      //     })
           
-          // firebase.auth().get
-          // dirty code
-          li.sort((x,y) => (x.fullName > y.fullName)); 
-          this.setState({listUsers: li});
-        }
-      )
+      //     // firebase.auth().get
+      //     // dirty code
+      //     li.sort((x,y) => (x.fullName > y.fullName)); 
+      //     this.setState({listUsers: li});
+      //   }
+      // )
 
     }
 

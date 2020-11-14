@@ -22,7 +22,6 @@ const windowWidth=Dimensions.get('window').width;
           
         },
         input:{
-            
             height:50,
             marginLeft:-32,
             width:windowWidth/1.11,
