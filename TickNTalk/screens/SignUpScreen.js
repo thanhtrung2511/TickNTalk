@@ -18,9 +18,12 @@ export default class SignUpScreen extends React.Component {
     }
     AddUserToDatabase=()=>{
       UserRef.push({
-        fullName:this.state.typedFullName,
+        Name:this.state.typedFullName,
         Phone: this.state.typedPhone,
         Email:this.state.typedEmail,
+        Gender:"",
+        Birthday:"",
+        urlAva:"",
     });
     }
     SignUpWithGoogle=()=>{}

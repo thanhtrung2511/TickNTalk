@@ -12,7 +12,7 @@ export class SignInScreen extends React.Component {
       this.state={
         //isAuthenticated:false,
         typedPassword:'',
-        user:null,
+        //user:null,
         showError: false
       };
     }
@@ -84,6 +84,7 @@ export class SignInScreen extends React.Component {
 const mapStateToProps = (state) => {
   return{
       typedEmail: state.emailReducer,
+      
   }
 };
 
