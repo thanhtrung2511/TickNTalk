@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Image,Text,TextInput, View,TouchableOpacity,SafeAreaView } from 'react-native'
-import styles from '../components/SignIn/Styles'
+import {Text,TextInput, View,SafeAreaView } from 'react-native'
+import {Button,styles,BasicImage,LoginBottom} from '../components/Basic/Basic'
 import firebase from 'firebase'
 import {ChangeEmailAction} from '../actions/index'
 import {connect} from 'react-redux'
@@ -26,6 +26,7 @@ export class SignInScreen extends React.Component {
         this.setState({showError: true})
       })
     }
+    SignInWithGoogle=()=>{}
     SignInContinue=() =>
     {
       this.props.navigation.navigate("Dashboard")
@@ -37,11 +38,11 @@ export class SignInScreen extends React.Component {
     render() {
         return (
           <SafeAreaView style={styles.container}>
-            <View style={{alignItems:"center"}}>
-              <Image style={styles.tinyLogo}
+                <View style={{alignItems:"center"}}>
+                <BasicImage icon='false'
                         source={require('../assets/Logo.png')}/>
-              <Text style={styles.hello}>Đăng nhập tài khoản của bạn</Text>
-              <View style={{alignItems:'center'}} justifyContent="center">
+                <Text style={styles.hello}>Đăng nhập tài khoản của bạn</Text>
+                <View style={{alignItems:'center'}} justifyContent="center">
                 <TextInput style={styles.input}
                       placeholder="Tên tài khoản"
                       keyboardType="email-address"
@@ -67,26 +68,14 @@ export class SignInScreen extends React.Component {
                 
               </View>
               
-              <View style={{marginLeft:16,marginTop:32,alignItems:"center"}}>
-                <TouchableOpacity style={styles.SignInButton} onPress={this.SignInWithEmailAndPassword} >
-                      <Text style={{fontWeight:"700", fontSize:20, color:'white'}}>Đăng nhập</Text>
-                </TouchableOpacity>
-                <View style={{flexDirection:'row',marginTop:32}}> 
-                <View style={{width:30,height:1,backgroundColor:'black'}}>
-                </View>
-                <Text style={{marginTop:-10,fontWeight:"700", fontSize:15, color:'black'}}>Hoặc</Text>
-                <View style={{width:30,height:1,backgroundColor:'black'}}>
-                </View>
-                </View>
-                <TouchableOpacity style={styles.SignInButton}>
-                      <Text style={{fontWeight:"700", fontSize:20, color:'white'}}>Đăng nhập với Google</Text>
-                </TouchableOpacity>
-                
-              </View>
-              <View style={styles.Extra}>
-              <Text style={styles.SignUp}>Bạn chưa có tài khoản?</Text>
-              <Text style={styles.SignUpText} onPress={this.SignUp}>Đăng ký tại đây</Text>
-              </View>
+              <LoginBottom OnPressNormal={this.SignInWithEmailAndPassword}
+                           OnPressGoogle={this.SignInWithGoogle}
+                           TextNormal="Đăng nhập"
+                           TextGoogle="Đăng nhập với Google"
+                           TextStatic="Bạn chưa có tài khoản?"
+                           TextNav="Đăng ký tại đây"
+                           Sign={this.SignUp}
+              />
             </View>
           </SafeAreaView>
         );

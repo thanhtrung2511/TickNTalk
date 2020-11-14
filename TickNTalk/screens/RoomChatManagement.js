@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import { Button,Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,FlatList } from 'react-native'
 import { SafeAreaView,NavigationContainer } from 'react-native-safe-area-context'
 import { EvilIcons } from '@expo/vector-icons';
-import styles from '../components/RoomChat/Styles'
-import { MaterialIcons } from '@expo/vector-icons';
+import {styles,ButtonIcon} from '../components/Basic/Basic'
+
 export default class RoomChatManagements extends React.Component {
     
     state={
@@ -29,9 +29,7 @@ export default class RoomChatManagements extends React.Component {
                       }}
                       value={this.state.username}>
                 </TextInput>
-                <TouchableOpacity style={styles.createRoom}>
-                  <MaterialIcons name='group-add' size={33} color={'black'}></MaterialIcons>
-                </TouchableOpacity>
+                <ButtonIcon MaterialFamilyIconName="group-add" size={33}/>
                 </View>
                 <FlatList style={styles.ChatBox} onPress={this.ChatScreenNav}>
                 </FlatList>

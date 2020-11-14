@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,FlatList, ViewBase } from 'react-native'
-import { SafeAreaView,NavigationContainer } from 'react-native-safe-area-context'
+import { Text,TextInput, View,FlatList } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { EvilIcons } from '@expo/vector-icons';
-import styles from '../components/ChatFeed/Styles'
+import {styles} from '../components/Basic/Basic'
 import firebase from 'firebase'
 import { UserRef } from '../Fire';
 import { Card } from 'react-native-paper';

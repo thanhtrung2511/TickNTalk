@@ -15,10 +15,10 @@ import {
   NavigationContainer,
 } from 'react-native-safe-area-context';
 import {EvilIcons} from '@expo/vector-icons';
-import styles from '../components/ChangePass/Styles';
 import firebase from 'firebase';
 import {UserRef} from '../Fire';
 import {connect} from 'react-redux';
+import {Button,styles} from '../components/Basic/Basic'
 
 export class ChangePass extends React.Component {
   static navigationOptions = {
@@ -101,7 +101,7 @@ export class ChangePass extends React.Component {
   render () {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.header}>Thông tin cá nhân</Text>
+        <Text style={styles.header}>Đổi mật khẩu</Text>
         <View
           style={{marginLeft: 32, marginTop: 16, flexDirection: 'column'}}
           justifyContent="center"
@@ -124,7 +124,7 @@ export class ChangePass extends React.Component {
             </View>
           </View>
           <TextInput
-            style={styles.input_OldPass}
+            style={styles.input}
             secureTextEntry={true}
             placeholder="Nhập mật khẩu cũ"
             onChangeText={currentPassword => {
@@ -135,7 +135,7 @@ export class ChangePass extends React.Component {
           />
 
           <TextInput
-            style={styles.input_NewPass}
+            style={styles.input}
             secureTextEntry={true}
             placeholder="Nhập mật khẩu mới"
             onChangeText={newPassword => {
@@ -146,7 +146,7 @@ export class ChangePass extends React.Component {
           />
 
           <TextInput
-            style={styles.input_Repassword}
+            style={styles.input}
             secureTextEntry={true}
             placeholder="Nhập lại mật khẩu"
             onChangeText={Repassword => {
@@ -160,17 +160,7 @@ export class ChangePass extends React.Component {
           </Text>
         </View>
 
-        <View>
-          <TouchableOpacity
-            style={styles.ConfirmButton}
-            onPress={this.Change_pass}
-          >
-            <Text style={{fontWeight: '700', fontSize: 20, color: 'white'}}>
-              Xác nhận
-            </Text>
-          </TouchableOpacity>
-        </View>
-
+        <Button onPress={this.Change_pass} Text="Xác nhận"/>
       </SafeAreaView>
     );
   }
