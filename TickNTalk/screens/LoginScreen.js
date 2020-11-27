@@ -30,13 +30,7 @@ export default class ChatScreen extends React.Component {
             <LoginButton onPress={this.SignUp}
                     Text="Đăng ký"/>
           </View>
-          <MessageCard 
-            ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
-            Name='Trung'
-            LastestChat='aaaaaaaaaaasjdhasjdhasdaaaaaaaaaaaaaaa'
-            isRead='false'
-            >
-          </MessageCard>
+          
         </View>
       </SafeAreaView>
     );

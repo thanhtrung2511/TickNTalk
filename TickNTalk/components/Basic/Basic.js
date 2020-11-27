@@ -21,7 +21,8 @@ export const colors = {
     blue: "#007aff",
     indigo: "#5856d6",
     purple: "#af52de",
-    pink: "#ff2d55",
+    pink: "#f29bd4",
+    lightpink: "#f7e0f4",
     gray: "#8e8e93",
     dark: "#48484a",
     redDark: "#d70015",
@@ -32,16 +33,21 @@ export const colors = {
     gray6: "#f2f2f7",
     white: "#ffffff",
     black: "#000000",
-    skin:"#FFE5D8",
+    skin:"#FFF5D8",
+    fushia:"#FF00FF",
+    cyan: "#a4e6f4"
 };
 export const styles=StyleSheet.create({
     container: {
+        height: windowHeight*0.95,
         marginHorizontal: sizeFactor,
         marginBottom: sizeFactor * 0.75,
-        paddingTop: sizeFactor,
+        marginTop: sizeFactor * 2,
+        paddingVertical:sizeFactor*0.5,
         paddingBottom: sizeFactor * 0.25,
         paddingHorizontal: sizeFactor,
         borderRadius: sizeFactor,
+        backgroundColor: colors.lightpink,
     },
     text: {
         fontSize: sizeFactor,
@@ -86,11 +92,22 @@ export const styles=StyleSheet.create({
     input:{
         marginTop:sizeFactor,
         height:sizeFactor*3,
-        width:sizeFactor*20,
+        width:sizeFactor*21.7,
         borderRadius:70/3,
         backgroundColor:colors.skin,
         fontWeight:"600",
-        textAlign: "center"
+        textAlign: "center",
+        marginBottom:sizeFactor*0.5,
+    },
+    inputGroup:{
+        marginTop:sizeFactor,
+        height:sizeFactor*3,
+        width:sizeFactor*19,
+        borderRadius:70/3,
+        backgroundColor:colors.skin,
+        fontWeight:"600",
+        textAlign: "center",
+        marginBottom:sizeFactor * 0.5,
     },
     FogetPassword:{
         marginTop:32,
@@ -101,41 +118,44 @@ export const styles=StyleSheet.create({
         width:sizeFactor*20,
         height:sizeFactor*5,
         borderRadius:99,
-        backgroundColor:"lightpink",
+        backgroundColor:colors.cyan,
         alignItems:"center",
         justifyContent:"center",
         marginTop: 16
       },
     MessageCard: {
-        marginHorizontal: sizeFactor,
-        marginBottom: sizeFactor * 0.75,
-        paddingTop: sizeFactor,
+        marginBottom:sizeFactor * 0.25,
+        marginLeft:sizeFactor ,
+        paddingTop: sizeFactor*0.25,
         paddingBottom: sizeFactor * 0.25,
         paddingHorizontal: sizeFactor,
-        borderRadius: sizeFactor,
+        width: sizeFactor*20,
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: colors.pink,
         flexDirection:'row',
         justifyContent:"space-between", 
-        backgroundColor:'transparent', 
-        alignItems:'flex-end'
+        alignItems:'center',
+        backgroundColor:colors.white
     },
     Login_text:{
         fontSize:30,
         fontWeight:'700',
-        color:"#FFFFFF"
+        color:colors.black
     },
     Simple_button:{
         
-        width:sizeFactor*20,
+        width:sizeFactor*13,
         height:sizeFactor*3,
             borderRadius:70/3,
-            backgroundColor:"lightpink",
+            backgroundColor:colors.cyan,
             alignItems:"center",
             justifyContent:"center",
             marginTop: 16
         
     },
     Simple_text:{
-        fontWeight:"700", fontSize:20, color:'white'
+        fontWeight:"700", fontSize:16, color:colors.black
     },
     SignText:{
       
@@ -163,11 +183,10 @@ export const styles=StyleSheet.create({
         borderRadius: 70/5
       },
       ChatBox:{
-        width:sizeFactor*23,
-        height:windowHeight/1.11,
-        marginLeft:-3*sizeFactor,
+        width:sizeFactor*21.7,
+        height:windowHeight*0.675,
         paddingHorizontal: sizeFactor,
-        backgroundColor: "#FFFF",
+        backgroundColor:colors.lightpink,
         borderRadius:70/5,
     },
 })
@@ -178,10 +197,10 @@ export class MessageCard extends Component
       <View style={styles.MessageCard} onPress={this.props.onPress}>
         <BasicImage icon="true"
         source={{uri:this.props.ImageSource}}></BasicImage>       
-        <View style={{  marginTop:10,
-                        marginLeft:5,
+        <View style={{  paddingTop:5,
+                        paddingLeft:5,
                         flexDirection:'column', 
-                        justifyContent:"flex-start"
+                        justifyContent:"space-between"
                     }}>
           <Text 
               style={{fontWeight:"800",

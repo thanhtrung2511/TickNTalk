@@ -20,9 +20,9 @@ export default class RoomChatManagements extends React.Component {
         return (
           <SafeAreaView style={styles.container}>
               <Text style={styles.header}>Nhóm</Text>                        
-              <View style={{marginLeft:32,marginTop:16,flexDirection:'column'}} justifyContent="center">
+              <View style={{marginTop:16,flexDirection:'column'}} justifyContent="center">
                 <View style={{flexDirection:'row'}}>
-                <TextInput style={styles.input}
+                <TextInput style={styles.inputGroup}
                       placeholder="Tìm kiếm nhóm"
                       onChangeText={username=>{
                         this.setState({username});
