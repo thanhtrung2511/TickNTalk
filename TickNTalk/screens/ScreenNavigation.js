@@ -13,6 +13,7 @@ import RoomChatManagement from './RoomChatManagement'
 import SignInScreen from './SignInScreen'
 import SignUpScreen from './SignUpScreen'
 import ChangePass from './ChangePass'
+import UpdateAvaScreen from './UpdateAvaScreen'
 
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
@@ -116,7 +117,8 @@ const AppNavigator = createStackNavigator(
     ChatInfo: ChatInfo,
     Dashboard: TabNavigator,
     ChangePass: ChangePass,
-    PersonalInfo: PersonalInfo
+    PersonalInfo: PersonalInfo,
+    Avatar: UpdateAvaScreen
   },
   {
     headerMode:""

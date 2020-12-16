@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { Image,SafeAreaView,Text,TextInput, View,ScrollView, TouchableOpacity } from 'react-native'
+import { Image,SafeAreaView,Text,TextInput, View,ScrollView } from 'react-native'
 import firebase from 'firebase'
 import {UserRef} from '../Fire'
 import {styles,BasicImage,LoginBottom} from '../components/Basic/Basic'
-
+import {TouchableOpacity} from '../components/Basic/Basic'
 export default class SignUpScreen extends React.Component {
     state={
         typedPassword:"",
