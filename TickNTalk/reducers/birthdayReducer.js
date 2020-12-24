@@ -1,8 +1,8 @@
-import {BirthdayAction} from "../actions/index"
+import {ChangeBirthdayAction} from "../actions/index"
 const birthdayReducer=(state="",action)=>{
     switch(action.type)
     {
-        case "BIRTHDAY_ACTION": return action.birthday;
+        case "CHANGE_BIRTHDAY_ACTION": return action.birthday;
         default: return state;
     
     }

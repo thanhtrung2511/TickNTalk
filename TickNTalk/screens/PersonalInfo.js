@@ -14,12 +14,12 @@ import {
   NavigationContainer,
 } from 'react-native-safe-area-context';
 import {EvilIcons} from '@expo/vector-icons';
-import styles from '../components/PersonalInfo/Styles';
+import styles from '../screens/components/profile/Styles';
 import firebase from 'firebase';
 import {
   ChangeEmailAction,
   ChangeNameAction,
-  BirthdayAction,
+  ChangeBirthdayAction,
   ChangePhoneAction,
 } from '../actions/index';
 import {connect, Provider} from 'react-redux';
@@ -31,33 +31,40 @@ export class PersonalInFo extends React.Component {
     this.unsubscriber = null;
   }
 
-Update_ava=() => {
-  this.props.navigation.navigate("Avatar");
-}
-
   Change_pass = () => {
     this.props.navigation.navigate ('ChangePass');
   };
+
   LogOut = () => {
     this.props.navigation.navigate ('Login');
   };
+
+  ChangeInfo=()=>{
+    this.props.navigation.navigate ('EditMyInfo');
+  };
+
   componentDidMount () {
     var nameTmp = '';
-    var birthday = '';
-    var phone = '';
+    var birthdayTmp = '';
+    var phoneTmp = '';
     UserRef.orderByChild ('Email')
       .equalTo (this.props.typedEmail)
       .on ('value', snap => {
         snap.forEach (element => {
           nameTmp = element.toJSON ().Name;
-          birthday = element.toJSON ().Birthday;
-          phone = element.toJSON ().Phone;
+          console.log (element.toJSON ().Name);
+
+          birthdayTmp = element.toJSON ().Birthday;
+          phoneTmp = element.toJSON ().Phone;
+           console.log (element.toJSON ().Phone);
         });
       });
 
     this.props.ChangeNameAction (nameTmp);
-    this.props.BirthdayAction (birthday);
-    this.props.ChangePhoneAction (phone);
+    this.props.ChangeBirthdayAction (birthdayTmp);
+    this.props.ChangePhoneAction (phoneTmp);
+    console.log ("thy");
+      console.log (this.props.ChangeNameAction (nameTmp));
   }
 
   render () {
@@ -86,24 +93,24 @@ Update_ava=() => {
               </Text>
               <Text> Name: {this.props.typedName}</Text>
               <Text style={{fontWeight: '800'}}>
-                ngày sinh: {this.props.Birthday}
+                ngày sinh: {this.props.typedBirthday}
               </Text>
               <Text style={{fontWeight: '800'}}>
-                sdt: {this.props.Phone}
+                sdt: {this.props.typedPhone}
               </Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.input} onPress={this.Update_ava} >
+          <TouchableOpacity style={styles.input}>
             <Text style={{marginLeft: 16, fontWeight: '700'}}>
               Cập nhật ảnh đại diện
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.input} onPress={this.Change_pass} >
+          <TouchableOpacity style={styles.input} onPress={this.Change_pass}>
             <Text style={{marginLeft: 16, fontWeight: '700'}}>
               Đổi mật khẩu
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.input}>
+          <TouchableOpacity style={styles.input} onPress={this.ChangeInfo}>
             <Text style={{marginLeft: 16, fontWeight: '700'}}>
               Chỉnh sửa thông tin cá nhân
             </Text>
@@ -120,8 +127,8 @@ function mapStateToProps (state) {
   return {
     typedEmail: state.emailReducer,
     typedName: state.nameReducer,
-    Birthday: state.birthdayReducer,
-    Phone: state.phoneReducer,
+    typedBirthday: state.birthdayReducer,
+     typedPhone: state.phoneReducer,
   };
 }
 
@@ -133,12 +140,15 @@ function mapDispatchToProps (dispatch) {
     ChangeNameAction: typedName => {
       dispatch (ChangeNameAction (typedName));
     },
-    ChangePhoneAction: phone => {
-      dispatch (ChangePhoneAction (phone));
+    ChangeBirthdayAction: typedBirthday => {
+      dispatch (ChangeBirthdayAction (typedBirthday));
     },
-    BirthdayAction: birthday => {
-      dispatch (BirthdayAction (birthday));
+    ChangePhoneAction: typedPhone => {
+      dispatch (ChangePhoneAction (typedPhone));
     },
+    // BirthdayAction: birthday => {
+    //   dispatch (BirthdayAction (birthday));
+    // },
   };
 }
 export default connect (mapStateToProps, mapDispatchToProps) (PersonalInFo);

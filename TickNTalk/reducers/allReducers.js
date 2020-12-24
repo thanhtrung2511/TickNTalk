@@ -9,8 +9,8 @@ import phoneReducer from './phoneReducer'
 const allReducers = combineReducers({
     emailReducer,
     nameReducer,
-    phoneReducer,
     birthdayReducer,
+    phoneReducer,
     //firebase: firebaseReducer
 })
 export default allReducers
