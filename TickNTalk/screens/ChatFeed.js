@@ -35,8 +35,12 @@ export class ChatFeed extends React.Component {
 
     isMatchedRoom(room, toSearchText)
     {
+      // if this room does not contain the logged in user
+      if(Object.values(room.Members).find(x => x === this.props.loggedInEmail) === undefined)
+        return false;
+
       // check by roomname first
-      if(room.RoomName.includes(toSearchText) === true)
+      if(room.RoomName.toUpperCase().includes(toSearchText.toUpperCase()) === true)
         return true;
 
       var result = false;
@@ -46,8 +50,10 @@ export class ChatFeed extends React.Component {
         if(email != this.props.loggedInEmail)
         {
           // foreach user ref, find the ones that matched the email or username
-          if(email.includes(toSearchText))
+          if(email.toUpperCase().includes(toSearchText.toUpperCase()))
             result = true;
+
+          // CuteTN todo: check user name later maybe
         }
       });
       
@@ -67,7 +73,7 @@ export class ChatFeed extends React.Component {
           li.push(room);
         }
       });
-      
+
       this.setState({filteredRooms: li});
     }
   
@@ -90,6 +96,7 @@ export class ChatFeed extends React.Component {
           // firebase.auth().get
           // dirty code
           li.sort((x,y) => (x.RoomName > y.RoomName)); 
+
           this.setState({listRooms: li});
         }
       )
@@ -111,7 +118,7 @@ export class ChatFeed extends React.Component {
                 </TextInput>
                 
                 </View>
-                <MessageCard 
+                {/* <MessageCard 
                             ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
                             Name='Trung'
                             LastestChat='aaaaaaaaaaasjdhasjdhasdaaaaaaaaaaaaaaa'
@@ -124,27 +131,28 @@ export class ChatFeed extends React.Component {
                             LastestChat='aaaaaaaaaaasjdhasjdhasdaaaaaaaaaaaaaaa'
                             isRead='false'
                             >
-                          </MessageCard>
+                          </MessageCard> */}
                 <FlatList style={styles.ChatBox} 
                   data={this.state.filteredRooms}
                   renderItem={({item,index})=>{
+                    const title = (index + 1) + '. ' + item.RoomName;
+
                     return(
-                      <SafeAreaView>
-                          <View>{index+1}. {item.RoomName}</View>
-                          <MessageCard 
-                            ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
-                            Name='Trung'
-                            LastestChat='aaaaaaaaaaasjdhasjdhasdaaaaaaaaaaaaaaa'
-                            isRead='false'
-                            >
-                          </MessageCard>
-                      </SafeAreaView>
-                    )
-                  }}
-                >
+                        <Text>
+                            <MessageCard 
+                              ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
+                              Name={title}
+                              LastestChat='chibi so ciu'
+                              isRead='true'
+                              >
+                            </MessageCard>
+                        </Text>
+                      )
+                    }}
+                  >
                 </FlatList>
-                
-              </View>
+                  
+                </View>
               
           </SafeAreaView>
         );
