@@ -39,10 +39,8 @@ export const colors = {
 };
 export const styles=StyleSheet.create({
     container: {
-        height: windowHeight*0.95,
-        marginHorizontal: sizeFactor,
-        marginBottom: sizeFactor * 0.75,
-        marginTop: sizeFactor * 2,
+        height: windowHeight,
+        width: windowWidth,
         paddingVertical:sizeFactor*0.5,
         paddingBottom: sizeFactor * 0.25,
         paddingHorizontal: sizeFactor,
