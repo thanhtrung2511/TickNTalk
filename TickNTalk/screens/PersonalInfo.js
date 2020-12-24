@@ -24,7 +24,7 @@ export class PersonalInFo extends React.Component {
     this.props.navigation.navigate ('ChangePass');
   };
   LogOut = () => {
-    this.props.navigation.navigate ('Login');
+    this.props.navigation.replace('Login');
   };
   componentDidMount () {
     var nameTmp = '';

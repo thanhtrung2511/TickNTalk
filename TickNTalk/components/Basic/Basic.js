@@ -1,12 +1,12 @@
 import {
         Dimensions,StyleSheet,
         View, Text, Image,
-        TouchableOpacity
+        TouchableOpacity, Platform
 }
 from 'react-native';
 import React, { Component } from 'react';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons,Ionicons } from '@expo/vector-icons';
 export const windowWidth = Dimensions.get("window").width;
 export const windowHeight = Dimensions.get("window").height;
 
@@ -41,10 +41,7 @@ export const styles=StyleSheet.create({
     container: {
         height: windowHeight,
         width: windowWidth,
-        paddingVertical:sizeFactor*0.5,
-        paddingBottom: sizeFactor * 0.25,
-        paddingHorizontal: sizeFactor,
-        borderRadius: sizeFactor,
+        
         backgroundColor: colors.lightpink,
     },
     text: {
@@ -186,15 +183,44 @@ export const styles=StyleSheet.create({
         paddingHorizontal: sizeFactor,
         backgroundColor:colors.lightpink,
         borderRadius:70/5,
-    },
+     },
+     ChatScreen_Banner:{
+        width:windowWidth,
+        height:sizeFactor*3,
+        flexDirection: 'row',
+        alignItems:"center"
+     },
+     ChatScreen_input:{
+        
+        height:sizeFactor*2.3,
+        width:sizeFactor*20,
+        borderRadius:70/3,
+        backgroundColor:colors.skin,
+        fontWeight:"600",
+        textAlign:"left",
+        marginLeft:sizeFactor*0.5,
+     },
+     ChatContainer:{
+        height: windowHeight*0.7,
+        width: windowWidth,
+        paddingVertical:sizeFactor*0.5,
+        paddingBottom: sizeFactor * 0.25,
+        paddingHorizontal: sizeFactor,
+        backgroundColor: colors.white,
+     },
+     ChatMessage:{
+         width:windowWidth*0.8,
+         flexDirection: 'row',
+         alignItems: 'center',
+     },
 })
-export class MessageCard extends Component
+export const MessageCard =(props)=>
 {
-    render(){
+    
     return (
-      <View style={styles.MessageCard} onPress={this.props.onPress}>
+      <TouchableOpacity style={styles.MessageCard} onPress={props.onPress}>
         <BasicImage icon="true"
-        source={{uri:this.props.ImageSource}}></BasicImage>       
+        source={{uri:props.ImageSource}}></BasicImage>       
         <View style={{  paddingTop:5,
                         paddingLeft:5,
                         flexDirection:'column', 
@@ -205,18 +231,17 @@ export class MessageCard extends Component
               fontSize:sizeFactor,
               color:colors.black}}
           >  
-              {this.props.Name}
+              {props.Name}
           </Text>
           <Text style={{width:sizeFactor*15,
-                        fontWeight:this.props.isRead == 'true'? '100': '600'}} 
+                        fontWeight:props.isRead == 'true'? '100': '600'}} 
                 numberOfLines={1} 
                 ellipsizeMode={'tail'}> 
-                {this.props.LastestChat}
+                {props.LastestChat}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
-        }
 }
 export const LoginButton=(props)=>{
     return(
@@ -243,12 +268,78 @@ export const ButtonIcon=(props)=>{
 }
 export const BasicImage=(props)=>{
     return(
-        <Image style={{width:props.icon=='false'?200:50,
-            height:props.icon=='false'?200:50,
+        <Image style={{width:props.icon=='false'?200: props.icon=="smaller"?30:50,
+            height:props.icon=='false'?200:props.icon=="smaller"?30:50,
             alignItems:"center",
             justifyContent:"center",
             borderRadius:70/3,}}
             source={props.source}/>
+    )
+}
+export const ChatMessage_Orther=(props)=>{
+    return (
+        <View style={{alignItems:"left",marginTop:16}}>
+        <View style={styles.ChatMessage}>
+            
+            <BasicImage icon="smaller"
+                source={{uri:props.ImageSource}}></BasicImage>
+            <Text style={{backgroundColor:colors.lightpink,borderRadius:70/4,marginLeft:8,maxWidth:sizeFactor*18}}
+                    wrapped={true}
+            >
+                {props.Content}
+            </Text>
+            </View>
+        </View>
+    );
+}
+export const ChatMessage_Mine=(props)=>{
+    return (
+        <View style={{alignItems:"flex-end",marginTop:16}}>
+           
+            <Text wrapped={true} style={{backgroundColor:colors.lightpink,maxWidth:sizeFactor*18}}>
+                {props.Content}
+            </Text>
+            <Text style={{marginTop:10,fontSize:12, fontWeight:"100"}}>
+                {props.Status===true? "Đã xem": "Đã gửi"}
+            </Text>
+        </View>
+    );
+}
+export const ChatHeader=(props)=>{
+    return (
+        <View style={styles.ChatScreen_Banner}>
+            <TouchableOpacity style={{marginLeft:16}} onPress={props.Backward}>
+                {Platform.OS==='ios'?
+                <Ionicons name="ios-arrow-back" size={30} color="black" /> :
+                <Ionicons name="md-arrow-round-back" size={30} color="black" />
+                }
+            </TouchableOpacity>
+            <TouchableOpacity style={{
+                                      marginLeft:16,flexDirection: 'row',alignItems: 'center'}} 
+                            onPress={props.goToInfo}
+            >
+                <BasicImage icon="true"
+                    source={{uri:props.ImageSource}}></BasicImage>    
+                 
+                    <Text 
+                        style={{marginLeft:16,fontWeight:"800",
+                        width:sizeFactor*13,
+                        fontSize:sizeFactor,
+                        color:colors.black}}
+                        numberOfLines={1} 
+                        ellipsizeMode={'tail'}
+                    >  
+                        {props.Name}
+                    </Text>
+                
+            </TouchableOpacity>
+            <TouchableOpacity style={{marginLeft:16}} onPress={props.Call}>
+                <Ionicons name="ios-call" size={30} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity style={{marginLeft:16}} onPress={props.Video}>
+                <Ionicons name="ios-videocam" size={30} color="black" />
+            </TouchableOpacity>
+        </View>
     )
 }
 export const LoginBottom=(props) =>{

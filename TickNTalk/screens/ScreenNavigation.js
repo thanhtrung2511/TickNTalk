@@ -18,6 +18,9 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
+import {connect} from 'react-redux'
+import { ChangeLoginStatus } from '../actions';
+
 const TabNavigator= createBottomTabNavigator(
     {
     ChatFeed:{
@@ -118,9 +121,28 @@ const AppNavigator = createStackNavigator(
     ChangePass: ChangePass,
     PersonalInfo: PersonalInfo
   },
+  
   {
-    headerMode:""
-  }
+    index: 0,
+    initialRouteName: 'Login',
+    headerMode: 'none',
+    navigationOptions: {
+      gesturesEnabled: false
+    }
+  },
 );
-
-export default createAppContainer(AppNavigator);   
+const mapStateToProps = (state) => {
+    return{
+        isLogin: state.isLogin,  
+    }
+  };
+  
+  const mapDispatchToProps = (dispatch) =>{
+    return {
+        Update: (isLogin) => {
+          dispatch(ChangeLoginStatus(isLogin));
+        }
+    };
+  }
+  export default connect(mapStateToProps, mapDispatchToProps)(createAppContainer(AppNavigator));
+  

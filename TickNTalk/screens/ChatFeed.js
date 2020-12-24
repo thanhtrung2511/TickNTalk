@@ -25,8 +25,8 @@ export class ChatFeed extends React.Component {
     }
     ChatScreenNav=()=>
     {
-      this.props.navigation.navigate("ChatScr")
-    }
+      this.props.navigation.navigate("ChatScr");
+    };
   
     componentDidMount()
     {
@@ -98,6 +98,7 @@ export class ChatFeed extends React.Component {
     }
 
     render() {
+      
         return (
           <SafeAreaView style={styles.container}>
               <Text style={styles.header}>Tin nhắn</Text>                        
@@ -123,6 +124,7 @@ export class ChatFeed extends React.Component {
                             Name='Trung'
                             LastestChat='aaaaaaaaaaasjdhasjdhasdaaaaaaaaaaaaaaa'
                             isRead='false'
+                            onPress={this.ChatScreenNav}
                             >
                           </MessageCard>
                 <FlatList style={styles.ChatBox} 

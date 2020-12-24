@@ -22,4 +22,15 @@ export function ChangePhoneAction(phone){
         phone:phone
     }
 }
-
+export function ChangeRoomIDAction(roomID){
+    return {
+        type:"CHANGE_ROOM_ID_ACTION",
+        roomID:roomID
+    }
+}
+export function ChangeLoginStatus(isLogin){
+    return {
+        type:"CHANGE_LOGINSTT_ACTION",
+        isLogin:isLogin
+    }
+}

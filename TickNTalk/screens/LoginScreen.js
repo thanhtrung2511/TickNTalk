@@ -9,11 +9,11 @@ export default class ChatScreen extends React.Component {
   }
   SignIn=() =>
   {
-    this.props.navigation.navigate("SignIn")
+    this.props.navigation.replace("SignIn")
   }
   SignUp=()=>
   {
-    this.props.navigation.navigate("SignUp")
+    this.props.navigation.replace("SignUp")
   }
   render() {
     return (

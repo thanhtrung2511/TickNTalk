@@ -30,7 +30,7 @@ export default class SignUpScreen extends React.Component {
     SignIn=()=>
     {
       this.ResetFields()
-      this.props.navigation.navigate("SignIn")
+      this.props.navigation.replace("SignIn")
     }
     ResetFields=()=>
     {
