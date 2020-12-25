@@ -42,6 +42,7 @@ export const styles=StyleSheet.create({
         paddingBottom: sizeFactor * 0.25,
         paddingHorizontal: sizeFactor,
         borderRadius: sizeFactor,
+        //backgroundColor:"pink",
     },
     text: {
         fontSize: sizeFactor,
@@ -90,7 +91,12 @@ export const styles=StyleSheet.create({
         borderRadius:70/3,
         backgroundColor:colors.skin,
         fontWeight:"600",
-        textAlign: "center"
+        textAlign: "center",
+
+        borderColor:"#BAB7C3",
+        color: "#514E5A",
+        alignItems:"center",
+        justifyContent:"center",
     },
     FogetPassword:{
         marginTop:32,

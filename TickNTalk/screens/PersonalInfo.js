@@ -14,13 +14,15 @@ import {
   NavigationContainer,
 } from 'react-native-safe-area-context';
 import {EvilIcons} from '@expo/vector-icons';
-import styles from '../screens/components/profile/Styles';
+// import styles from '../screens/components/profile/Styles';
+import {styles, ButtonIcon} from '../components/Basic/Basic';
 import firebase from 'firebase';
 import {
   ChangeEmailAction,
   ChangeNameAction,
   ChangeBirthdayAction,
   ChangePhoneAction,
+  ChangeGenderAction,
 } from '../actions/index';
 import {connect, Provider} from 'react-redux';
 import {UserRef} from '../Fire';
@@ -39,7 +41,7 @@ export class PersonalInFo extends React.Component {
     this.props.navigation.navigate ('Login');
   };
 
-  ChangeInfo=()=>{
+  ChangeInfo = () => {
     this.props.navigation.navigate ('EditMyInfo');
   };
 
@@ -47,24 +49,21 @@ export class PersonalInFo extends React.Component {
     var nameTmp = '';
     var birthdayTmp = '';
     var phoneTmp = '';
+    var genderTmp = '';
     UserRef.orderByChild ('Email')
       .equalTo (this.props.typedEmail)
       .on ('value', snap => {
         snap.forEach (element => {
           nameTmp = element.toJSON ().Name;
-          console.log (element.toJSON ().Name);
-
+          this.props.ChangeNameAction (nameTmp);
+          genderTmp = element.toJSON ().Gender;
+          this.props.ChangeGenderAction (genderTmp);
           birthdayTmp = element.toJSON ().Birthday;
+          this.props.ChangeBirthdayAction (birthdayTmp);
           phoneTmp = element.toJSON ().Phone;
-           console.log (element.toJSON ().Phone);
+          this.props.ChangePhoneAction (phoneTmp);
         });
       });
-
-    this.props.ChangeNameAction (nameTmp);
-    this.props.ChangeBirthdayAction (birthdayTmp);
-    this.props.ChangePhoneAction (phoneTmp);
-    console.log ("thy");
-      console.log (this.props.ChangeNameAction (nameTmp));
   }
 
   render () {
@@ -91,12 +90,17 @@ export class PersonalInFo extends React.Component {
               <Text style={{fontWeight: '800'}}>
                 Email: {this.props.typedEmail}
               </Text>
-              <Text> Name: {this.props.typedName}</Text>
               <Text style={{fontWeight: '800'}}>
-                ngày sinh: {this.props.typedBirthday}
+                Tên: {this.props.typedName}
               </Text>
               <Text style={{fontWeight: '800'}}>
-                sdt: {this.props.typedPhone}
+                Giới tính: {this.props.typedGender}
+              </Text>
+              <Text style={{fontWeight: '800'}}>
+                Ngày sinh: {this.props.typedBirthday}
+              </Text>
+              <Text style={{fontWeight: '800'}}>
+                Số điện thoại: {this.props.typedPhone}
               </Text>
             </View>
           </View>
@@ -128,7 +132,8 @@ function mapStateToProps (state) {
     typedEmail: state.emailReducer,
     typedName: state.nameReducer,
     typedBirthday: state.birthdayReducer,
-     typedPhone: state.phoneReducer,
+    typedPhone: state.phoneReducer,
+    typedGender: state.genderReducer,
   };
 }
 
@@ -137,18 +142,22 @@ function mapDispatchToProps (dispatch) {
     ChangeEmailAction: typedEmail => {
       dispatch (ChangeEmailAction (typedEmail));
     },
+
     ChangeNameAction: typedName => {
       dispatch (ChangeNameAction (typedName));
     },
+
     ChangeBirthdayAction: typedBirthday => {
       dispatch (ChangeBirthdayAction (typedBirthday));
     },
+
     ChangePhoneAction: typedPhone => {
       dispatch (ChangePhoneAction (typedPhone));
     },
-    // BirthdayAction: birthday => {
-    //   dispatch (BirthdayAction (birthday));
-    // },
+
+    ChangeGenderAction: typedGender => {
+      dispatch (ChangeGenderAction (typedGender));
+    },
   };
 }
 export default connect (mapStateToProps, mapDispatchToProps) (PersonalInFo);

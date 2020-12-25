@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import firebase from 'firebase';
 import {UserRef} from '../Fire';
+//import {styles, ButtonIcon} from '../components/Basic/Basic';
 import styles from '../screens/components/signup/Styles';
 
 export default class SignUpScreen extends React.Component {
@@ -53,8 +54,8 @@ export default class SignUpScreen extends React.Component {
         Name:this.state.typedName,
         Phone: this.state.typedPhone,
         Email:this.state.typedEmail,
-        Gender:"",
-        Birthday:"10/09/2988",
+        Gender:"Nam",
+        Birthday:"1997-01-09",
         urlAva:"",
     });
   }

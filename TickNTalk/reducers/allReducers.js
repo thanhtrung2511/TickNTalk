@@ -3,6 +3,7 @@ import emailReducer from './emailReducer'
 import nameReducer from './nameReducer'
 import birthdayReducer from './birthdayReducer'
 import phoneReducer from './phoneReducer'
+import genderReducer from './genderReducer'
 //import { firebaseReducer } from 'react-redux-firebase'
 
 
@@ -10,7 +11,8 @@ const allReducers = combineReducers({
     emailReducer,
     nameReducer,
     birthdayReducer,
-    phoneReducer,
+    phoneReducer,   
+    genderReducer,
     //firebase: firebaseReducer
 })
 export default allReducers
