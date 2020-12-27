@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  Alert,
+  Alert,KeyboardAvoidingView
 } from 'react-native';
 import {
   SafeAreaView,
@@ -100,7 +100,8 @@ export class ChangePass extends React.Component {
 
   render () {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView>
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
         <Text style={styles.header}>Đổi mật khẩu</Text>
         <View
           style={{marginLeft: 32, marginTop: 16, flexDirection: 'column'}}
@@ -161,6 +162,7 @@ export class ChangePass extends React.Component {
         </View>
 
         <ButtonMod onPress={this.Change_pass} Text="Xác nhận"/>
+      </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }

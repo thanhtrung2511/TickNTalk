@@ -51,8 +51,8 @@ class PersonalInfoEdit extends React.Component {
 
   render() {
     return (
-      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={0}>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView>
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
         <Text style={styles.header}>Thông tin cá nhân</Text>
         <View
           style={{ marginTop: 16, flexDirection: "column",justifyContent:"space-between" }}
@@ -139,8 +139,8 @@ class PersonalInfoEdit extends React.Component {
           onPress={this.EditMyInfo}
           Text="Lưu thay đổi"
         />
-      </SafeAreaView>
       </KeyboardAvoidingView>
+      </SafeAreaView>
     );
   }
 }

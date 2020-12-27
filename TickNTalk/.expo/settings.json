@@ -1,10 +1,9 @@
 {
+  "scheme": null,
   "hostType": "lan",
   "lanType": "ip",
   "dev": true,
   "minify": false,
-  "urlRandomness": "77-vm4",
-  "https": false,
-  "scheme": null,
-  "devClient": false
+  "urlRandomness": null,
+  "https": false
 }

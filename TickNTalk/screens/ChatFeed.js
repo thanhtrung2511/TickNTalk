@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react'
-import { Text,TextInput, View,FlatList } from 'react-native'
+import { Text,TextInput, View,FlatList,KeyboardAvoidingView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { EvilIcons } from '@expo/vector-icons';
@@ -100,12 +100,14 @@ export class ChatFeed extends React.Component {
     render() {
       
         return (
-          <SafeAreaView style={styles.container}>
+          <SafeAreaView>
+          <KeyboardAvoidingView style={styles.container} behavior="padding">
               <Text style={styles.header}>Tin nhắn</Text>                        
               <View style={{marginTop:16,flexDirection:'column'}} justifyContent="center">
                 <View style={{flexDirection:'row',alignItems:"flex-start"}}>
                 <TextInput style={styles.input}
                       placeholder="Tìm kiếm bạn bè.."
+                      clearButtonMode={Platform.OS === "ios" ? true:false}
                       onChangeText={Text=>{
                         this.onChangeSearchText(Text);
                       }}>
@@ -148,6 +150,7 @@ export class ChatFeed extends React.Component {
                 
               </View>
               
+          </KeyboardAvoidingView>
           </SafeAreaView>
         );
       }

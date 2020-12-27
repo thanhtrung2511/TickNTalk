@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from "react";
 import {
   Image,
   SafeAreaView,
@@ -8,171 +8,172 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   TouchableOpacity,
-} from 'react-native';
-import firebase from 'firebase';
-import {UserRef} from '../Fire';
-import {styles, BasicImage, LoginBottom} from '../components/Basic/Basic';
+} from "react-native";
+import firebase from "firebase";
+import { UserRef } from "../Fire";
+import {
+  styles,
+  BasicImage,
+  LoginBottom,
+  createOKAlert,
+} from "../components/Basic/Basic";
+import {connect} from "react-redux";
 
-export default class SignUpScreen extends React.Component {
-  constructor (props) {
-    super (props);
+export class SignUpScreen extends React.Component {
+  constructor(props) {
+    super(props);
     this.state = {
-      typedPassword: '',
-      typedRepassword: '',
-      typedEmail: '',
-      typedPhone: '',
-      typedName: '',
+      typedPassword: "",
+      typedRepassword: "",
+      typedPhone: "",
+      typedName: "",
       user: null,
-      showError: ' ',
+      showError: " ",
       canCreateAccount: false,
-      SignUpColor: 'red',
+      SignUpColor: "red",
     };
   }
 
+  SignUpCont = () => {
+    this.ResetFields();
+    this.props.navigation.replace("SignUpCont");
+  };
   SignIn = () => {
     //this.ResetFields ();
-    this.props.navigation.navigate ('SignUpCont');
+    this.props.navigation.replace("SignIn");
   };
-
   ResetFields = () => {
-    this.setState ({
-      typedPassword: '',
-      typedRepassword: '',
-      typedEmail: '',
+    this.setState({
+      typedPassword: "",
+      typedRepassword: "",
+      
       user: null,
-      showError: ' ',
+      showError: " ",
       canCreateAccount: false,
-      SignUpColor: 'red',
+      SignUpColor: "red",
       //typedBirthday:'09/01/1997',
     });
+    this.props.Update("");
   };
 
   AddUserToDatabase = () => {
-    UserRef.push ({
-      Name: '',
-      Phone: '',
-      Email: this.state.typedEmail,
-      Gender: '',
-      Birthday: '',
-      urlAva: '',
+    UserRef.push({
+      Name: "",
+      Phone: "",
+      Email: this.props.typedEmail,
+      Gender: "",
+      Birthday: "",
+      urlAva: "",
     });
-    this.SignIn ();
+    this.SignUpCont();
   };
 
   SignUpWithEmailAndPassword = () => {
     firebase
-      .auth ()
-      .createUserWithEmailAndPassword (
-        this.state.typedEmail,
+      .auth()
+      .createUserWithEmailAndPassword(
+        this.props.typedEmail,
         this.state.typedPassword
       )
-      .then (resp => {
-        this.setState ({
-          showError: 'Đã tạo tài khoản thành công',
-          SignUpColor: 'green',
-          user: resp,
+      .then((resp) => {
+        createOKAlert({
+          Text: "Đã tạo tài khoản thành công",
+          onPress: () => this.AddUserToDatabase(),
         });
-
-        this.AddUserToDatabase ();
       })
-      .catch (error => {
-        if (error != null)
-          this.setState ({showError: `${error}`, SignUpColor: 'red'});
+      .catch((error) => {
+        if (error != null) createOKAlert({ Text: "Email này đã được sử dụng" });
       });
   };
   CheckAccount = () => {
     if (
-      this.state.typedEmail != '' &&
-      this.state.typedPassword != '' &&
-      this.state.typedRepassword != ''
+      this.state.typedEmail != "" &&
+      this.state.typedPassword != "" &&
+      this.state.typedRepassword != ""
     ) {
-      this.state.typedPassword.toString () !==
-        this.state.typedRepassword.toString ()
-        ? this.setState ({
-            showError: 'Mật khẩu nhập lại không khớp',
-            SignUpColor: 'red',
-            canCreateAccount: false,
-          })
-        : this.setState ({showError: ' ', canCreateAccount: true});
-      console.log (this.state.typedRepassword, this.state.typedPassword);
-    } else
-      this.setState ({
-        showError: 'Lỗi! Chưa điền thông tin đầy đủ',
-        SignUpColor: 'red',
-      });
-    console.log (this.state.canCreateAccount);
+      this.state.typedPassword.toString() !==
+      this.state.typedRepassword.toString()
+        ? createOKAlert({ Text: "Mật khẩu nhập lại không đúng" })
+        : this.setState({ canCreateAccount: true });
+    } else createOKAlert({ Text: "Chưa điền đầy đủ thông tin" });
     if (this.state.canCreateAccount) {
-      this.SignUpWithEmailAndPassword ();
+      this.SignUpWithEmailAndPassword();
     }
   };
-  render () {
+  render() {
     return (
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-40}>
-        <SafeAreaView style={styles.container}>
-          <View style={{alignItems: 'center'}}>
-            <ScrollView>
-              <View style={{alignItems: 'center'}} justifyContent="center">
-              <BasicImage icon='false'
-                        source={require('../assets/Logo.png')}/>
-                <Text style={styles.hello}>Đăng ký tài khoản mới</Text>
+      <SafeAreaView>
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
+          <View style={{ alignItems: "center" }}>
+            <View style={{ alignItems: "center" }} justifyContent="center">
+              <BasicImage icon="false" source={require("../assets/Logo.png")} />
+              <Text style={styles.hello}>Đăng ký tài khoản mới</Text>
 
-                <TextInput
-                  style={styles.input}
-                  secureTextEntry={false}
-                  keyboardType="email-address"
-                  placeholder="Email"
-                  onChangeText={typedEmail => {
-                    this.setState ({typedEmail});
-                  }}
-                  value={this.state.typedEmail}
-                />
-                <TextInput
-                  style={styles.input}
-                  secureTextEntry={true}
-                  placeholder="Mật khẩu"
-                  onChangeText={typedPassword => {
-                    this.setState ({typedPassword});
-                    this.setState ({showError: ' '});
-                  }}
-                  value={this.state.typedPassword}
-                />
+              <TextInput
+                style={styles.input}
+                secureTextEntry={false}
+                keyboardType="email-address"
+                placeholder="Email"
+                onChangeText={(typedEmail) => {
+                  this.props.Update(typedEmail );
+                }}
+                value={this.props.typedEmail}
+              />
+              <TextInput
+                style={styles.input}
+                secureTextEntry={true}
+                placeholder="Mật khẩu"
+                onChangeText={(typedPassword) => {
+                  this.setState({ typedPassword });
+                  this.setState({ showError: " " });
+                }}
+                value={this.state.typedPassword}
+              />
 
-                <TextInput
-                  style={styles.input}
-                  secureTextEntry={true}
-                  placeholder="Nhập lại mật khẩu"
-                  onChangeText={typedRepassword => {
-                    this.setState ({typedRepassword});
-                    this.setState ({showError: ' '});
-                  }}
-                  value={this.state.typedRepassword}
-                />
+              <TextInput
+                style={styles.input}
+                secureTextEntry={true}
+                placeholder="Nhập lại mật khẩu"
+                onChangeText={(typedRepassword) => {
+                  this.setState({ typedRepassword });
+                  this.setState({ showError: " " });
+                }}
+                value={this.state.typedRepassword}
+              />
 
-                <Text style={{color: this.state.SignUpColor}}>
-                  {this.state.showError}
-                </Text>
-              </View>
-              <View style={{marginTop: 32, alignItems: 'center'}}>
-                <TouchableOpacity
-                  style={styles.SignUpButton}
-                  onPress={this.CheckAccount}
-                />
+              <Text style={{ color: this.state.SignUpColor }}>
+                {this.state.showError}
+              </Text>
+            </View>
 
-                <LoginBottom
-                  OnPressNormal={this.SignUpWithEmailAndPassword}
-                  OnPressGoogle={this.SignUpWithGoogle}
-                  TextNormal="Tiếp tục"
-                  TextGoogle="Đăng ký với Google"
-                  TextStatic="Bạn đã có tài khoản?"
-                  TextNav="Đăng nhập tại đây"
-                  Sign={this.SignIn}
-                />
-              </View>
-            </ScrollView>
+            <LoginBottom
+              OnPressNormal={this.CheckAccount}
+              OnPressGoogle={this.SignUpWithGoogle}
+              TextNormal="Tiếp tục"
+              TextGoogle="Đăng ký với Google"
+              TextStatic="Bạn đã có tài khoản?"
+              TextNav="Đăng nhập tại đây"
+              Sign={this.SignIn}
+            />
           </View>
-
-        </SafeAreaView>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     );
   }
 }
+const mapStateToProps = (state) => {
+  return{
+      typedEmail: state.emailReducer,
+      
+  }
+};
+
+const mapDispatchToProps = (dispatch) =>{
+  return {
+      Update: (typedEmail) => {
+        dispatch(ChangeEmailAction(typedEmail));
+      },
+      
+  };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpScreen);

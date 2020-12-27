@@ -1,7 +1,8 @@
 import {
         Dimensions,StyleSheet,
         View, Text, Image,
-        TouchableOpacity, Platform
+        TouchableOpacity, Platform,
+        Alert
 }
 from 'react-native';
 import React, { Component } from 'react';
@@ -38,7 +39,7 @@ export const colors = {
 };
 export const styles=StyleSheet.create({
     container: {
-        height: windowHeight,
+        height: windowHeight*0.97,
         width: windowWidth,
         alignItems:"center",
         backgroundColor: colors.lightpink,
@@ -193,7 +194,7 @@ export const styles=StyleSheet.create({
      },
      ChatScreen_Bottom:{
         width:windowWidth,
-        height:sizeFactor*3,
+        minHeight:sizeFactor*3,
         flexDirection: 'row',
         alignItems:"center",
         justifyContent:"space-around",
@@ -211,8 +212,7 @@ export const styles=StyleSheet.create({
      ChatContainer:{
         height: windowHeight*0.7,
         width: windowWidth,
-        paddingVertical:sizeFactor*0.5,
-        paddingBottom: sizeFactor * 0.25,
+        paddingVertical:sizeFactor*0.2,
         paddingHorizontal: sizeFactor,
         backgroundColor: colors.white,
      },
@@ -373,3 +373,14 @@ export const LoginBottom=(props) =>{
         </View>
     )
 }
+export const  createOKAlert = (props) =>
+Alert.alert(
+  "Thông báo",
+  props.Text,
+  [
+    { 
+        text: "OK", onPress: () => {props.onPress}
+    }
+  ],
+  { cancelable: false }
+);

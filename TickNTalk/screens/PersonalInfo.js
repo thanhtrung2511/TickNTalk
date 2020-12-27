@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  Image,
+  Image,KeyboardAvoidingView
 } from 'react-native';
 import {
   SafeAreaView,
@@ -72,7 +72,8 @@ export class PersonalInFo extends React.Component {
 
   render () {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView>
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
         <Text style={styles.header}>Thông tin cá nhân</Text>
         <View
           style={{marginLeft: 32, marginTop: 16, flexDirection: 'column'}}
@@ -127,6 +128,7 @@ export class PersonalInFo extends React.Component {
             <Text style={{marginLeft: 16, fontWeight: '700'}}>Đăng xuất</Text>
           </TouchableOpacity>
         </View>
+      </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }

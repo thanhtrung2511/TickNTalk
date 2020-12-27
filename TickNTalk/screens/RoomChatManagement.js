@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button,Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,FlatList } from 'react-native'
+import { Button,Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,FlatList,KeyboardAvoidingView } from 'react-native'
 import { SafeAreaView,NavigationContainer } from 'react-native-safe-area-context'
 import { EvilIcons } from '@expo/vector-icons';
 import {styles,ButtonIcon} from '../components/Basic/Basic'
@@ -18,7 +18,8 @@ export default class RoomChatManagements extends React.Component {
     }
     render() {
         return (
-          <SafeAreaView style={styles.container}>
+          <SafeAreaView>
+          <KeyboardAvoidingView style={styles.container} behavior="padding">
               <Text style={styles.header}>Nhóm</Text>                        
               <View style={{marginTop:16,flexDirection:'column'}} justifyContent="center">
                 <View style={{flexDirection:'row'}}>
@@ -34,6 +35,7 @@ export default class RoomChatManagements extends React.Component {
                 <FlatList style={styles.ChatBox} onPress={this.ChatScreenNav}>
                 </FlatList>
               </View>
+          </KeyboardAvoidingView>
           </SafeAreaView>
         );
       }

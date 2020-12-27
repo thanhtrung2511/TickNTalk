@@ -41,8 +41,8 @@ export class SignInScreen extends React.Component {
     }
     render() {
         return (
-          <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-40}>
-          <SafeAreaView style={styles.container}>
+          <SafeAreaView>
+          <KeyboardAvoidingView style={styles.container} behavior="padding">
                 <View style={{alignItems:"center"}}>
                 
                 <BasicImage icon='false'
@@ -84,8 +84,8 @@ export class SignInScreen extends React.Component {
               />
               
             </View>
-          </SafeAreaView>
           </KeyboardAvoidingView>
+          </SafeAreaView>
         );
       }
 }
