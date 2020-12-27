@@ -5,16 +5,18 @@ import birthdayReducer from './birthdayReducer'
 import phoneReducer from './phoneReducer'
 import roomReducer from './roomReducer'
 import isLoginReducer from './isLoginReducer'
+import genderReducer from './genderReducer'
 //import { firebaseReducer } from 'react-redux-firebase'
 
 
 const allReducers = combineReducers({
     emailReducer,
     nameReducer,
-    phoneReducer,
     birthdayReducer,
     isLoginReducer,
     roomReducer,
+    phoneReducer,   
+    genderReducer,
     //firebase: firebaseReducer
 })
 export default allReducers

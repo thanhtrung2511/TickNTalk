@@ -40,7 +40,7 @@ export const styles=StyleSheet.create({
     container: {
         height: windowHeight,
         width: windowWidth,
-        
+        alignItems:"center",
         backgroundColor: colors.lightpink,
     },
     text: {
@@ -84,7 +84,7 @@ export const styles=StyleSheet.create({
         backgroundColor:colors.black
     },
     input:{
-        marginTop:sizeFactor,
+        marginTop:sizeFactor*0.75,
         height:sizeFactor*3,
         width:sizeFactor*21.7,
         borderRadius:70/3,
