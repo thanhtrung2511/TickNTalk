@@ -4,11 +4,13 @@ import {GiftedChat} from 'react-native-gifted-chat';
 import Fire from "../Fire";
 import {styles,ChatHeader,ChatMessage_Mine,ChatMessage_Orther} from "../components/Basic/Basic"
 import {Ionicons} from '@expo/vector-icons'
-
-
-export default class ChatScreen extends React.Component {
+import {ChangeRoomIDAction,ChangeEmailAction} from "../actions/index"
+import {connect} from "react-redux"
+export class ChatScreen extends React.Component {
   state ={
-    messages:[]
+    messages:[],
+    roomName:"",
+    member:[],
   }
   get user(){
     return {
@@ -22,7 +24,7 @@ export default class ChatScreen extends React.Component {
   goBack=()=>{
     this.props.navigation.goBack();
   }
-  // componentDidMount(){
+  componentDidMount(){
   //   Fire.get(message => 
   //     this.setState(previous  =>  ({
   //       messages: GiftedChat.append(previous.messages,message)
@@ -31,7 +33,8 @@ export default class ChatScreen extends React.Component {
   // }
   // componentWillUnmount(){
   //   Fire.off();
-  // }
+
+  }
   render() {
     
     // const chat=<GiftedChat messages={this.state.messages} onSend={Fire.send} user={this.user}/>;
@@ -40,7 +43,7 @@ export default class ChatScreen extends React.Component {
       <SafeAreaView>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <ChatHeader ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
-                    Name='Team Vô Duyên'
+                    Name={this.props.curRoomID}
                     Backward={this.goBack}
         ></ChatHeader>
         
@@ -77,5 +80,22 @@ export default class ChatScreen extends React.Component {
     )
   }
 }
+const mapStateToProps = (state) => {
+  return{
+      loggedInEmail: state.emailReducer,
+      curRoomID: state.roomReducer,
+  }
+};
 
+const mapDispatchToProps = (dispatch) =>{
+  return {
+      Update: (loggedInEmail) => {
+        dispatch(ChangeEmailAction(loggedInEmail));
+      },
+      updateRoomID: (curID) => {
+        dispatch(ChangeRoomIDAction(curID));
+      },
+  };
+}
+export default connect(mapStateToProps,mapDispatchToProps)(ChatScreen)
 
