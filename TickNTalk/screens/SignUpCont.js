@@ -30,7 +30,7 @@ import DatePicker from 'react-native-datepicker';
 import {styles, ButtonIcon} from '../components/Basic/Basic';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-class PersonalInfoEdit extends React.Component {
+class SignUpCont extends React.Component {
   constructor (props) {
     super (props);
     this.unsubscriber = null;
@@ -55,8 +55,7 @@ class PersonalInfoEdit extends React.Component {
         });
       });
     });
-
-    this.props.navigation.goBack ();
+    this.props.navigation.replace ('SignIn');
   };
 
   render () {
@@ -67,6 +66,7 @@ class PersonalInfoEdit extends React.Component {
           style={{marginLeft: 32, marginTop: 16, flexDirection: 'column'}}
           justifyContent="center"
         >
+
           <TextInput
             style={styles.input}
             secureTextEntry={false}
@@ -83,42 +83,41 @@ class PersonalInfoEdit extends React.Component {
             value={this.props.typedPhone}
             onChangeText={text => this.props.ChangePhoneAction (text)}
           />
-          <View>
-            <DropDownPicker
-              items={[
-                {label: 'Nam', value: 'Nam', hidden: true},
-                {label: 'Nữ', value: 'Nữ'},
 
-              ]}
-              defaultValue={this.props.typedGender}
-              containerStyle={{height: 40}}
-              style={{backgroundColor: '#fafafa'}}
-              itemStyle={{
-                justifyContent: 'flex-start',
-              }}
-              dropDownStyle={{backgroundColor: '#fafafa'}}
-              onChangeItem={typedGender =>
-                this.props.ChangeGenderAction (typedGender.value)}
-            />
-            <DatePicker
-              style={{width: 200, marginTop:80}}
-              date={this.props.typedBirthday}
-              mode="date"
-              placeholder="placeholder"
-              format="YYYY-MM-DD"
-              minDate="1930-05-01"
-              maxDate="2020-06-01"
-              onDateChange={date => {
-                this.props.ChangeBirthdayAction (date);
-              }}
-            />
-          </View>
+          <DropDownPicker
+            items={[
+              {label: 'Nam', value: 'Nam', hidden: false},
+              {label: 'Nữ', value: 'Nữ'},
+            ]}
+            defaultValue={this.props.typedGender}
+            containerStyle={{height: 40}}
+            style={{backgroundColor: '#fafafa'}}
+            itemStyle={{
+              justifyContent: 'flex-start',
+            }}
+            dropDownStyle={{backgroundColor: '#fafafa'}}
+            onChangeItem={typedGender =>
+              this.props.ChangeGenderAction (typedGender.value)}
+          />
+          <DatePicker
+            style={{width: 200, marginTop: 40, justifyContent: 'center'}}
+            date={this.props.typedBirthday}
+            mode="date"
+            placeholder="placeholder"
+            format="YYYY-MM-DD"
+            minDate="1930-05-01"
+            maxDate="2020-06-01"
+            onDateChange={date => {
+              this.props.ChangeBirthdayAction (date);
+            }}
+          />
+
         </View>
         <Button
-          style={{fontSize: 20, color: 'green',marginTop:20}}
+          style={{fontSize: 20, color: 'green', marginTop: 20}}
           styleDisabled={{color: 'red'}}
           onPress={this.EditMyInfo}
-          title="Lưu thay đổi"
+          title="Đăng ký"
         />
       </SafeAreaView>
     );
@@ -158,4 +157,4 @@ function mapDispatchToProps (dispatch) {
     },
   };
 }
-export default connect (mapStateToProps, mapDispatchToProps) (PersonalInfoEdit);
+export default connect (mapStateToProps, mapDispatchToProps) (SignUpCont);

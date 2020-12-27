@@ -14,6 +14,7 @@ import SignInScreen from './SignInScreen'
 import SignUpScreen from './SignUpScreen'
 import ChangePass from './ChangePass'
 import UpdateAvaScreen from './UpdateAvaScreen'
+import SignUpCont from './SignUpCont'
 
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
@@ -118,7 +119,8 @@ const AppNavigator = createStackNavigator(
     Dashboard: TabNavigator,
     ChangePass: ChangePass,
     PersonalInfo: PersonalInfo,
-    Avatar: UpdateAvaScreen
+    Avatar: UpdateAvaScreen,
+    SignUpCont: SignUpCont
   },
   {
     headerMode:""

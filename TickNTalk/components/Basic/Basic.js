@@ -86,6 +86,7 @@ export const styles=StyleSheet.create({
     },
     input:{
         marginTop:sizeFactor,
+        marginBottom:sizeFactor,
         height:sizeFactor*3,
         width:sizeFactor*20,
         borderRadius:70/3,

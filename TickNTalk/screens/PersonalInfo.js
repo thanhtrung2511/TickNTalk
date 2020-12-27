@@ -33,8 +33,12 @@ export class PersonalInFo extends React.Component {
     this.unsubscriber = null;
   }
 
-  Change_pass = () => {
+  ChangePass = () => {
     this.props.navigation.navigate ('ChangePass');
+  };
+
+  ChangeAva = () => {
+    this.props.navigation.navigate ('Avatar');
   };
 
   LogOut = () => {
@@ -104,12 +108,12 @@ export class PersonalInFo extends React.Component {
               </Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.input}>
+          <TouchableOpacity style={styles.input} onPress={this.ChangeAva}>
             <Text style={{marginLeft: 16, fontWeight: '700'}}>
               Cập nhật ảnh đại diện
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.input} onPress={this.Change_pass}>
+          <TouchableOpacity style={styles.input} onPress={this.ChangePass}>
             <Text style={{marginLeft: 16, fontWeight: '700'}}>
               Đổi mật khẩu
             </Text>

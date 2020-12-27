@@ -31,16 +31,17 @@ export default class SignUpScreen extends React.Component {
   };
 
   SignIn = () => {
-    this.ResetFields ();
-    this.props.navigation.navigate ('SignIn');
+    //this.ResetFields ();
+    this.props.navigation.navigate ('SignUpCont');
   };
+
+
+
   ResetFields = () => {
     this.setState ({
       typedPassword: '',
       typedRepassword: '',
       typedEmail: '',
-      typedPhone: '',
-      typedName: '',
       user: null,
       showError: ' ',
       canCreateAccount: false,
@@ -51,30 +52,17 @@ export default class SignUpScreen extends React.Component {
 
   AddUserToDatabase=()=>{
       UserRef.push({
-        Name:this.state.typedName,
-        Phone: this.state.typedPhone,
+        Name:"",
+        Phone: "",
         Email:this.state.typedEmail,
         Gender:"Nam",
         Birthday:"1997-01-09",
         urlAva:"",
     });
+    this.SignIn();
   }
 
   SignUpWithEmailAndPassword = () => {
-    //   firebase.auth().createUserWithEmailAndPassword(
-    //   this.state.typedEmail,this.state.typedPassword
-    //   ).then(resp => {
-    //   return usersRef.doc(resp.user.uid).set({
-    //     Name:this.state.typedFullName,
-    //     Phone: this.state.typedPhone,
-    //     Email:this.state.typedEmail
-    //   });
-    // }).then(() => {
-    //   this.setState({showError: 'Đã tạo tài khoản thành công',SignUpColor:'green',user: loggedInUser});
-    // }).catch((err) => {
-    //   this.setState({showError: `${error}`,SignUpColor:'red'})
-    // });
-
     firebase
       .auth ()
       .createUserWithEmailAndPassword (
@@ -89,6 +77,7 @@ export default class SignUpScreen extends React.Component {
           user: resp,
         });
         this.AddUserToDatabase();
+        
       })
       .catch (error => {
         if (error != null)
@@ -99,9 +88,7 @@ export default class SignUpScreen extends React.Component {
     if (
       this.state.typedEmail != '' &&
       this.state.typedPassword != '' &&
-      this.state.typedRepassword != '' &&
-      this.state.typedPhone != '' &&
-      this.state.typedName != ''
+      this.state.typedRepassword != '' 
     ) {
       this.state.typedPassword.toString () !==
         this.state.typedRepassword.toString ()
@@ -136,15 +123,6 @@ export default class SignUpScreen extends React.Component {
               <TextInput
                 style={styles.input}
                 secureTextEntry={false}
-                placeholder="Họ và Tên"
-                onChangeText={typedName => {
-                  this.setState ({typedName});
-                }}
-                value={this.state.typedName}
-              />
-              <TextInput
-                style={styles.input}
-                secureTextEntry={false}
                 keyboardType="email-address"
                 placeholder="Email"
                 onChangeText={typedEmail => {
@@ -173,16 +151,7 @@ export default class SignUpScreen extends React.Component {
                 }}
                 value={this.state.typedRepassword}
               />
-              <TextInput
-                style={styles.input}
-                keyboardType="phone-pad"
-                placeholder="Số điện thoại"
-                onChangeText={typedPhone => {
-                  this.setState ({typedPhone});
-                  this.setState ({showError: ' '});
-                }}
-                value={this.state.typedPhone}
-              />
+          
               <Text style={{color: this.state.SignUpColor}}>
                 {this.state.showError}
               </Text>
