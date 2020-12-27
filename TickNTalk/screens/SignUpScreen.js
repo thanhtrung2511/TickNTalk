@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image,SafeAreaView,Text,TextInput, View,ScrollView, TouchableOpacity } from 'react-native'
+import { Image,SafeAreaView,Text,TextInput, View,ScrollView,KeyboardAvoidingView, TouchableOpacity } from 'react-native'
 import firebase from 'firebase'
 import {UserRef} from '../Fire'
 import {styles,BasicImage,LoginBottom} from '../components/Basic/Basic'
@@ -81,7 +81,9 @@ export default class SignUpScreen extends React.Component {
         }
     }
     render() {
+      
         return (
+          <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-40}>
           <SafeAreaView style={styles.container}>
           <View style={{alignItems:'center'}}>
               <ScrollView>
@@ -147,6 +149,7 @@ export default class SignUpScreen extends React.Component {
               </ScrollView>
             </View>
           </SafeAreaView>
+          </KeyboardAvoidingView>
         );
       }
 }

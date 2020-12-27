@@ -5,7 +5,6 @@ import {
 }
 from 'react-native';
 import React, { Component } from 'react';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { MaterialIcons,Ionicons } from '@expo/vector-icons';
 export const windowWidth = Dimensions.get("window").width;
 export const windowHeight = Dimensions.get("window").height;
@@ -35,7 +34,7 @@ export const colors = {
     black: "#000000",
     skin:"#FFF5D8",
     fushia:"#FF00FF",
-    cyan: "#a4e6f4"
+    cyan: "lightblue"
 };
 export const styles=StyleSheet.create({
     container: {
@@ -61,9 +60,9 @@ export const styles=StyleSheet.create({
         fontWeight:"800",
         fontSize:16,
         color:colors.black,
-        marginTop:sizeFactor*3,
+        marginTop:sizeFactor,
         marginLeft:32,
-        marginBottom:sizeFactor * 3,
+        marginBottom:sizeFactor,
     },
     background: {
         flex: 1,
@@ -105,15 +104,15 @@ export const styles=StyleSheet.create({
         marginBottom:sizeFactor * 0.5,
     },
     FogetPassword:{
-        marginTop:32,
-        marginLeft:200,
+        marginTop:sizeFactor,
+        marginLeft:sizeFactor*14,
         color: colors.blue,
       },
     Login_button:{
         width:sizeFactor*20,
         height:sizeFactor*5,
         borderRadius:99,
-        backgroundColor:colors.cyan,
+        backgroundColor:colors.pink,
         alignItems:"center",
         justifyContent:"center",
         marginTop: 16
@@ -140,10 +139,10 @@ export const styles=StyleSheet.create({
     },
     Simple_button:{
         
-        width:sizeFactor*13,
+        width:sizeFactor*17,
         height:sizeFactor*3,
             borderRadius:70/3,
-            backgroundColor:colors.cyan,
+            backgroundColor:colors.pink,
             alignItems:"center",
             justifyContent:"center",
             marginTop: 16
@@ -251,7 +250,7 @@ export const LoginButton=(props)=>{
         </TouchableOpacity>
     )
 }
-export const Button=(props)=>{
+export const ButtonMod=(props)=>{
     return(
         <TouchableOpacity style={styles.Simple_button} onPress={props.onPress}>
                   <Text style={styles.Simple_text}>{props.Text}
@@ -345,8 +344,8 @@ export const ChatHeader=(props)=>{
 export const LoginBottom=(props) =>{
     return (
         <View>
-        <View style={{marginLeft:16,marginTop:32,alignItems:"center"}}>
-                <Button onPress={props.OnPressNormal} Text={props.TextNormal}></Button>
+        <View style={{marginLeft:16,marginTop:sizeFactor,alignItems:"center"}}>
+                <ButtonMod onPress={props.OnPressNormal} Text={props.TextNormal}></ButtonMod>
                 <View style={{flexDirection:'row',marginTop:32}}> 
                 <View style={{width:30,height:1,backgroundColor:'black'}}>
                 </View>
@@ -354,7 +353,7 @@ export const LoginBottom=(props) =>{
                 <View style={{width:30,height:1,backgroundColor:'black'}}>
                 </View>
                 </View>
-                <Button OnPress={props.OnPressGoogle} Text={props.TextGoogle}></Button>
+                <ButtonMod OnPress={props.OnPressGoogle} Text={props.TextGoogle}></ButtonMod>
                 
               </View>
               <View style={styles.Extra}>

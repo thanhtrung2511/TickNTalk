@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Text,TextInput, View,SafeAreaView } from 'react-native'
+import {Text,TextInput, View,SafeAreaView,KeyboardAvoidingView,ScrollView } from 'react-native'
 import {Button,styles,BasicImage,LoginBottom} from '../components/Basic/Basic'
 import firebase from 'firebase'
 import {ChangeEmailAction, ChangeLoginStatus} from '../actions/index'
@@ -41,8 +41,10 @@ export class SignInScreen extends React.Component {
     }
     render() {
         return (
+          <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-40}>
           <SafeAreaView style={styles.container}>
                 <View style={{alignItems:"center"}}>
+                
                 <BasicImage icon='false'
                         source={require('../assets/Logo.png')}/>
                 <Text style={styles.hello}>Đăng nhập tài khoản của bạn</Text>
@@ -80,8 +82,10 @@ export class SignInScreen extends React.Component {
                            TextNav="Đăng ký tại đây"
                            Sign={this.SignUp}
               />
+              
             </View>
           </SafeAreaView>
+          </KeyboardAvoidingView>
         );
       }
 }

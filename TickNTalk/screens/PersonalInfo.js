@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { EvilIcons } from '@expo/vector-icons';
-import {Button,styles,MessageCard,BasicImage} from "../components/Basic/Basic"
+import {ButtonMod,styles,MessageCard,BasicImage} from "../components/Basic/Basic"
 import firebase from 'firebase';
 import {
   ChangeEmailAction,
@@ -58,10 +58,10 @@ export class PersonalInFo extends React.Component {
                     <Text>test@gmail.com</Text>
                   </View>
                 </View>
-                <Button Text="Cập nhật ảnh đại diện"></Button>
-                <Button Text="Đổi mật khẩu" onPress={this.Change_pass}></Button>
-                <Button Text="Chỉnh sửa thông tin cá nhân" onPress={this.EditInfo}></Button>
-                <Button Text="Đăng xuất" onPress={this.LogOut}></Button>
+                <ButtonMod Text="Cập nhật ảnh đại diện"></ButtonMod>
+                <ButtonMod Text="Đổi mật khẩu" onPress={this.Change_pass}></ButtonMod>
+                <ButtonMod Text="Chỉnh sửa thông tin cá nhân" onPress={this.EditInfo}></ButtonMod>
+                <ButtonMod Text="Đăng xuất" onPress={this.LogOut}></ButtonMod>
               </View>
           </SafeAreaView>
         );
