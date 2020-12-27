@@ -187,12 +187,20 @@ export const styles=StyleSheet.create({
         width:windowWidth,
         height:sizeFactor*3,
         flexDirection: 'row',
-        alignItems:"center"
+        alignItems:"center",
+        justifyContent:"space-around"
+     },
+     ChatScreen_Bottom:{
+        width:windowWidth,
+        height:sizeFactor*3,
+        flexDirection: 'row',
+        alignItems:"center",
+        justifyContent:"space-around",
      },
      ChatScreen_input:{
         
         height:sizeFactor*2.3,
-        width:sizeFactor*20,
+        width:sizeFactor*17,
         borderRadius:70/3,
         backgroundColor:colors.skin,
         fontWeight:"600",
@@ -211,6 +219,7 @@ export const styles=StyleSheet.create({
          width:windowWidth*0.8,
          flexDirection: 'row',
          alignItems: 'center',
+         justifyContent:"flex-start"
      },
 })
 export const MessageCard =(props)=>
@@ -307,14 +316,14 @@ export const ChatMessage_Mine=(props)=>{
 export const ChatHeader=(props)=>{
     return (
         <View style={styles.ChatScreen_Banner}>
-            <TouchableOpacity style={{marginLeft:16}} onPress={props.Backward}>
+            <TouchableOpacity onPress={props.Backward}>
                 {Platform.OS==='ios'?
                 <Ionicons name="ios-arrow-back" size={30} color="black" /> :
                 <Ionicons name="md-arrow-round-back" size={30} color="black" />
                 }
             </TouchableOpacity>
             <TouchableOpacity style={{
-                                      marginLeft:16,flexDirection: 'row',alignItems: 'center'}} 
+                                     flexDirection: 'row',alignItems: 'center'}} 
                             onPress={props.goToInfo}
             >
                 <BasicImage icon="true"
@@ -322,7 +331,7 @@ export const ChatHeader=(props)=>{
                  
                     <Text 
                         style={{marginLeft:16,fontWeight:"800",
-                        width:sizeFactor*13,
+                        width:sizeFactor*10,
                         fontSize:sizeFactor,
                         color:colors.black}}
                         numberOfLines={1} 

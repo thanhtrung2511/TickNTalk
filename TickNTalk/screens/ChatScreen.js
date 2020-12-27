@@ -52,8 +52,8 @@ export default class ChatScreen extends React.Component {
                               ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
           ></ChatMessage_Mine>
         </ScrollView>
-        <View style={styles.ChatScreen_Banner}>
-            <TouchableOpacity style={{marginLeft:16}} onPress={this.ImageSend}>
+        <View style={styles.ChatScreen_Bottom}>
+            <TouchableOpacity onPress={this.ImageSend}>
                 <Ionicons name="ios-camera" size={30} color="black" />
             </TouchableOpacity>
             <TextInput style={styles.ChatScreen_input}
