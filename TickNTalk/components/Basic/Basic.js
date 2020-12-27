@@ -180,7 +180,7 @@ export const styles=StyleSheet.create({
       },
       ChatBox:{
         width:sizeFactor*21.7,
-        height:windowHeight*0.675,
+        height:windowHeight*0.15,
         paddingHorizontal: sizeFactor,
         backgroundColor:colors.lightpink,
         borderRadius:70/5,
