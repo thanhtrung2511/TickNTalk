@@ -11,7 +11,7 @@ const firebaseConfig={
                 appId: "1:767529054937:web:84218fd9c62b42e90d84c8",
                 measurementId: "G-NBES9LJYEK",
 };
-
+firebase.initializeApp(firebaseConfig);
 //        return{
 //            _id,
 //            createdAt,
@@ -33,7 +33,7 @@ const firebaseConfig={
 //        return (firebase.auth().currentUser || {}).uid;
 //    };
 // }
-firebase.initializeApp(firebaseConfig);
+
 // const db = firebase.firestore();
 
 export const rootRef = firebase.database().ref();

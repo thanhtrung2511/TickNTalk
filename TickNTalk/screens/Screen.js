@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import firebase from 'firebase';
 // import {UserRef} from '../Fire';
-import styles from '../components/SignUp/Styles';
+import styles from '../components/Basic/Basic';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import {AntDesign} from '@expo/vector-icons';

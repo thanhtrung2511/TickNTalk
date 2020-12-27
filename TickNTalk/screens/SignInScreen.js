@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {Text,TextInput, View,SafeAreaView } from 'react-native'
+import {Text,TextInput, View,SafeAreaView,KeyboardAvoidingView,ScrollView } from 'react-native'
 import {Button,styles,BasicImage,LoginBottom} from '../components/Basic/Basic'
 import firebase from 'firebase'
-import {ChangeEmailAction} from '../actions/index'
+import {ChangeEmailAction, ChangeLoginStatus} from '../actions/index'
 import {connect} from 'react-redux'
  
 export class SignInScreen extends React.Component {
@@ -29,16 +29,22 @@ export class SignInScreen extends React.Component {
     SignInWithGoogle=()=>{}
     SignInContinue=() =>
     {
-      this.props.navigation.navigate("Dashboard")
+      this.props.UpdateIsLogin(true);
+      this.props.navigation.replace('Dashboard');
     }
     SignUp=()=>
     {
-      this.props.navigation.navigate("SignUp")
+      this.props.navigation.replace("SignUp")
+    }
+    componentDidMount=()=>{
+      this.props.UpdateIsLogin(false);
     }
     render() {
         return (
+          <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-40}>
           <SafeAreaView style={styles.container}>
                 <View style={{alignItems:"center"}}>
+                
                 <BasicImage icon='false'
                         source={require('../assets/Logo.png')}/>
                 <Text style={styles.hello}>Đăng nhập tài khoản của bạn</Text>
@@ -76,15 +82,17 @@ export class SignInScreen extends React.Component {
                            TextNav="Đăng ký tại đây"
                            Sign={this.SignUp}
               />
+              
             </View>
           </SafeAreaView>
+          </KeyboardAvoidingView>
         );
       }
 }
 const mapStateToProps = (state) => {
   return{
       typedEmail: state.emailReducer,
-      
+      isLogin: state.isLogin
   }
 };
 
@@ -92,6 +100,9 @@ const mapDispatchToProps = (dispatch) =>{
   return {
       Update: (typedEmail) => {
         dispatch(ChangeEmailAction(typedEmail));
+      },
+      UpdateIsLogin: (login) => {
+        dispatch(ChangeLoginStatus(login));
       }
   };
 }

@@ -42,7 +42,7 @@ export class PersonalInFo extends React.Component {
   };
 
   LogOut = () => {
-    this.props.navigation.navigate ('Login');
+    this.props.navigation.replace('Login');
   };
 
   ChangeInfo = () => {

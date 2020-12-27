@@ -1,12 +1,11 @@
 import {
         Dimensions,StyleSheet,
         View, Text, Image,
-        TouchableOpacity
+        TouchableOpacity, Platform
 }
 from 'react-native';
 import React, { Component } from 'react';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons,Ionicons } from '@expo/vector-icons';
 export const windowWidth = Dimensions.get("window").width;
 export const windowHeight = Dimensions.get("window").height;
 
@@ -21,7 +20,8 @@ export const colors = {
     blue: "#007aff",
     indigo: "#5856d6",
     purple: "#af52de",
-    pink: "#ff2d55",
+    pink: "#f29bd4",
+    lightpink: "#f7e0f4",
     gray: "#8e8e93",
     dark: "#48484a",
     redDark: "#d70015",
@@ -32,17 +32,16 @@ export const colors = {
     gray6: "#f2f2f7",
     white: "#ffffff",
     black: "#000000",
-    skin:"#FFE5D8",
+    skin:"#FFF5D8",
+    fushia:"#FF00FF",
+    cyan: "lightblue"
 };
 export const styles=StyleSheet.create({
     container: {
-        marginHorizontal: sizeFactor,
-        marginBottom: sizeFactor * 0.75,
-        paddingTop: sizeFactor,
-        paddingBottom: sizeFactor * 0.25,
-        paddingHorizontal: sizeFactor,
-        borderRadius: sizeFactor,
-        //backgroundColor:"pink",
+        height: windowHeight,
+        width: windowWidth,
+        alignItems:"center",
+        backgroundColor: colors.lightpink,
     },
     text: {
         fontSize: sizeFactor,
@@ -61,9 +60,9 @@ export const styles=StyleSheet.create({
         fontWeight:"800",
         fontSize:16,
         color:colors.black,
-        marginTop:sizeFactor*3,
+        marginTop:sizeFactor,
         marginLeft:32,
-        marginBottom:sizeFactor * 3,
+        marginBottom:sizeFactor,
     },
     background: {
         flex: 1,
@@ -85,64 +84,73 @@ export const styles=StyleSheet.create({
         backgroundColor:colors.black
     },
     input:{
-        marginTop:sizeFactor,
-        marginBottom:sizeFactor,
+        marginTop:sizeFactor*0.75,
         height:sizeFactor*3,
-        width:sizeFactor*20,
+        width:sizeFactor*21.7,
         borderRadius:70/3,
         backgroundColor:colors.skin,
         fontWeight:"600",
         textAlign: "center",
-
-        borderColor:"#BAB7C3",
-        color: "#514E5A",
-        alignItems:"center",
-        justifyContent:"center",
+        marginBottom:sizeFactor*0.5,
+    },
+    inputGroup:{
+        marginTop:sizeFactor,
+        marginBottom:sizeFactor,
+        height:sizeFactor*3,
+        width:sizeFactor*19,
+        borderRadius:70/3,
+        backgroundColor:colors.skin,
+        fontWeight:"600",
+        textAlign: "center",
+        marginBottom:sizeFactor * 0.5,
     },
     FogetPassword:{
-        marginTop:32,
-        marginLeft:200,
+        marginTop:sizeFactor,
+        marginLeft:sizeFactor*14,
         color: colors.blue,
       },
     Login_button:{
         width:sizeFactor*20,
         height:sizeFactor*5,
         borderRadius:99,
-        backgroundColor:"lightpink",
+        backgroundColor:colors.pink,
         alignItems:"center",
         justifyContent:"center",
         marginTop: 16
       },
     MessageCard: {
-        marginHorizontal: sizeFactor,
-        marginBottom: sizeFactor * 0.75,
-        paddingTop: sizeFactor,
+        marginBottom:sizeFactor * 0.25,
+        marginLeft:sizeFactor ,
+        paddingTop: sizeFactor*0.25,
         paddingBottom: sizeFactor * 0.25,
         paddingHorizontal: sizeFactor,
-        borderRadius: sizeFactor,
+        width: sizeFactor*20,
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: colors.pink,
         flexDirection:'row',
         justifyContent:"space-between", 
-        backgroundColor:'transparent', 
-        alignItems:'flex-end'
+        alignItems:'center',
+        backgroundColor:colors.white
     },
     Login_text:{
         fontSize:30,
         fontWeight:'700',
-        color:"#FFFFFF"
+        color:colors.black
     },
     Simple_button:{
         
-        width:sizeFactor*20,
+        width:sizeFactor*17,
         height:sizeFactor*3,
             borderRadius:70/3,
-            backgroundColor:"lightpink",
+            backgroundColor:colors.pink,
             alignItems:"center",
             justifyContent:"center",
             marginTop: 16
         
     },
     Simple_text:{
-        fontWeight:"700", fontSize:20, color:'white'
+        fontWeight:"700", fontSize:16, color:colors.black
     },
     SignText:{
       
@@ -170,43 +178,79 @@ export const styles=StyleSheet.create({
         borderRadius: 70/5
       },
       ChatBox:{
-        width:sizeFactor*23,
-        height:windowHeight/1.11,
-        marginLeft:-3*sizeFactor,
+        width:sizeFactor*21.7,
+        height:windowHeight*0.675,
         paddingHorizontal: sizeFactor,
-        backgroundColor: "#FFFF",
+        backgroundColor:colors.lightpink,
         borderRadius:70/5,
-    },
+     },
+     ChatScreen_Banner:{
+        width:windowWidth,
+        height:sizeFactor*3,
+        flexDirection: 'row',
+        alignItems:"center",
+        justifyContent:"space-around"
+     },
+     ChatScreen_Bottom:{
+        width:windowWidth,
+        height:sizeFactor*3,
+        flexDirection: 'row',
+        alignItems:"center",
+        justifyContent:"space-around",
+     },
+     ChatScreen_input:{
+        
+        height:sizeFactor*2.3,
+        width:sizeFactor*17,
+        borderRadius:70/3,
+        backgroundColor:colors.skin,
+        fontWeight:"600",
+        textAlign:"left",
+        marginLeft:sizeFactor*0.5,
+     },
+     ChatContainer:{
+        height: windowHeight*0.7,
+        width: windowWidth,
+        paddingVertical:sizeFactor*0.5,
+        paddingBottom: sizeFactor * 0.25,
+        paddingHorizontal: sizeFactor,
+        backgroundColor: colors.white,
+     },
+     ChatMessage:{
+         width:windowWidth*0.8,
+         flexDirection: 'row',
+         alignItems: 'center',
+         justifyContent:"flex-start"
+     },
 })
-export class MessageCard extends Component
+export const MessageCard =(props)=>
 {
-    render(){
+    
     return (
-      <View style={styles.MessageCard} onPress={this.props.onPress}>
+      <TouchableOpacity style={styles.MessageCard} onPress={props.onPress}>
         <BasicImage icon="true"
-        source={{uri:this.props.ImageSource}}></BasicImage>       
-        <View style={{  marginTop:10,
-                        marginLeft:5,
+        source={{uri:props.ImageSource}}></BasicImage>       
+        <View style={{  paddingTop:5,
+                        paddingLeft:5,
                         flexDirection:'column', 
-                        justifyContent:"flex-start"
+                        justifyContent:"space-between"
                     }}>
           <Text 
               style={{fontWeight:"800",
               fontSize:sizeFactor,
               color:colors.black}}
           >  
-              {this.props.Name}
+              {props.Name}
           </Text>
           <Text style={{width:sizeFactor*15,
-                        fontWeight:this.props.isRead == 'true'? '100': '600'}} 
+                        fontWeight:props.isRead == 'true'? '100': '600'}} 
                 numberOfLines={1} 
                 ellipsizeMode={'tail'}> 
-                {this.props.LastestChat}
+                {props.LastestChat}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
-        }
 }
 export const LoginButton=(props)=>{
     return(
@@ -216,7 +260,7 @@ export const LoginButton=(props)=>{
         </TouchableOpacity>
     )
 }
-export const Button=(props)=>{
+export const ButtonMod=(props)=>{
     return(
         <TouchableOpacity style={styles.Simple_button} onPress={props.onPress}>
                   <Text style={styles.Simple_text}>{props.Text}
@@ -233,19 +277,85 @@ export const ButtonIcon=(props)=>{
 }
 export const BasicImage=(props)=>{
     return(
-        <Image style={{width:props.icon=='false'?200:50,
-            height:props.icon=='false'?200:50,
+        <Image style={{width:props.icon=='false'?200: props.icon=="smaller"?30:50,
+            height:props.icon=='false'?200:props.icon=="smaller"?30:50,
             alignItems:"center",
             justifyContent:"center",
             borderRadius:70/3,}}
             source={props.source}/>
     )
 }
+export const ChatMessage_Orther=(props)=>{
+    return (
+        <View style={{alignItems:"left",marginTop:16}}>
+        <View style={styles.ChatMessage}>
+            
+            <BasicImage icon="smaller"
+                source={{uri:props.ImageSource}}></BasicImage>
+            <Text style={{backgroundColor:colors.lightpink,borderRadius:70/4,marginLeft:8,maxWidth:sizeFactor*18}}
+                    wrapped={true}
+            >
+                {props.Content}
+            </Text>
+            </View>
+        </View>
+    );
+}
+export const ChatMessage_Mine=(props)=>{
+    return (
+        <View style={{alignItems:"flex-end",marginTop:16}}>
+           
+            <Text wrapped={true} style={{backgroundColor:colors.lightpink,maxWidth:sizeFactor*18}}>
+                {props.Content}
+            </Text>
+            <Text style={{marginTop:10,fontSize:12, fontWeight:"100"}}>
+                {props.Status===true? "Đã xem": "Đã gửi"}
+            </Text>
+        </View>
+    );
+}
+export const ChatHeader=(props)=>{
+    return (
+        <View style={styles.ChatScreen_Banner}>
+            <TouchableOpacity onPress={props.Backward}>
+                {Platform.OS==='ios'?
+                <Ionicons name="ios-arrow-back" size={30} color="black" /> :
+                <Ionicons name="md-arrow-round-back" size={30} color="black" />
+                }
+            </TouchableOpacity>
+            <TouchableOpacity style={{
+                                     flexDirection: 'row',alignItems: 'center'}} 
+                            onPress={props.goToInfo}
+            >
+                <BasicImage icon="true"
+                    source={{uri:props.ImageSource}}></BasicImage>    
+                 
+                    <Text 
+                        style={{marginLeft:16,fontWeight:"800",
+                        width:sizeFactor*10,
+                        fontSize:sizeFactor,
+                        color:colors.black}}
+                        numberOfLines={1} 
+                        ellipsizeMode={'tail'}
+                    >  
+                        {props.Name}
+                    </Text>
+                
+            </TouchableOpacity>
+            <TouchableOpacity style={{marginLeft:16}} onPress={props.Call}>
+                <Ionicons name="ios-call" size={30} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity style={{marginLeft:16}} onPress={props.Video}>
+                <Ionicons name="ios-videocam" size={30} color="black" />
+            </TouchableOpacity>
+        </View>
+    )
+}
 export const LoginBottom=(props) =>{
     return (
         <View>
-        <View style={{marginLeft:16,marginTop:32,alignItems:"center"}}>
-                <Button onPress={props.OnPressNormal} Text={props.TextNormal}></Button>
+        <View style={{marginLeft:16,marginTop:sizeFactor,alignItems:"center"}}>
+                <ButtonMod onPress={props.OnPressNormal} Text={props.TextNormal}></ButtonMod>
                 <View style={{flexDirection:'row',marginTop:32}}> 
                 <View style={{width:30,height:1,backgroundColor:'black'}}>
                 </View>
@@ -253,7 +363,7 @@ export const LoginBottom=(props) =>{
                 <View style={{width:30,height:1,backgroundColor:'black'}}>
                 </View>
                 </View>
-                <Button OnPress={props.OnPressGoogle} Text={props.TextGoogle}></Button>
+                <ButtonMod OnPress={props.OnPressGoogle} Text={props.TextGoogle}></ButtonMod>
                 
               </View>
               <View style={styles.Extra}>

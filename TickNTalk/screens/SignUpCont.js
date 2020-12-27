@@ -61,58 +61,69 @@ class SignUpCont extends React.Component {
   render () {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.header}>Thông tin cá nhân</Text>
-        <View
-          style={{marginLeft: 32, marginTop: 16, flexDirection: 'column'}}
-          justifyContent="center"
+        <Text style={styles.header}>Thêm thông tin cá nhân</Text>
+       <View
+          style={{ marginTop: 16, flexDirection: "column",justifyContent:"space-between" }}
         >
 
-          <TextInput
-            style={styles.input}
-            secureTextEntry={false}
-            placeholder="Họ và Tên"
-            value={this.props.typedname}
-            onChangeText={text => this.props.ChangeNameAction (text)}
-          />
-
-          <TextInput
-            style={styles.input}
-            secureTextEntry={false}
-            keyboardType="Phone"
-            placeholder="Số điện thoại"
-            value={this.props.typedPhone}
-            onChangeText={text => this.props.ChangePhoneAction (text)}
-          />
-
-          <DropDownPicker
-            items={[
-              {label: 'Nam', value: 'Nam', hidden: false},
-              {label: 'Nữ', value: 'Nữ'},
-            ]}
-            defaultValue={this.props.typedGender}
-            containerStyle={{height: 40}}
-            style={{backgroundColor: '#fafafa'}}
-            itemStyle={{
-              justifyContent: 'flex-start',
-            }}
-            dropDownStyle={{backgroundColor: '#fafafa'}}
-            onChangeItem={typedGender =>
-              this.props.ChangeGenderAction (typedGender.value)}
-          />
-          <DatePicker
-            style={{width: 200, marginTop: 40, justifyContent: 'center'}}
-            date={this.props.typedBirthday}
-            mode="date"
-            placeholder="placeholder"
-            format="YYYY-MM-DD"
-            minDate="1930-05-01"
-            maxDate="2020-06-01"
-            onDateChange={date => {
-              this.props.ChangeBirthdayAction (date);
-            }}
-          />
-
-        </View>
+          <View>
+            <Text>Họ và tên</Text>
+            <TextInput
+              header="Họ và tên"
+              style={styles.input}
+              value={this.props.typedname}
+              onChangeText={(text) => this.props.ChangeNameAction(text)}
+            />
+          </View>
+          <View>
+            <Text>Số điện thoại</Text>
+            <TextInput
+              header="Số điện thoại"
+              style={styles.input}
+              placeholder="012345678"
+              keyboardType="phone-pad"
+              value={this.props.typedPhone}
+              onChangeText={(text) => this.props.ChangePhoneAction(text)}
+            />
+          </View>
+          <View>
+          <Text>Giới tính</Text>
+            <DropDownPicker
+              items={[
+                { label: "Nam", value: "Nam", hidden: true },
+                { label: "Nữ", value: "Nữ" },
+              ]}
+              defaultValue={
+                this.props.typedGender === "" ? "Nam" : this.props.typedGender
+              }
+              containerStyle={{ height: 40 }}
+              style={{ backgroundColor: "#fafafa" }}
+              itemStyle={{
+                justifyContent: "flex-start",
+              }}
+              dropDownStyle={{ backgroundColor: "#fafafa" }}
+              onChangeItem={(typedGender) =>
+                this.props.ChangeGenderAction(typedGender.value)
+              }
+            />
+             </View>
+            <View>
+              <Text>Ngày sinh</Text>
+              <DatePicker
+                date={this.props.typedBirthday}
+                mode="date"
+                format="DD-MM-YYYY"
+                cancelBtnText="Cancel"
+                confirmBtnText="Confirm"
+                minDate="01-01-1975"
+                maxDate="01-01-2020"
+                onDateChange={(date) => {
+                  this.props.ChangeBirthdayAction(date);
+                }}
+              />
+           
+          </View>
+          </View>
         <Button
           style={{fontSize: 20, color: 'green', marginTop: 20}}
           styleDisabled={{color: 'red'}}

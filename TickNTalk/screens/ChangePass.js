@@ -18,7 +18,7 @@ import {EvilIcons} from '@expo/vector-icons';
 import firebase from 'firebase';
 import {UserRef} from '../Fire';
 import {connect} from 'react-redux';
-import {Button,styles} from '../components/Basic/Basic'
+import {ButtonMod,styles} from '../components/Basic/Basic'
 
 export class ChangePass extends React.Component {
   static navigationOptions = {
@@ -160,7 +160,7 @@ export class ChangePass extends React.Component {
           </Text>
         </View>
 
-        <Button onPress={this.Change_pass} Text="Xác nhận"/>
+        <ButtonMod onPress={this.Change_pass} Text="Xác nhận"/>
       </SafeAreaView>
     );
   }

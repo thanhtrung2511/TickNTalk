@@ -4,7 +4,7 @@ import { Text,TextInput, View,FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { EvilIcons } from '@expo/vector-icons';
-import {styles} from '../components/Basic/Basic'
+import {styles,MessageCard} from '../components/Basic/Basic'
 import firebase from 'firebase'
 
 import { UserRef, RoomRef } from '../Fire';
@@ -25,8 +25,8 @@ export class ChatFeed extends React.Component {
     }
     ChatScreenNav=()=>
     {
-      this.props.navigation.navigate("ChatScr")
-    }
+      this.props.navigation.navigate("ChatScr");
+    };
   
     componentDidMount()
     {
@@ -98,28 +98,56 @@ export class ChatFeed extends React.Component {
     }
 
     render() {
+      
         return (
           <SafeAreaView style={styles.container}>
               <Text style={styles.header}>Tin nhắn</Text>                        
-              <View style={{marginLeft:32,marginTop:16,flexDirection:'column'}} justifyContent="center">
+              <View style={{marginTop:16,flexDirection:'column'}} justifyContent="center">
+                <View style={{flexDirection:'row',alignItems:"flex-start"}}>
                 <TextInput style={styles.input}
                       placeholder="Tìm kiếm bạn bè.."
                       onChangeText={Text=>{
                         this.onChangeSearchText(Text);
                       }}>
                 </TextInput>
+                
+                </View>
+                <MessageCard 
+                            ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
+                            Name='Trung'
+                            LastestChat='aaaaaaaaaaasjdhasjdhasdaaaaaaaaaaaaaaa'
+                            isRead='false'
+                            >
+                          </MessageCard>
+                          <MessageCard 
+                            ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
+                            Name='Trung'
+                            LastestChat='aaaaaaaaaaasjdhasjdhasdaaaaaaaaaaaaaaa'
+                            isRead='false'
+                            onPress={this.ChatScreenNav}
+                            >
+                          </MessageCard>
                 <FlatList style={styles.ChatBox} 
                   data={this.state.filteredRooms}
                   renderItem={({item,index})=>{
                     return(
                       <SafeAreaView>
-                          <Text>{index+1}. {item.RoomName}</Text>
+                          <View>{index+1}. {item.RoomName}</View>
+                          <MessageCard 
+                            ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
+                            Name='Trung'
+                            LastestChat='aaaaaaaaaaasjdhasjdhasdaaaaaaaaaaaaaaa'
+                            isRead='false'
+                            >
+                          </MessageCard>
                       </SafeAreaView>
                     )
                   }}
                 >
                 </FlatList>
+                
               </View>
+              
           </SafeAreaView>
         );
       }
