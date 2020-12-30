@@ -74,7 +74,10 @@ export class PersonalInFo extends React.Component {
     return (
       <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <Text style={styles.header}>Thông tin cá nhân</Text>
+      <View style={{width:'90%'}} justifyContent="space-between" flexDirection="row">
+      <Text style={styles.header}>Thông tin cá nhân</Text>
+            </View> 
+        
         <View
           style={{marginLeft: 32, marginTop: 16, flexDirection: 'column'}}
           justifyContent="center"

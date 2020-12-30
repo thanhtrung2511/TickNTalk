@@ -3,6 +3,7 @@ import { Button,Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,Fl
 import { SafeAreaView,NavigationContainer } from 'react-native-safe-area-context'
 import { EvilIcons } from '@expo/vector-icons';
 import {styles,ButtonIcon} from '../components/Basic/Basic'
+import {SearchBar} from 'react-native-elements'
 
 export default class RoomChatManagements extends React.Component {
     
@@ -20,18 +21,34 @@ export default class RoomChatManagements extends React.Component {
         return (
           <SafeAreaView style={styles.container}>
           <KeyboardAvoidingView style={styles.container} behavior="padding">
+              <View style={{width:'90%'}} justifyContent="space-between" alignItems='center' flexDirection="row">
               <Text style={styles.header}>Nhóm</Text>                        
-              <View style={{marginTop:16,flexDirection:'column'}} justifyContent="center">
-                <View style={{flexDirection:'row'}}>
-                <TextInput style={styles.inputGroup}
+              <ButtonIcon MaterialFamilyIconName="group-add" size={33}/>
+              </View>
+              <View style={{marginTop:16,flexDirection:'column'}} justifyContent="stretch">
+                
+                {/* <TextInput style={styles.inputGroup}
                       placeholder="Tìm kiếm nhóm"
                       onChangeText={username=>{
                         this.setState({username});
                       }}
                       value={this.state.username}>
-                </TextInput>
-                <ButtonIcon MaterialFamilyIconName="group-add" size={33}/>
-                </View>
+                </TextInput> */}
+                <SearchBar
+                    platform={Platform.OS}
+                    placeholder="Tìm bạn bè..."
+                    lightTheme="true"
+                    containerStyle={{ marginHorizontal:8,backgroundColor: 'transparent' }}
+                    inputContainerStyle={{ backgroundColor:'whitesmoke',borderRadius:'70/3'}}
+                    leftIconContainerStyle={{marginLeft:16}}
+                    inputStyle={{}}
+                    placeholder="Tìm kiếm bạn bè.."
+                    onChangeText={Text=>{
+                      this.setState({toSearchText:Text})
+                      this.onChangeSearchText(Text);
+                    }}
+                    value={this.state.toSearchText}
+                />  
                 <FlatList style={styles.ChatBox} onPress={this.ChatScreenNav}>
                 </FlatList>
               </View>
