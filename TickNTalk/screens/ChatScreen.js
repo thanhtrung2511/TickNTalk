@@ -40,7 +40,7 @@ export class ChatScreen extends React.Component {
     // const chat=<GiftedChat messages={this.state.messages} onSend={Fire.send} user={this.user}/>;
     
     return ( 
-      <SafeAreaView>
+      <SafeAreaView style={styles.container}> 
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <ChatHeader ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
                     Name={this.props.curRoomID}

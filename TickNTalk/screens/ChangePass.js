@@ -100,7 +100,7 @@ export class ChangePass extends React.Component {
 
   render () {
     return (
-      <SafeAreaView>
+      <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <Text style={styles.header}>Đổi mật khẩu</Text>
         <View

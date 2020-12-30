@@ -18,7 +18,7 @@ export default class RoomChatManagements extends React.Component {
     }
     render() {
         return (
-          <SafeAreaView>
+          <SafeAreaView style={styles.container}>
           <KeyboardAvoidingView style={styles.container} behavior="padding">
               <Text style={styles.header}>Nhóm</Text>                        
               <View style={{marginTop:16,flexDirection:'column'}} justifyContent="center">

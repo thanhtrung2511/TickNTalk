@@ -256,7 +256,7 @@ export class ChatFeed extends React.Component {
     render() {
       
         return (
-          <SafeAreaView>
+          <SafeAreaView style={styles.container}>
           <KeyboardAvoidingView style={styles.container} behavior="padding">
               <Text style={styles.header}>Tin nhắn</Text>                        
               <View style={{marginTop:16,flexDirection:'column'}} justifyContent="center">
