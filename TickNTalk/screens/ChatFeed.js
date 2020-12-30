@@ -43,8 +43,6 @@ export class ChatFeed extends React.Component {
     ChatScreenNav=(id)=>
     {
       this.props.updateRoomID(id);
-      console.log(id);
-      //Hãy update RoomID đã chọn lên Redux
       this.props.navigation.navigate("ChatScr");
     };
   
@@ -263,10 +261,11 @@ export class ChatFeed extends React.Component {
                 <View style={{flexDirection:'row',alignItems:"flex-start"}}>
                 <TextInput style={styles.input}
                       placeholder="Tìm kiếm bạn bè.."
-                      clearButtonMode={Platform.OS === "ios" ? true:false}
+                      // clearButtonMode={Platform.OS === "ios" ? true:false}
                       onChangeText={Text=>{
                         this.onChangeSearchText(Text);
-                      }}>
+                      }}
+                      >
                 </TextInput>
                 
                 </View>
@@ -279,6 +278,7 @@ export class ChatFeed extends React.Component {
                   data={this.state.filteredFriends}
                   renderItem={({item,index})=>{
                     let title = item.RoomName;
+                    const roomId = item.RoomID;
 
                     // if title is nothing, then get friend's name
                     if(title === "" || title === undefined)
@@ -299,7 +299,7 @@ export class ChatFeed extends React.Component {
                               Name={title}
                               LastestChat='chibi so ciu'
                               isRead='true'
-                              onPress={this.ChatScreenNav}
+                              onPress={()=>{this.ChatScreenNav(roomId)}}
                               >
                             </MessageCard>
                         </Text>
@@ -316,7 +316,8 @@ export class ChatFeed extends React.Component {
                   data={this.state.filteredGroups}
                   renderItem={({item,index})=>{
                     const title = item.RoomName;
-                    const id=item.RoomID;
+                    const roomId = item.RoomID;
+
                     return(
                         <Text>
                             <MessageCard 
@@ -324,7 +325,8 @@ export class ChatFeed extends React.Component {
                               Name={title}
                               LastestChat='chibi so ciu'
                               isRead='true'
-                              onPress={()=>{this.ChatScreenNav(id)}}
+                              // onPress={()=>{/*this.ChatScreenNav(roomId)}*/ console.log(roomId);}}
+                              onPress={()=>{this.ChatScreenNav(roomId)}}
                               >
                             </MessageCard>
                         </Text>

@@ -287,7 +287,7 @@ export const BasicImage=(props)=>{
 }
 export const ChatMessage_Orther=(props)=>{
     return (
-        <View style={{alignItems:"left",marginTop:16}}>
+        <View style={{alignItems:"flex-start",marginTop:16}}>
         <View style={styles.ChatMessage}>
             
             <BasicImage icon="smaller"
