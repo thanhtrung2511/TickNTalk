@@ -16,8 +16,9 @@ import {
   BasicImage,
   LoginBottom,
   createOKAlert,
+  sizeFactor,
 } from "../components/Basic/Basic";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 
 export class SignUpScreen extends React.Component {
   constructor(props) {
@@ -46,7 +47,7 @@ export class SignUpScreen extends React.Component {
     this.setState({
       typedPassword: "",
       typedRepassword: "",
-      
+
       user: null,
       showError: " ",
       canCreateAccount: false,
@@ -93,7 +94,7 @@ export class SignUpScreen extends React.Component {
     ) {
       this.state.typedPassword.toString() !==
       this.state.typedRepassword.toString()
-        ? createOKAlert({ Text: "Mật khẩu nhập lại không đúng" })
+        ? createOKAlert({ Text: "Mật khẩu nhập lại không đúng" ,onPress:()=>this.ResetFields()})
         : this.setState({ canCreateAccount: true });
     } else createOKAlert({ Text: "Chưa điền đầy đủ thông tin" });
     if (this.state.canCreateAccount) {
@@ -108,14 +109,13 @@ export class SignUpScreen extends React.Component {
             <View style={{ alignItems: "center" }} justifyContent="center">
               <BasicImage icon="false" source={require("../assets/Logo.png")} />
               <Text style={styles.hello}>Đăng ký tài khoản mới</Text>
-
               <TextInput
                 style={styles.input}
                 secureTextEntry={false}
                 keyboardType="email-address"
                 placeholder="Email"
                 onChangeText={(typedEmail) => {
-                  this.props.Update(typedEmail );
+                  this.props.Update(typedEmail);
                 }}
                 value={this.props.typedEmail}
               />
@@ -145,7 +145,7 @@ export class SignUpScreen extends React.Component {
                 {this.state.showError}
               </Text>
             </View>
-
+            <View style={{ marginTop:sizeFactor*1.7}}>
             <LoginBottom
               OnPressNormal={this.CheckAccount}
               OnPressGoogle={this.SignUpWithGoogle}
@@ -155,6 +155,7 @@ export class SignUpScreen extends React.Component {
               TextNav="Đăng nhập tại đây"
               Sign={this.SignIn}
             />
+            </View>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -162,18 +163,16 @@ export class SignUpScreen extends React.Component {
   }
 }
 const mapStateToProps = (state) => {
-  return{
-      typedEmail: state.emailReducer,
-      
-  }
+  return {
+    typedEmail: state.emailReducer,
+  };
 };
 
-const mapDispatchToProps = (dispatch) =>{
+const mapDispatchToProps = (dispatch) => {
   return {
-      Update: (typedEmail) => {
-        dispatch(ChangeEmailAction(typedEmail));
-      },
-      
+    Update: (typedEmail) => {
+      dispatch(ChangeEmailAction(typedEmail));
+    },
   };
-}
+};
 export default connect(mapStateToProps, mapDispatchToProps)(SignUpScreen);

@@ -7,6 +7,7 @@ import {
 from 'react-native';
 import React, { Component } from 'react';
 import { MaterialIcons,Ionicons } from '@expo/vector-icons';
+import { color } from 'react-native-reanimated';
 export const windowWidth = Dimensions.get("window").width;
 export const windowHeight = Dimensions.get("window").height;
 
@@ -15,14 +16,15 @@ export const sizeFactor = windowWidth / 25.7;
 
 export const colors = {
     red: "#ff3b30",
+    darkgrey:"#424242",
     orange: "#ff9500",
     yellow: "#ffcc00",
     green: "#34c759",
     blue: "#007aff",
     indigo: "#5856d6",
     purple: "#af52de",
-    pink: "#f29bd4",
-    lightpink: "#f7e0f4",
+    pink: "#ff94c2",
+    lightpink: "#ffc1e3",
     gray: "#8e8e93",
     dark: "#48484a",
     redDark: "#d70015",
@@ -35,14 +37,21 @@ export const colors = {
     black: "#000000",
     skin:"#FFF5D8",
     fushia:"#FF00FF",
-    cyan: "lightblue"
+    cyan: "lightblue",
+    Darkpink:"#f06292"
 };
 export const styles=StyleSheet.create({
+    containerLI: {
+        height: windowHeight,
+        width: windowWidth,
+        alignItems:"center",
+        backgroundColor: "white",
+    },
     container: {
         height: windowHeight*0.97,
         width: windowWidth,
         alignItems:"center",
-        backgroundColor: colors.lightpink,
+        backgroundColor: colors.white,
     },
     text: {
         fontSize: sizeFactor,
@@ -52,18 +61,29 @@ export const styles=StyleSheet.create({
         fontSize: sizeFactor * 1.5,
         marginBottom: sizeFactor * 0.75,
     },
+    headerLI:{
+        fontWeight:"800",
+        fontSize:sizeFactor*2,
+        color:colors.Darkpink,
+        marginTop:-20
+      },
     header:{
         fontWeight:"800",
         fontSize:sizeFactor*2,
-        color:colors.black,
+        marginTop:sizeFactor*2,
+        color:colors.darkgrey,
       },
+    mini_header: {
+        fontWeight:"800",
+        fontSize:sizeFactor*1.8,
+        color:colors.darkgrey,
+    },
     hello:{
+        marginTop:32,
         fontWeight:"800",
         fontSize:16,
-        color:colors.black,
-        marginTop:sizeFactor,
-        marginLeft:32,
-        marginBottom:sizeFactor,
+        color:colors.Darkpink,
+        marginBottom:16,
     },
     background: {
         flex: 1,
@@ -89,7 +109,7 @@ export const styles=StyleSheet.create({
         height:sizeFactor*3,
         width:sizeFactor*21.7,
         borderRadius:70/3,
-        backgroundColor:colors.skin,
+        backgroundColor:'whitesmoke',
         fontWeight:"600",
         textAlign: "center",
         marginBottom:sizeFactor*0.5,
@@ -106,28 +126,25 @@ export const styles=StyleSheet.create({
         marginBottom:sizeFactor * 0.5,
     },
     FogetPassword:{
-        marginTop:sizeFactor,
+        marginTop:-sizeFactor*0.5,
         marginLeft:sizeFactor*14,
         color: colors.blue,
       },
     Login_button:{
-        width:sizeFactor*20,
-        height:sizeFactor*5,
+        width:sizeFactor*15,
+        height:sizeFactor*3.7,
         borderRadius:99,
-        backgroundColor:colors.pink,
+        backgroundColor:colors.Darkpink,
         alignItems:"center",
         justifyContent:"center",
         marginTop: 16
       },
     MessageCard: {
-        marginBottom:sizeFactor * 0.25,
-        marginLeft:sizeFactor ,
         paddingTop: sizeFactor*0.25,
         paddingBottom: sizeFactor * 0.25,
         paddingHorizontal: sizeFactor,
-        width: sizeFactor*20,
+        width: windowWidth,
         borderRadius: 15,
-        borderWidth: 1,
         borderColor: colors.pink,
         flexDirection:'row',
         justifyContent:"space-between", 
@@ -135,9 +152,9 @@ export const styles=StyleSheet.create({
         backgroundColor:colors.white
     },
     Login_text:{
-        fontSize:30,
+        fontSize:sizeFactor*1.5,
         fontWeight:'700',
-        color:colors.black
+        color:colors.white
     },
     Simple_button:{
         
@@ -147,7 +164,6 @@ export const styles=StyleSheet.create({
             backgroundColor:colors.pink,
             alignItems:"center",
             justifyContent:"center",
-            marginTop: 16
         
     },
     Simple_text:{
@@ -171,7 +187,7 @@ export const styles=StyleSheet.create({
       },
       SmallButton:{
         alignItems:'center',
-        marginTop:10,
+        marginTop:32,
         flexDirection:'row',
         justifyContent:"center",
         backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -179,10 +195,8 @@ export const styles=StyleSheet.create({
         borderRadius: 70/5
       },
       ChatBox:{
-        width:sizeFactor*21.7,
-        height:windowHeight*0.15,
-        paddingHorizontal: sizeFactor,
-        backgroundColor:colors.lightpink,
+        padding:sizeFactor*0.5,
+        backgroundColor:colors.white,
         borderRadius:70/5,
      },
      ChatScreen_Banner:{
@@ -242,7 +256,7 @@ export const MessageCard =(props)=>
           >  
               {props.Name}
           </Text>
-          <Text style={{width:sizeFactor*15,
+          <Text style={{width:sizeFactor*19,
                         fontWeight:props.isRead == 'true'? '100': '600'}} 
                 numberOfLines={1} 
                 ellipsizeMode={'tail'}> 
@@ -254,16 +268,16 @@ export const MessageCard =(props)=>
 }
 export const LoginButton=(props)=>{
     return(
-        <TouchableOpacity style={styles.Login_button} onPress={props.onPress}>
-                  <Text style={styles.Login_text}>{props.Text}
+        <TouchableOpacity style={[styles.Login_button,props.style]} onPress={props.onPress}>
+                  <Text style={[styles.Login_text,props.styleText]}>{props.Text}
                 </Text>
         </TouchableOpacity>
     )
 }
 export const ButtonMod=(props)=>{
     return(
-        <TouchableOpacity style={styles.Simple_button} onPress={props.onPress}>
-                  <Text style={styles.Simple_text}>{props.Text}
+        <TouchableOpacity style={[styles.Simple_button,props.styleContainer]} onPress={props.onPress}>
+                  <Text style={[styles.Simple_text,props.styleText]}>{props.Text}
                 </Text>
         </TouchableOpacity>
     )
@@ -354,17 +368,16 @@ export const ChatHeader=(props)=>{
 export const LoginBottom=(props) =>{
     return (
         <View>
-        <View style={{marginLeft:16,marginTop:sizeFactor,alignItems:"center"}}>
-                <ButtonMod onPress={props.OnPressNormal} Text={props.TextNormal}></ButtonMod>
-                <View style={{flexDirection:'row',marginTop:32}}> 
+        <View style={{alignItems:"center"}}>
+                <ButtonMod styleText={{color:colors.white}} onPress={props.OnPressNormal} Text={props.TextNormal}></ButtonMod>
+                <View style={{flexDirection:'row',marginHorizontal:32,marginVertical:24}}> 
                 <View style={{width:30,height:1,backgroundColor:'black'}}>
                 </View>
                 <Text style={{marginTop:-10,fontWeight:"700", fontSize:15, color:'black'}}>Hoặc</Text>
                 <View style={{width:30,height:1,backgroundColor:'black'}}>
                 </View>
                 </View>
-                <ButtonMod OnPress={props.OnPressGoogle} Text={props.TextGoogle}></ButtonMod>
-                
+                <ButtonMod styleText={{color:colors.white}} OnPress={props.OnPressGoogle} Text={props.TextGoogle}></ButtonMod>
               </View>
               <View style={styles.Extra}>
               <Text style={styles.Sign}>{props.TextStatic}</Text>

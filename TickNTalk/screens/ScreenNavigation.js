@@ -15,11 +15,11 @@ import SignUpScreen from './SignUpScreen'
 import ChangePass from './ChangePass'
 import UpdateAvaScreen from './UpdateAvaScreen'
 import SignUpCont from './SignUpCont'
-
+import {colors} from '../components/Basic/Basic'
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-
+import {Text} from 'react-native'
 import {connect} from 'react-redux'
 import { ChangeLoginStatus } from '../actions';
 
@@ -28,7 +28,9 @@ const TabNavigator= createBottomTabNavigator(
     ChatFeed:{
         screen: ChatFeed,
         navigationOptions:{
-            tabBarLabel:"Tin nhắn",          
+            tabBarLabel:({ focused, tintColor }) => (
+                <Text  style={{color:focused?colors.Darkpink:colors.black}} >Tin nhắn</Text>
+              ),      
             tabBarOption:{
                 tabStyle:{
                     paddingVertical: 10
@@ -45,18 +47,20 @@ const TabNavigator= createBottomTabNavigator(
                 },
                 showIcon:true,
                 showLabel:true,
-                activeTintColor: 'cyan',
+                activeTintColor: colors.Darkpink,
                 inactiveTintColor: 'gray'
             },
             tabBarIcon: ({ focused, tintColor }) => (
-                <MaterialIcons name="message" size={24} color="black" />
+                <MaterialIcons name="message" size={24} color={focused?colors.Darkpink:colors.black} />
               )
         }
     },
     RoomManage:{
         screen: RoomChatManagement,
         navigationOptions:{
-            tabBarLabel:"Nhóm",
+            tabBarLabel:({ focused, tintColor }) => (
+                <Text  style={{color:focused?colors.Darkpink:colors.black}} >Nhóm</Text>
+              ), 
             tabBarOption:{
                 tabStyle:{
                     paddingVertical: 10
@@ -73,18 +77,20 @@ const TabNavigator= createBottomTabNavigator(
                 },
                 showIcon:true,
                 showLabel:true,
-                activeTintColor: 'cyan',
+                activeTintColor: colors.Darkpink,
                 inactiveTintColor: 'gray'
             },
             tabBarIcon: ({ focused, tintColor }) => (
-                <FontAwesome name="group" size={24} color="black" />
+                <FontAwesome name="group" size={24} color={focused?colors.Darkpink:colors.black} />
               )
         }
     },
     MyInfo:{
         screen: PersonalInfo,
         navigationOptions:{
-            tabBarLabel:"Thông tin cá nhân",
+            tabBarLabel:({ focused, tintColor }) => (
+                <Text  style={{color:focused?colors.Darkpink:colors.black}} >Thông tin cá nhân</Text>
+              ), 
             tabBarOption:{
                 tabStyle:{
                     paddingVertical: 10
@@ -101,11 +107,11 @@ const TabNavigator= createBottomTabNavigator(
                 },
                 showIcon:true,
                 showLabel:true,
-                activeTintColor: 'cyan',
+                activeTintColor: colors.Darkpink,
                 inactiveTintColor: 'gray'
             },
             tabBarIcon: ({ focused, tintColor }) => (
-                <Ionicons name="ios-person" size={24} color="black" />         )
+                <Ionicons name="ios-person" size={24} color={focused?colors.Darkpink:colors.black} />         )
         }
     }
     }

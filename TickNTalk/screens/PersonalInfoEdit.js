@@ -1,5 +1,5 @@
 import React, { Component, useState } from "react";
-import { Text, TextInput, View,KeyboardAvoidingView } from "react-native";
+import { Text, TextInput, View, KeyboardAvoidingView } from "react-native";
 import {
   SafeAreaView,
   NavigationContainer,
@@ -52,70 +52,30 @@ class PersonalInfoEdit extends React.Component {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <Text style={styles.header}>Thông tin cá nhân</Text>
-        <View
-          style={{ marginTop: 16, flexDirection: "column",justifyContent:"space-between" }}
-        >
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
+          <Text style={styles.mini_header}>Chỉnh sửa thông tin cá nhân</Text>
+          <View style={{ marginTop: 32, flexDirection: "column" }}>
+            <View>
+              <Text>Họ và tên</Text>
+              <TextInput
+                header="Họ và tên"
+                style={styles.input}
+                value={this.props.typedname}
+                onChangeText={(text) => this.props.ChangeNameAction(text)}
+              />
+            </View>
+            <View>
+              <Text>Số điện thoại</Text>
+              <TextInput
+                header="Số điện thoại"
+                style={styles.input}
+                placeholder="012345678"
+                keyboardType="phone-pad"
+                value={this.props.typedPhone}
+                onChangeText={(text) => this.props.ChangePhoneAction(text)}
+              />
+            </View>
 
-          <TextInput
-            style={styles.input}
-            secureTextEntry={false}
-            placeholder="Họ và Tên"
-            value={this.props.typedname}
-            onChangeText={text => this.props.ChangeNameAction (text)}
-          />
-
-          <TextInput
-            style={styles.input}
-            secureTextEntry={false}
-            keyboardType="Phone"
-            placeholder="Số điện thoại"
-            value={this.props.typedPhone}
-            onChangeText={text => this.props.ChangePhoneAction (text)}
-          />
-
-          <View>
-            <Text>Họ và tên</Text>
-            <TextInput
-              header="Họ và tên"
-              style={styles.input}
-              value={this.props.typedname}
-              onChangeText={(text) => this.props.ChangeNameAction(text)}
-            />
-          </View>
-          <View>
-            <Text>Số điện thoại</Text>
-            <TextInput
-              header="Số điện thoại"
-              style={styles.input}
-              placeholder="012345678"
-              keyboardType="phone-pad"
-              value={this.props.typedPhone}
-              onChangeText={(text) => this.props.ChangePhoneAction(text)}
-            />
-          </View>
-          <View>
-          <Text>Giới tính</Text>
-            <DropDownPicker
-              items={[
-                { label: "Nam", value: "Nam", hidden: true },
-                { label: "Nữ", value: "Nữ" },
-              ]}
-              defaultValue={
-                this.props.typedGender === "" ? "Nam" : this.props.typedGender
-              }
-              containerStyle={{ height: 40 }}
-              style={{ backgroundColor: "#fafafa" }}
-              itemStyle={{
-                justifyContent: "flex-start",
-              }}
-              dropDownStyle={{ backgroundColor: "#fafafa" }}
-              onChangeItem={(typedGender) =>
-                this.props.ChangeGenderAction(typedGender.value)
-              }
-            />
-             </View>
             <View>
               <Text>Ngày sinh</Text>
               <DatePicker
@@ -126,20 +86,52 @@ class PersonalInfoEdit extends React.Component {
                 confirmBtnText="Confirm"
                 minDate="01-01-1975"
                 maxDate="01-01-2020"
+                customStyles={{
+                  dateIcon: {
+                    position: "absolute",
+                    left: 0,
+                    top: 4,
+                    marginLeft: 0,
+                  },
+                  dateInput: {
+                    marginLeft: 40,
+                  },
+                }}
                 onDateChange={(date) => {
                   this.props.ChangeBirthdayAction(date);
                 }}
               />
-           
+            </View>
+            <View>
+              <Text>Giới tính</Text>
+              <DropDownPicker
+                items={[
+                  { label: "Nam", value: "Nam", hidden: true },
+                  { label: "Nữ", value: "Nữ" },
+                ]}
+                defaultValue={
+                  this.props.typedGender === "" ? "Nam" : this.props.typedGender
+                }
+                containerStyle={{ height: 40 }}
+                style={{ backgroundColor: "#fafafa" }}
+                itemStyle={{
+                  justifyContent: "flex-start",
+                }}
+                dropDownStyle={{ backgroundColor: "#fafafa" }}
+                onChangeItem={(typedGender) =>
+                  this.props.ChangeGenderAction(typedGender.value)
+                }
+              />
+            </View>
           </View>
+          <View style={{ marginTop: 80 }}>
+            <ButtonMod
+              styleDisabled={{ color: "red" }}
+              onPress={this.EditMyInfo}
+              Text="Lưu thay đổi"
+            />
           </View>
-        <ButtonMod
-          style={{ fontSize: 20, color: "green", marginTop: 20 }}
-          styleDisabled={{ color: "red" }}
-          onPress={this.EditMyInfo}
-          Text="Lưu thay đổi"
-        />
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }

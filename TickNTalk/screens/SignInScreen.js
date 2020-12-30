@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {Text,TextInput, View,SafeAreaView,KeyboardAvoidingView,ScrollView } from 'react-native'
-import {Button,styles,BasicImage,LoginBottom} from '../components/Basic/Basic'
+import {Button,styles,BasicImage,LoginBottom,sizeFactor} from '../components/Basic/Basic'
 import firebase from 'firebase'
 import {ChangeEmailAction, ChangeLoginStatus} from '../actions/index'
 import {connect} from 'react-redux'
@@ -73,7 +73,7 @@ export class SignInScreen extends React.Component {
                 <Text style={styles.FogetPassword}>Quên mật khẩu?</Text>
                 
               </View>
-              
+              <View style={{marginTop: sizeFactor*5.1}}>
               <LoginBottom OnPressNormal={this.SignInWithEmailAndPassword}
                            OnPressGoogle={this.SignInWithGoogle}
                            TextNormal="Đăng nhập"
@@ -82,7 +82,7 @@ export class SignInScreen extends React.Component {
                            TextNav="Đăng ký tại đây"
                            Sign={this.SignUp}
               />
-              
+              </View>
             </View>
           </KeyboardAvoidingView>
           </SafeAreaView>
