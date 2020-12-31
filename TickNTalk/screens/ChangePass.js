@@ -104,7 +104,7 @@ export class ChangePass extends React.Component {
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <Text style={styles.header}>Đổi mật khẩu</Text>
         <View
-          style={{marginLeft: 32, marginTop: 16, flexDirection: 'column'}}
+          style={{ marginTop: 16, flexDirection: 'column'}}
           justifyContent="center"
         >
           <View
@@ -118,7 +118,7 @@ export class ChangePass extends React.Component {
           >
 
             <View
-              style={{marginLeft: 16, marginTop: 16, flexDirection: 'column'}}
+              style={{ marginTop: 16, flexDirection: 'column'}}
             >
               <Text style={{fontWeight: '800'}}>Phương Vy</Text>
               <Text>test@gmail.com</Text>

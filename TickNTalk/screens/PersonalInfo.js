@@ -16,7 +16,12 @@ import {
 } from "react-native-safe-area-context";
 import { EvilIcons } from "@expo/vector-icons";
 // import styles from '../screens/components/profile/Styles';
-import { styles, ButtonIcon } from "../components/Basic/Basic";
+import {
+  styles,
+  ButtonIcon,
+  BasicImage,
+  ButtonMod,
+} from "../components/Basic/Basic";
 import firebase from "firebase";
 import {
   ChangeEmailAction,
@@ -25,6 +30,7 @@ import {
   ChangePhoneAction,
   ChangeGenderAction,
 } from "../actions/index";
+import {DataTable} from 'react-native-paper'
 import { connect, Provider } from "react-redux";
 import { UserRef } from "../Fire";
 
@@ -82,22 +88,26 @@ export class PersonalInFo extends React.Component {
           <Text style={styles.header}>Thông tin cá nhân</Text>
         </View>
 
-        <View
-          style={{ flexDirection: "column" }}
-          justifyContent="center"
-        >
+        <View style={{ flexDirection: "column" ,marginTop: 32}} justifyContent="flex-start">
           <View
             style={{
               flexDirection: "row",
-              
-              padding: 64,
-              backgroundColor: "white",
+              padding: 16,
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "78%",
+              backgroundColor: "whitesmoke",
               borderRadius: 70 / 5,
             }}
           >
-            <View
-              style={{  marginTop: 16, flexDirection: "column" }}
-            >
+            <BasicImage
+              source={{
+                uri:
+                  "https://instagram.fsgn3-1.fna.fbcdn.net/v/t51.2885-19/s150x150/123146532_711576649507850_6303894487975334088_n.jpg?_nc_ht=instagram.fsgn3-1.fna.fbcdn.net&_nc_ohc=RNr9jnrIEykAX9kLF7D&tp=1&oh=916b52756169c6965cd3f764de1f273b&oe=60171A44",
+              }}
+              icon="true"
+            ></BasicImage>
+            <View style={{ marginTop: 16, flexDirection: "column" }}>
               <Text style={{ fontWeight: "800" }}>
                 Email: {this.props.typedEmail}
               </Text>
@@ -115,24 +125,20 @@ export class PersonalInFo extends React.Component {
               </Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.input} onPress={this.ChangeAva}>
-            <Text style={{ fontWeight: "700" }}>
-              Cập nhật ảnh đại diện
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.input} onPress={this.ChangePass}>
-            <Text style={{ fontWeight: "700" }}>
-              Đổi mật khẩu
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.input} onPress={this.ChangeInfo}>
-            <Text style={{  fontWeight: "700" }}>
-              Chỉnh sửa thông tin cá nhân
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.input} onPress={this.LogOut}>
-            <Text style={{  fontWeight: "700" }}>Đăng xuất</Text>
-          </TouchableOpacity>
+          <View style={{ alignItems:"center",marginTop:16,height:'50%',flexDirection: "column",justifyContent:"space-around" }}>
+          <ButtonMod
+            Text="Cập nhật ảnh đại diện"
+            onPress={this.ChangeAva}
+          ></ButtonMod>
+          <ButtonMod Text="Đổi mật khẩu" onPress={this.ChangePass}
+          ></ButtonMod>
+          <ButtonMod
+            Text="Chỉnh sửa thông tin cá nhân"
+            onPress={this.ChangeInfo}
+          ></ButtonMod>
+          <ButtonMod Text="Đăng xuất" onPress={this.LogOut}
+          ></ButtonMod>
+          </View>
         </View>
       </SafeAreaView>
     );

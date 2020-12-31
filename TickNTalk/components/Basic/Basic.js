@@ -75,7 +75,8 @@ export const styles=StyleSheet.create({
       },
     mini_header: {
         fontWeight:"800",
-        fontSize:sizeFactor*1.8,
+        width:"80%",
+        fontSize:sizeFactor*2,
         color:colors.darkgrey,
     },
     hello:{
