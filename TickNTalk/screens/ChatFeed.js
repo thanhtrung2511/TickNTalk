@@ -245,7 +245,7 @@ export class ChatFeed extends React.Component {
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.containerLI}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           <View
             style={{ width: "90%" }}
@@ -255,7 +255,7 @@ export class ChatFeed extends React.Component {
             <Text style={styles.header}>Tin nhắn</Text>
           </View>
           <View
-            style={{ marginTop: 16, flexDirection: "column" }}
+            style={{flexDirection: "column" }}
             justifyContent="space-between"
           >
             {/* <TextInput style={styles.input}
@@ -265,6 +265,9 @@ export class ChatFeed extends React.Component {
                         this.onChangeSearchText(Text);
                       }}>
                 </TextInput> */}
+            
+
+            <ScrollView style={{maxHeight:"92%"}}>
             <SearchBar
               platform={Platform.OS}
               placeholder="Tìm bạn bè..."
@@ -275,7 +278,7 @@ export class ChatFeed extends React.Component {
               }}
               inputContainerStyle={{
                 backgroundColor: "whitesmoke",
-                borderRadius: "70/3",
+                borderRadius: 70/3,
               }}
               leftIconContainerStyle={{ marginLeft: 16 }}
               inputStyle={{}}
@@ -286,8 +289,6 @@ export class ChatFeed extends React.Component {
               }}
               value={this.state.toSearchText}
             />
-
-            <ScrollView>
               <Text
                 style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
               >

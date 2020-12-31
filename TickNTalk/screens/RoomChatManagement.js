@@ -25,7 +25,7 @@ export default class RoomChatManagements extends React.Component {
               <Text style={styles.header}>Nhóm</Text>                        
               <ButtonIcon MaterialFamilyIconName="group-add" size={33}/>
               </View>
-              <View style={{marginTop:16,flexDirection:'column'}} justifyContent="stretch">
+              <View style={{flexDirection:'column'}} justifyContent="stretch">
                 
                 {/* <TextInput style={styles.inputGroup}
                       placeholder="Tìm kiếm nhóm"
@@ -39,7 +39,7 @@ export default class RoomChatManagements extends React.Component {
                     placeholder="Tìm bạn bè..."
                     lightTheme="true"
                     containerStyle={{ marginHorizontal:8,backgroundColor: 'transparent' }}
-                    inputContainerStyle={{ backgroundColor:'whitesmoke',borderRadius:'70/3'}}
+                    inputContainerStyle={{ backgroundColor:'whitesmoke',borderRadius:70/3}}
                     leftIconContainerStyle={{marginLeft:16}}
                     inputStyle={{}}
                     placeholder="Tìm kiếm bạn bè.."
