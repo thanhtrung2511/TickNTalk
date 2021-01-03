@@ -53,7 +53,7 @@ class PersonalInfoEdit extends React.Component {
     return (
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
-          <Text style={styles.mini_header}>Chỉnh sửa thông tin cá nhân</Text>
+          <Text style={styles.mini_header} wrapped={true} numberOfLines={2}>Chỉnh sửa thông tin cá nhân</Text>
           <View style={{ marginTop: 32, flexDirection: "column" }}>
             <View>
               <Text>Họ và tên</Text>

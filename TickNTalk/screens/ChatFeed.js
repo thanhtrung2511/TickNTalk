@@ -45,7 +45,7 @@ export class ChatFeed extends React.Component {
   }
   ChatScreenNav=(id)=>
   {
-    // this.props.updateRoomID(id);
+    this.props.UpdateRoomID(id);
     this.props.navigation.navigate("ChatScr");
   };
 
@@ -244,7 +244,7 @@ export class ChatFeed extends React.Component {
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.containerLI}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           <View
             style={{ width: "90%" }}
@@ -254,7 +254,7 @@ export class ChatFeed extends React.Component {
             <Text style={styles.header}>Tin nhắn</Text>
           </View>
           <View
-            style={{ marginTop: 16, flexDirection: "column" }}
+            style={{flexDirection: "column" }}
             justifyContent="space-between"
           >
             {/* <TextInput style={styles.input}
@@ -264,6 +264,9 @@ export class ChatFeed extends React.Component {
                         this.onChangeSearchText(Text);
                       }}>
                 </TextInput> */}
+            
+
+            <ScrollView style={{maxHeight:"92%"}}>
             <SearchBar
               platform={Platform.OS}
               placeholder="Tìm bạn bè..."
@@ -286,8 +289,6 @@ export class ChatFeed extends React.Component {
               }}
               value={this.state.toSearchText}
             />
-
-            <ScrollView>
               <Text
                 style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
               >
@@ -299,7 +300,7 @@ export class ChatFeed extends React.Component {
                 data={this.state.filteredFriends}
                 renderItem={({ item, index }) => {
                   let title = item.RoomName;
-                  let roomId = item.RoomId;
+                  let roomId = item.RoomID;
 
                   // if title is nothing, then get friend's name
                   if (title === "" || title === undefined) {
@@ -409,8 +410,8 @@ const mapDispatchToProps = (dispatch) => {
     Update: (loggedInEmail) => {
       dispatch(ChangeEmailAction(loggedInEmail));
     },
-    updateRoomID: (curID) => {
-      dispatch(ChangeRoomIDAction(curID));
+    UpdateRoomID: (curRoomID) => {
+      dispatch(ChangeRoomIDAction(curRoomID));
     },
   };
 };
