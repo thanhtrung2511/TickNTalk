@@ -24,6 +24,13 @@ import { Card } from "react-native-paper";
 import { connect } from "react-redux";
 import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
 
+import {
+  GetFriendEmail, 
+  GetUserByEmail,
+  CheckRoomContainUser,
+  CountNumberOfMembers,
+} from "../Utilities/ChatRoomUtils";
+
 export class ChatFeed extends React.Component {
   state = {
     toSearchText: "",
@@ -91,13 +98,13 @@ export class ChatFeed extends React.Component {
           Members: child.toJSON().Members,
         };
 
-        if (this.CheckRoomContainUser(room, this.props.loggedInEmail)) {
-          let memberCnt = this.CountNumberOfMember(room);
+        if (CheckRoomContainUser(room, this.props.loggedInEmail)) {
+          let memberCnt = CountNumberOfMembers(room);
           if (memberCnt === 2) {
             // add to friend list
             fr.push(room);
             // remove from stranger
-            let email = this.GetFriendEmail(room);
+            let email = GetFriendEmail(room, this.props.loggedInEmail);
             st = st.filter(
               (user) => user.Email.toUpperCase() !== email.toUpperCase()
             );
@@ -111,13 +118,6 @@ export class ChatFeed extends React.Component {
     });
   }
 
-  GetFriendEmail(friendRoom) {
-    let result = friendRoom.Members[0];
-    if (result === this.props.loggedInEmail) result = friendRoom.Members[1];
-
-    return result;
-  }
-
   // Remove from stranger list
   RemoveFromStrangers(strangerList, email) {
     if (strangerList === undefined) return [];
@@ -125,27 +125,6 @@ export class ChatFeed extends React.Component {
     return strangerList.filter(
       (x) => x.Email.toUpperCase() !== email.toUpperCase()
     );
-  }
-
-  /// return undefined if not found
-  GetUserByEmail(email) {
-    return this.state.listUsers.find((user) => user.Email === email);
-  }
-
-  CheckRoomContainUser(room, email) {
-    let flagFound = false;
-    Object.values(room.Members).forEach((e) => {
-      if (e === email) {
-        flagFound = true;
-        return;
-      }
-    });
-
-    return flagFound;
-  }
-
-  CountNumberOfMember(room) {
-    return Object.values(room.Members).length;
   }
 
   /*
@@ -304,8 +283,8 @@ export class ChatFeed extends React.Component {
 
                   // if title is nothing, then get friend's name
                   if (title === "" || title === undefined) {
-                    const friendEmail = this.GetFriendEmail(item);
-                    const friend = this.GetUserByEmail(friendEmail);
+                    const friendEmail = GetFriendEmail(item, this.props.loggedInEmail);
+                    const friend = GetUserByEmail(this.state.listUsers, friendEmail);
 
                     if (friend === undefined) title = "Người dùng TickNTalk";
                     else title = friend.Name;

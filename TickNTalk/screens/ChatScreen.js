@@ -35,6 +35,9 @@ export class ChatScreen extends React.Component {
   //   Fire.off();
 
   }
+
+
+
   render() {
     
     // const chat=<GiftedChat messages={this.state.messages} onSend={Fire.send} user={this.user}/>;
@@ -81,6 +84,8 @@ export class ChatScreen extends React.Component {
     )
   }
 }
+
+
 const mapStateToProps = (state) => {
   return{
       loggedInEmail: state.emailReducer,
