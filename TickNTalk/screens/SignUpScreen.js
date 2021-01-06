@@ -107,7 +107,7 @@ export class SignUpScreen extends React.Component {
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           <View style={{ alignItems: "center" }}>
             <View style={{ alignItems: "center" }} justifyContent="center">
-              <BasicImage icon="false" source={require("../assets/Logo.png")} />
+              <BasicImage Icon={200} source={require("../assets/Logo.png")} />
               <Text style={styles.hello}>Đăng ký tài khoản mới</Text>
               <TextInput
                 style={styles.input}

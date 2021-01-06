@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {Text,TextInput, View,SafeAreaView,KeyboardAvoidingView,ScrollView } from 'react-native'
-import {Button,styles,BasicImage,LoginBottom,sizeFactor} from '../components/Basic/Basic'
+import {Button,styles,BasicImage,LoginBottom,sizeFactor,createOKAlert} from '../components/Basic/Basic'
+
 import firebase from 'firebase'
 import {ChangeEmailAction, ChangeLoginStatus} from '../actions/index'
 import {connect} from 'react-redux'
@@ -20,10 +21,10 @@ export class SignInScreen extends React.Component {
       firebase.auth().signInWithEmailAndPassword(this.props.typedEmail,this.state.typedPassword)
       .then((loggedInUser)=>
       {
-          this.SignInContinue();
+        this.SignInContinue();
       })
       .catch((error)=>{
-        this.setState({showError: true})
+        createOKAlert({ Text:"Tên đăng nhập hoặc mật khẩu không đúng"})
       })
     }
     SignInWithGoogle=()=>{}
@@ -45,7 +46,7 @@ export class SignInScreen extends React.Component {
           <KeyboardAvoidingView style={styles.container} behavior="padding">
                 <View style={{alignItems:"center"}}>
                 
-                <BasicImage icon='false'
+                <BasicImage Icon={200}
                         source={require('../assets/Logo.png')}/>
                 <Text style={styles.hello}>Đăng nhập tài khoản của bạn</Text>
                 <View style={{alignItems:'center'}} justifyContent="center">
@@ -65,11 +66,7 @@ export class SignInScreen extends React.Component {
                         this.setState({showError:false})
                       }}
                       value={this.state.password}/>
-                <Text style={{color:'red'}} >
-                 { this.state.showError ?
-                  "Tên tài khoản hoặc mật khẩu không đúng.": " "
-                 }
-                </Text>
+               
                 <Text style={styles.FogetPassword}>Quên mật khẩu?</Text>
                 
               </View>

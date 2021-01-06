@@ -15,6 +15,7 @@ import {
   MessageCard,
   windowHeight,
   sizeFactor,
+  colors,
 } from "../components/Basic/Basic";
 import firebase from "firebase";
 import { SearchBar } from "react-native-elements";
@@ -247,12 +248,14 @@ export class ChatFeed extends React.Component {
     return (
       <SafeAreaView style={styles.containerLI}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <View style={{ backgroundColor: colors.lightpink,width:"100%",alignItems:"center" }}>
           <View
             style={{ width: "90%" }}
             justifyContent="space-between"
             flexDirection="row"
           >
             <Text style={styles.header}>Tin nhắn</Text>
+          </View>
           </View>
           <View
             style={{flexDirection: "column" }}

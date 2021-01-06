@@ -21,6 +21,9 @@ import {
   ButtonIcon,
   BasicImage,
   ButtonMod,
+  colors,
+  sizeFactor,
+  windowWidth,
 } from "../components/Basic/Basic";
 import firebase from "firebase";
 import {
@@ -30,8 +33,8 @@ import {
   ChangePhoneAction,
   ChangeGenderAction,
 } from "../actions/index";
-import {DataTable} from 'react-native-paper'
-import { connect, Provider } from "react-redux";
+import { DataTable } from "react-native-paper";
+import { connect } from "react-redux";
 import { UserRef } from "../Fire";
 
 export class PersonalInFo extends React.Component {
@@ -49,7 +52,16 @@ export class PersonalInFo extends React.Component {
   };
 
   LogOut = () => {
-    this.props.navigation.replace("Login");
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        // Sign-out successful.
+        this.props.navigation.replace("Login");
+      })
+      .catch((error) => {
+        // An error happened.
+      });
   };
 
   ChangeInfo = () => {
@@ -79,66 +91,119 @@ export class PersonalInFo extends React.Component {
 
   render() {
     return (
-      <SafeAreaView style={styles.containerLI}>
-        <View
-          style={{ width: "90%" }}
-          justifyContent="space-between"
-          flexDirection="row"
-        >
-          <Text style={styles.header}>Thông tin cá nhân</Text>
-        </View>
-
-        <View style={{ flexDirection: "column" ,marginTop: 32}} justifyContent="flex-start">
+      <SafeAreaView style={[styles.containerLI]}>
+        <View style={styles.container}>
+          <View style={{ backgroundColor: colors.lightpink,width:"100%",alignItems:"center" }}>
           <View
-            style={{
-              flexDirection: "row",
-              padding: 16,
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "78%",
-              backgroundColor: "whitesmoke",
-              borderRadius: 70 / 5,
-            }}
+            style={{ width: "90%" }}
+            justifyContent="space-between"
+            flexDirection="row"
           >
-            <BasicImage
+            <Text style={styles.header}>Thông tin cá nhân</Text>
+          </View>
+          </View>
+          <View
+            style={{ flexDirection: "column", width: "100%" ,paddingVertical:16}}
+            justifyContent="space-around"
+            alignItems="center"
+            backgroundColor={colors.lightpink}
+            
+          >
+            
+            <View
+              style={{
+                flexDirection: "column",
+                padding: 8,
+                justifyContent: "flex-start",
+                backgroundColor: "whitesmoke",
+                borderRadius: 70 / 5,
+                width: "90%",
+              
+              }}
+            >
+              <View alignItems="center">
+              <BasicImage
               source={{
                 uri:
                   "https://instagram.fsgn3-1.fna.fbcdn.net/v/t51.2885-19/s150x150/123146532_711576649507850_6303894487975334088_n.jpg?_nc_ht=instagram.fsgn3-1.fna.fbcdn.net&_nc_ohc=RNr9jnrIEykAX9kLF7D&tp=1&oh=916b52756169c6965cd3f764de1f273b&oe=60171A44",
               }}
-              icon="true"
+              Icon={150}
+              Round={100}
             ></BasicImage>
-            <View style={{ marginTop: 16, flexDirection: "column" }}>
-              <Text style={{ fontWeight: "800" }}>
-                Email: {this.props.typedEmail}
-              </Text>
-              <Text style={{ fontWeight: "800" }}>
-                Tên: {this.props.typedName}
-              </Text>
-              <Text style={{ fontWeight: "800" }}>
-                Giới tính: {this.props.typedGender}
-              </Text>
-              <Text style={{ fontWeight: "800" }}>
-                Ngày sinh: {this.props.typedBirthday}
-              </Text>
-              <Text style={{ fontWeight: "800" }}>
-                Số điện thoại: {this.props.typedPhone}
-              </Text>
+            </View>
+              <View
+                style={{
+                  flexDirection: "column",
+                  paddingVertical: 8,
+                  paddingHorizontal: 16,
+                  justifyContent: "space-around",
+                }}
+              >
+                <View justifyContent="space-between" flexDirection="row">
+                  <Text style={{fontSize:16, fontWeight: "800" }}>Email:</Text>
+                  <Text style={{ fontSize:16, fontWeight: "400" }}>
+                    {this.props.typedEmail}
+                  </Text>
+                </View>
+                <View justifyContent="space-between" flexDirection="row">
+                  <Text style={{ fontSize:16, fontWeight: "800" }}>Tên:</Text>
+                  <Text style={{ fontSize:16, fontWeight: "400" }}>
+                    {this.props.typedName}
+                  </Text>
+                </View>
+                <View justifyContent="space-between" flexDirection="row">
+                  <Text style={{ fontSize:16, fontWeight: "800" }}>Giới tính:</Text>
+                  <Text style={{ fontSize:16, fontWeight: "400" }}>
+                    {this.props.typedGender}
+                  </Text>
+                </View>
+                <View justifyContent="space-between" flexDirection="row">
+                  <Text style={{ fontSize:16, fontWeight: "800" }}>Ngày sinh:</Text>
+                  <Text style={{ fontSize:16, fontWeight: "400" }}>
+                    {this.props.typedBirthday}
+                  </Text>
+                </View>
+                <View justifyContent="space-between" flexDirection="row">
+                  <Text style={{ fontSize:16, fontWeight: "800" }}>Số điện thoại:</Text>
+                  <Text style={{ ffontSize:16, ontWeight: "400" }}>
+                    {this.props.typedPhone}
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
-          <View style={{ alignItems:"center",marginTop:16,height:'50%',flexDirection: "column",justifyContent:"space-around" }}>
-          <ButtonMod
-            Text="Cập nhật ảnh đại diện"
-            onPress={this.ChangeAva}
-          ></ButtonMod>
-          <ButtonMod Text="Đổi mật khẩu" onPress={this.ChangePass}
-          ></ButtonMod>
-          <ButtonMod
-            Text="Chỉnh sửa thông tin cá nhân"
-            onPress={this.ChangeInfo}
-          ></ButtonMod>
-          <ButtonMod Text="Đăng xuất" onPress={this.LogOut}
-          ></ButtonMod>
-          </View>
+          <View
+              style={{
+                alignItems: "center",
+                height: "40%",
+                flexDirection: "column",
+                justifyContent: "space-around",
+                width: "100%",
+                
+              }}
+            >
+              <ButtonMod
+                styleText={{ color: colors.white }}
+                Text="Chỉnh sửa thông tin cá nhân"
+                onPress={this.ChangeInfo}
+              ></ButtonMod>
+              <ButtonMod
+                styleText={{ color: colors.white }}
+                Text="Cập nhật ảnh đại diện"
+                onPress={this.ChangeAva}
+              ></ButtonMod>
+              <ButtonMod
+                styleText={{ color: colors.white }}
+                Text="Đổi mật khẩu"
+                onPress={this.ChangePass}
+              ></ButtonMod>
+              <ButtonMod
+                styleText={{ color: colors.white }}
+                styleContainer={{ backgroundColor: colors.Darkpink }}
+                Text="Đăng xuất"
+                onPress={this.LogOut}
+              ></ButtonMod>
+            </View>
         </View>
       </SafeAreaView>
     );

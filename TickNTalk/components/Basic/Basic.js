@@ -45,7 +45,7 @@ export const styles=StyleSheet.create({
         height: windowHeight,
         width: windowWidth,
         alignItems:"center",
-        backgroundColor: "white",
+        backgroundColor: colors.lightpink,
     },
     container: {
         height: windowHeight*0.97,
@@ -70,8 +70,8 @@ export const styles=StyleSheet.create({
     header:{
         fontWeight:"800",
         fontSize:sizeFactor*2,
-        marginTop:sizeFactor*2,
-        color:colors.darkgrey,
+        marginTop:0,
+        color:"whitesmoke",
       },
     mini_header: {
         fontWeight:"800",
@@ -130,6 +130,7 @@ export const styles=StyleSheet.create({
         marginTop:-sizeFactor*0.5,
         marginLeft:sizeFactor*14,
         color: colors.blue,
+        marginTop:16,
       },
     Login_button:{
         width:sizeFactor*15,
@@ -188,7 +189,6 @@ export const styles=StyleSheet.create({
       },
       SmallButton:{
         alignItems:'center',
-        marginTop:32,
         flexDirection:'row',
         justifyContent:"center",
         backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -243,7 +243,7 @@ export const MessageCard =(props)=>
     
     return (
       <TouchableOpacity style={styles.MessageCard} onPress={props.onPress}>
-        <BasicImage icon="true"
+        <BasicImage Icon={50}
         source={{uri:props.ImageSource}}></BasicImage>       
         <View style={{  paddingTop:5,
                         paddingLeft:5,
@@ -286,17 +286,17 @@ export const ButtonMod=(props)=>{
 export const ButtonIcon=(props)=>{
     return(
         <TouchableOpacity style={styles.SmallButton} onPress={props.onPress}>
-        <MaterialIcons name={props.MaterialFamilyIconName} size={props.size} color={'black'}></MaterialIcons>
+        <MaterialIcons name={props.MaterialFamilyIconName} size={props.size} color={"whitesmoke"}></MaterialIcons>
         </TouchableOpacity>
     )
 }
 export const BasicImage=(props)=>{
     return(
-        <Image style={{width:props.icon=='false'?200: props.icon=="smaller"?30:50,
-            height:props.icon=='false'?200:props.icon=="smaller"?30:50,
+        <Image style={{width:props.Icon,
+            height:props.Icon,
             alignItems:"center",
             justifyContent:"center",
-            borderRadius:70/3,}}
+            borderRadius:props.Round,}}
             source={props.source}/>
     )
 }
@@ -305,7 +305,7 @@ export const ChatMessage_Orther=(props)=>{
         <View style={{alignItems:"flex-start",marginTop:16}}>
         <View style={styles.ChatMessage}>
             
-            <BasicImage icon="smaller"
+            <BasicImage Icon={30}
                 source={{uri:props.ImageSource}}></BasicImage>
             <Text style={{backgroundColor:colors.lightpink,borderRadius:70/4,marginLeft:8,maxWidth:sizeFactor*18}}
                     wrapped={true}
@@ -324,7 +324,8 @@ export const ChatMessage_Mine=(props)=>{
                 {props.Content}
             </Text>
             <Text style={{marginTop:10,fontSize:12, fontWeight:"100"}}>
-                {props.Status===true? "Đã xem": "Đã gửi"}
+                {props.Status===true? "Đã xem lúc": "Đã gửi lúc"}
+                {props.Time}
             </Text>
         </View>
     );
@@ -342,7 +343,7 @@ export const ChatHeader=(props)=>{
                                      flexDirection: 'row',alignItems: 'center'}} 
                             onPress={props.goToInfo}
             >
-                <BasicImage icon="true"
+                <BasicImage Icon={50}
                     source={{uri:props.ImageSource}}></BasicImage>    
                  
                     <Text 

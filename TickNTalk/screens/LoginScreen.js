@@ -7,7 +7,30 @@ import {
   styles,
   colors,
 } from "../components/Basic/Basic";
-export default class ChatScreen extends React.Component {
+import firebase from "firebase";
+import {connect} from "react-redux"
+import {ChangeEmailAction} from "../actions/index"
+
+export class LoginScreen extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      loading: true,
+      authenticated: false,
+    };
+  }
+
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ loading: false, authenticated: true });
+        this.props.Update(user.email);
+      } else {
+        this.setState({ loading: false, authenticated: false });
+      }
+    });
+  }
+  
   state = {};
   SignIn = () => {
     this.props.navigation.replace("SignIn");
@@ -15,12 +38,18 @@ export default class ChatScreen extends React.Component {
   SignUp = () => {
     this.props.navigation.replace("SignUp");
   };
+  Dashboard = () => {
+    this.props.navigation.replace("Dashboard");
+  }
   render() {
+    if (this.state.loading) return null; // Render loading/splash screen etc
+
+    if (this.state.authenticated) this.Dashboard();
     return (
-      <SafeAreaView style={styles.containerLI}>
+      <SafeAreaView style={[styles.containerLI,{backgroundColor: "white"}]}>
         <View style={{ alignItems: "center" }}>
           <View style={{ marginTop: 32, alignItems: "center" }}>
-            <BasicImage icon="false" source={require("../assets/Logo.png")} />
+            <BasicImage Icon={200} source={require("../assets/Logo.png")} />
             <Text style={styles.headerLI}>TICKnTALK</Text>
           </View>
           <View style={{ alignItems: "center", paddingTop: 64 }}>
@@ -37,3 +66,17 @@ export default class ChatScreen extends React.Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return{
+      typedEmail: state.emailReducer,
+  }
+};
+
+const mapDispatchToProps = (dispatch) =>{
+  return {
+      Update: (typedEmail) => {
+        dispatch(ChangeEmailAction(typedEmail));
+      },
+  };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

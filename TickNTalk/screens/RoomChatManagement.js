@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Button,Text,TextInput, View, Dimensions,StyleSheet, TouchableOpacity,FlatList,KeyboardAvoidingView } from 'react-native'
 import { SafeAreaView,NavigationContainer } from 'react-native-safe-area-context'
 import { EvilIcons } from '@expo/vector-icons';
-import {styles,ButtonIcon} from '../components/Basic/Basic'
+import {styles,ButtonIcon,colors} from '../components/Basic/Basic'
 import {SearchBar} from 'react-native-elements'
 
 export default class RoomChatManagements extends React.Component {
@@ -19,11 +19,13 @@ export default class RoomChatManagements extends React.Component {
     }
     render() {
         return (
-          <SafeAreaView style={styles.container}>
+          <SafeAreaView style={styles.containerLI}>
           <KeyboardAvoidingView style={styles.container} behavior="padding">
-              <View style={{width:'90%'}} justifyContent="space-between" alignItems='center' flexDirection="row">
+              <View style={{ backgroundColor: colors.lightpink,width:"100%",alignItems:"center" }}>
+              <View style={[styles.header,{width:'90%'}]} justifyContent="space-between" alignItems='center' flexDirection="row">
               <Text style={styles.header}>Nhóm</Text>                        
               <ButtonIcon MaterialFamilyIconName="group-add" size={33}/>
+              </View>
               </View>
               <View style={{flexDirection:'column'}} justifyContent="stretch">
                 

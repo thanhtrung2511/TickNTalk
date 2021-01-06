@@ -2,7 +2,7 @@ import React from 'react';
 import { Platform,FlatList, TouchableOpacity, SafeAreaView, View,ScrollView, TextInput,KeyboardAvoidingView} from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
 import Fire from "../Fire";
-import {styles,ChatHeader,ChatMessage_Mine,ChatMessage_Orther} from "../components/Basic/Basic"
+import {styles,ChatHeader,ChatMessage_Mine,ChatMessage_Orther,colors} from "../components/Basic/Basic"
 import {Ionicons} from '@expo/vector-icons'
 import {ChangeRoomIDAction,ChangeEmailAction} from "../actions/index"
 import {connect} from "react-redux"
@@ -40,7 +40,7 @@ export class ChatScreen extends React.Component {
     // const chat=<GiftedChat messages={this.state.messages} onSend={Fire.send} user={this.user}/>;
     
     return ( 
-      <SafeAreaView style={styles.container}> 
+      <SafeAreaView style={styles.containerLI}> 
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <ChatHeader ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
                     Name={this.props.curRoomID}
@@ -60,7 +60,7 @@ export class ChatScreen extends React.Component {
             <TouchableOpacity onPress={this.ImageSend}>
                 <Ionicons name="ios-camera" size={30} color="black" />
             </TouchableOpacity>
-            <TextInput style={styles.ChatScreen_input}
+            <TextInput style={[styles.input,{justifyContent:"flex-start"}]}
                       placeholder="Aa"
                       multiline
                       editable
@@ -68,8 +68,9 @@ export class ChatScreen extends React.Component {
                       numberOfLines={4}
                       onChangeText={(typedPassword)=>{
                         this.setState({typedPassword});
-                        
+                      
                       }}
+                    
                       value={this.state.password}/>
             <TouchableOpacity style={{marginLeft:16}} onPress={this.ImageSend}>
               <Ionicons name="md-send" size={30} color="black" />
