@@ -49,24 +49,18 @@ export class ChatScreen_GiftedChat extends React.Component {
       snapshot.forEach((child) => {
         let msg = {
           Id: child.key,
-          User: child.toJSON().User,
+          SenderEmail: child.toJSON().User,
           RoomID: child.toJSON().RoomID,
-          CreatedAt: child.toJSON().CreatedAt,
           RawData: child.toJSON().RawData,
         };
 
-
         if(msg.RoomID === this.props.curRoomID)
         {
-          // if(msg.CreatedAt !== undefined)
-          //   msg.RawData.createdAt = Date.parse(msg.CreatedAt.substring(1, msg.CreatedAt.length));
-
-          // console.log(JSON.stringify(msg.RawData));
           msgs.push(msg.RawData);
         };
       });
 
-      // msgs.sort((x, y) => x.createdAt.toUpperCase() > y.createdAt.toUpperCase());
+      msgs.sort((x, y) => x.createdAt < y.createdAt);
 
       this.setState({ messages: msgs });
     });
@@ -79,10 +73,10 @@ export class ChatScreen_GiftedChat extends React.Component {
       return;
 
     // CuteTN Note: Add new message to Firebase
+    newMessage[0].createdAt = Date.parse(newMessage[0].createdAt); // CuteTN Note: somehow, Firebase cannot understand Giftedchat raw data :)
     MessageRef.push({
-      User: this.props.loggedInEmail,
+      SenderEmail: this.props.loggedInEmail,
       RoomID: this.props.curRoomID,
-      CreatedAt: JSON.stringify(newMessage[0].createdAt),
       RawData: newMessage[0],
     })
 
