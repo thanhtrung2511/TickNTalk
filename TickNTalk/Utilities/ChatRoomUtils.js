@@ -25,3 +25,7 @@ export function CheckRoomContainUser(room, email) {
 export function CountNumberOfMembers(room) {
     return Object.values(room.Members).length;
 }
+
+export function GetRoomName() {
+
+}

@@ -15,6 +15,7 @@ import SignUpScreen from './SignUpScreen'
 import ChangePass from './ChangePass'
 import UpdateAvaScreen from './UpdateAvaScreen'
 import SignUpCont from './SignUpCont'
+import ChatScreen_GiftedChat from './ChatScreen_GiftedChat'
 import {colors} from '../components/Basic/Basic'
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
@@ -123,7 +124,7 @@ const AppNavigator = createStackNavigator(
     SignIn: SignInScreen,
     SignUp: SignUpScreen,
     EditMyInfo: PersonalInfoEdit ,
-    ChatScr:ChatScreen,
+    ChatScr:ChatScreen_GiftedChat,
     ChatInfo: ChatInfo,
     Dashboard: TabNavigator,
     ChangePass: ChangePass,
