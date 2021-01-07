@@ -85,7 +85,6 @@ export class ChatScreen_GiftedChat extends React.Component {
     }
 
     this.props.UpdateRoomID(tempRoom);
-    // this.forceUpdate();
   }
 
   SendMessage(newMessage = []) {
@@ -128,7 +127,7 @@ export class ChatScreen_GiftedChat extends React.Component {
         <GiftedChat
           messages={this.state.messages}
           onSend={newMessage => this.HandlePressSend(newMessage) }
-          user={{ _id: this.props.loggedInEmail }}
+          user={{ _id: this.props.loggedInEmail.toUpperCase() }}
         >
         </GiftedChat>
 

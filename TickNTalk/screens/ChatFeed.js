@@ -278,11 +278,11 @@ export class ChatFeed extends React.Component {
                   let roomId = item.RoomID;
 
                   // if title is nothing, then get friend's name
-                  if (title === "" || title === undefined) {
+                  if (!title) {
                     const friendEmail = GetFriendEmail(item, this.props.loggedInEmail);
                     const friend = GetUserByEmail(this.state.listUsers, friendEmail);
 
-                    if (friend === undefined) title = "Người dùng TickNTalk";
+                    if (!friend) title = "Người dùng TickNTalk";
                     else title = friend.Name;
                   }
 
@@ -349,7 +349,7 @@ export class ChatFeed extends React.Component {
                 renderItem={({ item, index }) => {
                   let title = item.Name;
 
-                  if (title === undefined || title === "") {
+                  if (!title) {
                     title = "Người dùng TickNTalk";
                   }
 
