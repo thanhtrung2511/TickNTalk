@@ -1,6 +1,6 @@
 export function GetFriendEmail(friendRoom, loggedInEmail) {
-    let result = friendRoom.Members[0];
-    if (result === loggedInEmail) result = friendRoom.Members[1];
+    let result = friendRoom.Data.Members[0];
+    if (result === loggedInEmail) result = friendRoom.Data.Members[1];
 
     return result;
 }
@@ -12,7 +12,7 @@ export function GetUserByEmail(listUsers, email) {
 
 export function CheckRoomContainUser(room, email) {
     let flagFound = false;
-    Object.values(room.Members).forEach((e) => {
+    Object.values(room.Data.Members).forEach((e) => {
       if (e === email) {
         flagFound = true;
         return;
@@ -23,9 +23,17 @@ export function CheckRoomContainUser(room, email) {
 };
 
 export function CountNumberOfMembers(room) {
-    return Object.values(room.Members).length;
+    return Object.values(room.Data.Members).length;
 }
 
-export function GetRoomName() {
+export function CreateNullRoom(members) {
+  const result = {
+    RoomID: null,
+    Data: {
+      RoomName: "",
+      Members: members, 
+    }
+  }
 
+  return result;
 }

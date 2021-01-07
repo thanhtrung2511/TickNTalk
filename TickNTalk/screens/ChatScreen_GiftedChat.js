@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import { Platform,FlatList, TouchableOpacity, SafeAreaView, View,ScrollView, TextInput,KeyboardAvoidingView} from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
-import Fire from "../Fire";
+import Fire, { RoomRef } from "../Fire";
 import {styles,ChatHeader,ChatMessage_Mine,ChatMessage_Orther} from "../components/Basic/Basic"
 import {Ionicons} from '@expo/vector-icons'
 import {ChangeRoomIDAction,ChangeEmailAction} from "../actions/index"
 import {connect} from "react-redux"
 import {UserRef, MessageRef} from "../Fire"
+import { CreateNullRoom } from '../Utilities/ChatRoomUtils';
 
 
 export class ChatScreen_GiftedChat extends React.Component {
@@ -49,15 +50,16 @@ export class ChatScreen_GiftedChat extends React.Component {
       snapshot.forEach((child) => {
         let msg = {
           Id: child.key,
-          SenderEmail: child.toJSON().User,
+          SenderEmail: child.toJSON().SenderEmail,
           RoomID: child.toJSON().RoomID,
-          RawData: child.toJSON().RawData,
+          Data: child.toJSON().Data,
         };
 
-        if(msg.RoomID === this.props.curRoomID)
-        {
-          msgs.push(msg.RawData);
-        };
+        if(msg.Data)
+          if(msg.RoomID === this.props.curRoom.RoomID)
+          {
+            msgs.push(msg.Data);
+          };
       });
 
       msgs.sort((x, y) => x.createdAt < y.createdAt);
@@ -66,45 +68,70 @@ export class ChatScreen_GiftedChat extends React.Component {
     });
   }
 
+  CreateNewRoom(members){
+    let newRoom = CreateNullRoom(members);
+    newRoom.Data.CreatedDate = Date.now();
 
-  // helper method that is sends a message
-  handleSend(newMessage = []) {
+    return newRoom;
+  }
+
+  async PushAndUseNewRoom(newRoom)
+  {
+    const newRoomDataRef = await RoomRef.push(newRoom.Data);
+
+    let tempRoom = { 
+      RoomID: newRoomDataRef.key,
+      Data: newRoom.Data,
+    }
+
+    this.props.UpdateRoomID(tempRoom);
+    // this.forceUpdate();
+  }
+
+  SendMessage(newMessage = []) {
     if(newMessage[0] === undefined)
       return;
 
     // CuteTN Note: Add new message to Firebase
-    newMessage[0].createdAt = Date.parse(newMessage[0].createdAt); // CuteTN Note: somehow, Firebase cannot understand Giftedchat raw data :)
+    newMessage[0].createdAt = Date.parse(newMessage[0].createdAt); // CuteTN Note: somehow, Firebase cannot understand Giftedchat data :)
     MessageRef.push({
       SenderEmail: this.props.loggedInEmail,
-      RoomID: this.props.curRoomID,
-      RawData: newMessage[0],
+      RoomID: this.props.curRoom.RoomID,
+      Data: newMessage[0],
     })
 
-    this.setState({ messages: GiftedChat.append(this.state.messages, newMessage) });
+    const msgs = this.state.messages;
+    // this.setState({ messages: GiftedChat.append(msgs, newMessage) }); // CuteTN Note: this is BUGGY :)
+    GiftedChat.append(msgs, newMessage);
+  }
+
+  // helper method that is sends a message
+  async HandlePressSend(newMessage = []) {
+    if(!this.props.curRoom.RoomID) {
+      const members = this.props.curRoom.Data.Members
+      const newRoom = this.CreateNewRoom(members);
+      this.PushAndUseNewRoom(newRoom).then(
+        (value) => {
+          this.state.messages = [];
+          this.SendMessage(newMessage)
+        }
+      );
+    }
+    else {
+      this.SendMessage(newMessage);
+    }
   }
 
   render() {
-    
-    // const chat=<GiftedChat messages={this.state.messages} onSend={Fire.send} user={this.user}/>;
-    
     return ( 
     <KeyboardAvoidingView style={styles.ChatContainer}> 
         <GiftedChat
           messages={this.state.messages}
-          onSend={newMessage => this.handleSend(newMessage)}
+          onSend={newMessage => this.HandlePressSend(newMessage) }
           user={{ _id: this.props.loggedInEmail }}
         >
         </GiftedChat>
-        {/* <FlatList
-          data={this.state.messages}
-          renderItem={({ item, index }) => {
-            <Text>
-              item
-            </Text>
-          }}
-        >
 
-        </FlatList> */}
         
       </KeyboardAvoidingView>
     )
@@ -115,7 +142,7 @@ export class ChatScreen_GiftedChat extends React.Component {
 const mapStateToProps = (state) => {
   return{
       loggedInEmail: state.emailReducer,
-      curRoomID: state.roomReducer,
+      curRoom: state.roomReducer,
   }
 };
 
@@ -124,8 +151,8 @@ const mapDispatchToProps = (dispatch) =>{
       Update: (loggedInEmail) => {
         dispatch(ChangeEmailAction(loggedInEmail));
       },
-      updateRoomID: (curID) => {
-        dispatch(ChangeRoomIDAction(curID));
+      UpdateRoomID: (curRoom) => {
+        dispatch(ChangeRoomIDAction(curRoom));
       },
   };
 }

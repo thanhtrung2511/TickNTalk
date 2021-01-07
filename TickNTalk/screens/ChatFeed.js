@@ -29,6 +29,7 @@ import {
   GetUserByEmail,
   CheckRoomContainUser,
   CountNumberOfMembers,
+  CreateNullRoom,
 } from "../Utilities/ChatRoomUtils";
 
 export class ChatFeed extends React.Component {
@@ -68,11 +69,7 @@ export class ChatFeed extends React.Component {
       let users = [];
 
       snapshot.forEach((child) => {
-        users.push({
-          Email: child.toJSON().Email,
-          Phone: child.toJSON().Phone,
-          Name: child.toJSON().Name,
-        });
+        users.push(child.toJSON())
       });
 
       users.sort((x, y) => x.Name.toUpperCase() > y.Name.toUpperCase());
@@ -91,11 +88,10 @@ export class ChatFeed extends React.Component {
       );
 
       snapshot.forEach((child) => {
+        const Data = child.toJSON();
         let room = {
           RoomID: child.key,
-          RoomName: child.toJSON().RoomName,
-          CreatedDate: child.toJSON().CreatedDate,
-          Members: child.toJSON().Members,
+          Data,
         };
 
         if (CheckRoomContainUser(room, this.props.loggedInEmail)) {
@@ -278,7 +274,7 @@ export class ChatFeed extends React.Component {
                 alignItems="center"
                 data={this.state.filteredFriends}
                 renderItem={({ item, index }) => {
-                  let title = item.RoomName;
+                  let title = item.Data.RoomName;
                   let roomId = item.RoomID;
 
                   // if title is nothing, then get friend's name
@@ -297,7 +293,7 @@ export class ChatFeed extends React.Component {
                         Name={title}
                         LastestChat="chibi so ciu"
                         isRead="true"
-                        onPress={() => { this.ChatScreenNav(roomId); }}
+                        onPress={() => { this.ChatScreenNav(item); }}
                       ></MessageCard>
                     </Text>
                   );
@@ -318,7 +314,7 @@ export class ChatFeed extends React.Component {
                 alignItems="center"
                 data={this.state.filteredGroups}
                 renderItem={({ item, index }) => {
-                  const title = item.RoomName;
+                  const title = item.Data.RoomName;
                   const roomId = item.RoomID;
 
                   return (
@@ -329,7 +325,7 @@ export class ChatFeed extends React.Component {
                         LastestChat="chibi so ciu"
                         isRead="true"
                         onPress={() => {
-                          this.ChatScreenNav(roomId);
+                          this.ChatScreenNav(item);
                         }}
                       ></MessageCard>
                     </Text>
@@ -357,6 +353,9 @@ export class ChatFeed extends React.Component {
                     title = "Người dùng TickNTalk";
                   }
 
+                  const members = [this.props.loggedInEmail, item.Email];
+                  const nullRoom = CreateNullRoom(members);
+
                   return (
                     <Text>
                       <MessageCard
@@ -364,6 +363,9 @@ export class ChatFeed extends React.Component {
                         Name={title}
                         LastestChat="Nhắn tin để kết bạn!"
                         isRead="true"
+                        onPress={() => {
+                          this.ChatScreenNav(nullRoom);
+                        }}
                       ></MessageCard>
                     </Text>
                   );
