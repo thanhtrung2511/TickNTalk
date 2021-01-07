@@ -37,3 +37,24 @@ export function CreateNullRoom(members) {
 
   return result;
 }
+
+// WARNING 1: this function modify directly to listRooms
+// WARNING 2: this function takes O(MN), N = listRooms.length, M = listMessages.length
+export function LoadLatestMessagesIntoRooms(listRooms, listMessages)
+{
+  Object.values(listRooms).forEach((room) => {
+    Object.values(listMessages).forEach((msg) => {
+      if(msg.RoomID === room.RoomID){
+        if(room.LatestMessage){
+          const tempMsg = room.LatestMessage;
+
+          if(tempMsg.Data.createdAt < msg.Data.createdAt){
+            room.LatestMessage = msg;
+          }          
+        }
+        else
+          room.LatestMessage = msg;
+      }
+    })
+  })
+}
