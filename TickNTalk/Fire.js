@@ -39,5 +39,8 @@ firebase.initializeApp(firebaseConfig);
 export const rootRef = firebase.database().ref();
 export const UserRef = rootRef.child('user');
 export const RoomRef = rootRef.child('room');
+
+export const storage  = firebase.storage().ref();
+export const imageRef = storage.child('image');
 // console.log(RoomRef);
 
