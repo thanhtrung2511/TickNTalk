@@ -60,6 +60,17 @@ export class ChatFeed extends React.Component {
     this.props.navigation.navigate("ChatScr");
   }
 
+  componentDidUpdate = (previousProp, previousState)=>{
+    if(
+      previousState.listMessages !== this.state.listMessages ||
+      previousState.listRooms !== this.state.listRooms ||
+      previousState.listUsers !== this.state.listUsers 
+      )
+    {
+      this.MyRefresh();
+    }
+  }
+
   SubscribeDb() {
     UserRef.on("value", (snapshot) => {
       let users = [];
@@ -71,7 +82,7 @@ export class ChatFeed extends React.Component {
       users.sort((x, y) => x.Name.toUpperCase() > y.Name.toUpperCase());
 
       this.setState({ listUsers: users });
-      this.MyRefresh();
+      // this.MyRefresh();
     });
 
     RoomRef.on("value", (snapshot) => {
@@ -88,7 +99,7 @@ export class ChatFeed extends React.Component {
       });
 
       this.setState({ listRooms: rooms });
-      this.MyRefresh();
+      // this.MyRefresh();
     });
 
     MessageRef.on("value", (snapshot) => {
@@ -107,19 +118,16 @@ export class ChatFeed extends React.Component {
       });
 
       this.setState({ listMessages: msgs });
-      this.MyRefresh();
+      // this.MyRefresh();
     });
   }
 
   MyRefresh() {
+    let tempRooms = this.state.listRooms;
+    const tempMsgs = this.state.listMessages;
+    LoadLatestMessagesIntoRooms(tempRooms, tempMsgs);
+
     this.ArrangeChatRooms();
-
-    // let tempRooms = this.state.listRooms;
-    // const tempMsgs = this.state.listMessages;
-    // console.log("cutetn debug: " + this.state.listMessages.length);
-    // LoadLatestMessagesIntoRooms(tempRooms, tempMsgs);
-    // this.setState({ listRooms: tempRooms });
-
     this.FilterSearchedRoom();
   }
 
