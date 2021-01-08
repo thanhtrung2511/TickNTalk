@@ -49,6 +49,6 @@ export function ChangeLoginStatus(isLogin){
 export function ChangeAvaAction(urlAva){
     return {
         type:"CHANGE_AVA_ACTION",
-        urlAva:urlAva
+        UrlAva:urlAva
     }
 }

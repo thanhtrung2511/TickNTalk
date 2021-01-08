@@ -23,6 +23,7 @@ import {
   ChangeBirthdayAction,
   ChangePhoneAction,
   ChangeGenderAction,
+    ChangeAvaAction,
 } from '../actions/index';
 import {connect, Provider} from 'react-redux';
 import {UserRef} from '../Fire';
@@ -66,6 +67,9 @@ export class PersonalInFo extends React.Component {
           this.props.ChangeBirthdayAction (birthdayTmp);
           phoneTmp = element.toJSON ().Phone;
           this.props.ChangePhoneAction (phoneTmp);
+          console.log(element.toJSON ().urlAva);
+          tmpuri= element.toJSON ().urlAva;
+          this.props.ChangeAvaAction (tmpuri);
         });
       });
   }
@@ -138,6 +142,7 @@ function mapStateToProps (state) {
     typedBirthday: state.birthdayReducer,
     typedPhone: state.phoneReducer,
     typedGender: state.genderReducer,
+    uriAva: state.avaReducer,
   };
 }
 
@@ -161,6 +166,10 @@ function mapDispatchToProps (dispatch) {
 
     ChangeGenderAction: typedGender => {
       dispatch (ChangeGenderAction (typedGender));
+    },
+
+     ChangeAvaAction: uriAva => {
+      dispatch (ChangeAvaAction (uriAva));
     },
   };
 }

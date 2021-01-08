@@ -69,9 +69,9 @@ export const styles=StyleSheet.create({
     },
 ProfilePhotoContainer:{
   backgroundColor: "#dfe6e9",
-  width: 85,
-  height: 85,
-  borderRadius: 40,
+  width: 200,
+  height: 200,
+  borderRadius: 100,
   alignSelf: 'center',
   marginTop: 16,
   overflow: 'hidden',
@@ -87,49 +87,6 @@ ProfilePhoto: {
 flex: 1,
 },
 
-AuthContainer:{
-  marginTop: 34 ,
-},
-
-AuthField:{
- height: 42,
-},
-
-SignUpContainer :{
-  height: 40,
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: colors.pink,
-  borderRadius: 6,
-},
-
-SignIn:{
-  marginTop: 15,
-},
-
-HeaderGraphic:{
-  width: 100,
-  top: -50,
-  zIndex: -100,
-},
-
-LeftCircle :{
-  backgroundColor: colors.primaryDark,
-  width: 200,
-  height: 200,
-  borderRadius: 100,
-  left: -50,
-  top: -50,
-},
-
-RightCircle :{
-  backgroundColor: colors.purpleBlue,
-  width: 400,
-  height: 400,
-  borderRadius: 200,
-  right: -100,
-  top: -200,
-},
     text: {
         fontSize: sizeFactor,
         marginBottom: sizeFactor * 0.75,
@@ -162,14 +119,7 @@ RightCircle :{
         marginHorizontal: sizeFactor * 1.25,
         color: "black",
     },
-    image_icon:{
-        width:50,
-        height:50,
-        alignItems:"center",
-        justifyContent:"center",
-        borderRadius:70/3,
-        backgroundColor:colors.black
-    },
+
     input:{
         marginTop:sizeFactor*0.75,
         height:sizeFactor*3,
