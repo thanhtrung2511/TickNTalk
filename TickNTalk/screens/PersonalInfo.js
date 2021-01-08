@@ -55,6 +55,7 @@ export class PersonalInFo extends React.Component {
     var birthdayTmp = '';
     var phoneTmp = '';
     var genderTmp = '';
+    var tmpuri='';
     UserRef.orderByChild ('Email')
       .equalTo (this.props.typedEmail)
       .on ('value', snap => {

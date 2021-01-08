@@ -139,29 +139,19 @@ class UpdateAvaScreen extends React.Component {
     });
   };
 
-//  componentDidMount () {
-//     var nameTmp = '';
-//     var birthdayTmp = '';
-//     var phoneTmp = '';
-//     var genderTmp = '';
-//     UserRef.orderByChild ('Email')
-//       .equalTo (this.props.typedEmail)
-//       .on ('value', snap => {
-//         snap.forEach (element => {
-//           nameTmp = element.toJSON ().Name;
-//           this.props.ChangeNameAction (nameTmp);
-//           genderTmp = element.toJSON ().Gender;
-//           this.props.ChangeGenderAction (genderTmp);
-//           birthdayTmp = element.toJSON ().Birthday;
-//           this.props.ChangeBirthdayAction (birthdayTmp);
-//           phoneTmp = element.toJSON ().Phone;
-//           this.props.ChangePhoneAction (phoneTmp);
-//           //console.log(element.toJSON ().urlAva);
-//           tmpuri= element.toJSON ().urlAva;
-//           this.props.ChangeAvaAction (tmpuri);
-//         });
-//       });
-//   }
+ componentDidMount () {
+
+    var tmpuri = '';
+    UserRef.orderByChild ('Email')
+      .equalTo (this.props.typedEmail)
+      .on ('value', snap => {
+        snap.forEach (element => {
+
+          tmpuri= element.toJSON ().urlAva;
+          this.props.ChangeAvaAction (tmpuri);
+        });
+      });
+  }
 
   render () {
 
