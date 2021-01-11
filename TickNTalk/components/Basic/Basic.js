@@ -53,6 +53,26 @@ export const styles=StyleSheet.create({
         alignItems:"center",
         backgroundColor: colors.white,
     },
+ProfilePhotoContainer:{
+  backgroundColor: "#dfe6e9",
+  width: 200,
+  height: 200,
+  borderRadius: 100,
+  alignSelf: 'center',
+  marginTop: 16,
+  overflow: 'hidden',
+},
+
+DefaultProfilePhoto :{
+alignItems: 'center',
+ justifyContent: 'center',
+flex: 1,
+},
+
+ProfilePhoto: {
+flex: 1,
+},
+
     text: {
         fontSize: sizeFactor,
         marginBottom: sizeFactor * 0.75,
@@ -97,14 +117,7 @@ export const styles=StyleSheet.create({
         marginHorizontal: sizeFactor * 1.25,
         color: "black",
     },
-    image_icon:{
-        width:50,
-        height:50,
-        alignItems:"center",
-        justifyContent:"center",
-        borderRadius:70/3,
-        backgroundColor:colors.black
-    },
+
     input:{
         marginTop:sizeFactor*0.75,
         height:sizeFactor*3,
@@ -237,6 +250,24 @@ export const styles=StyleSheet.create({
          alignItems: 'center',
          justifyContent:"flex-start"
      },
+  
+   profileImgContainer: {
+    borderRadius: 75,
+    width: 130,
+    height: 130,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+   profileImg: {
+    width: 130,
+    height: 130,
+    borderRadius: 75,
+  },
+
 })
 export const MessageCard =(props)=>
 {

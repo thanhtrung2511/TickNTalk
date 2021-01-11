@@ -32,10 +32,10 @@ import {
   ChangeBirthdayAction,
   ChangePhoneAction,
   ChangeGenderAction,
-} from "../actions/index";
-import { DataTable } from "react-native-paper";
-import { connect } from "react-redux";
-import { UserRef } from "../Fire";
+    ChangeAvaAction,
+} from '../actions/index';
+import {connect, Provider} from 'react-redux';
+import {UserRef} from '../Fire';
 
 export class PersonalInFo extends React.Component {
   constructor(props) {
@@ -68,23 +68,27 @@ export class PersonalInFo extends React.Component {
     this.props.navigation.navigate("EditMyInfo");
   };
 
-  componentDidMount() {
-    var nameTmp = "";
-    var birthdayTmp = "";
-    var phoneTmp = "";
-    var genderTmp = "";
-    UserRef.orderByChild("Email")
-      .equalTo(this.props.typedEmail)
-      .on("value", (snap) => {
-        snap.forEach((element) => {
-          nameTmp = element.toJSON().Name;
-          this.props.ChangeNameAction(nameTmp);
-          genderTmp = element.toJSON().Gender;
-          this.props.ChangeGenderAction(genderTmp);
-          birthdayTmp = element.toJSON().Birthday;
-          this.props.ChangeBirthdayAction(birthdayTmp);
-          phoneTmp = element.toJSON().Phone;
-          this.props.ChangePhoneAction(phoneTmp);
+  componentDidMount () {
+    var nameTmp = '';
+    var birthdayTmp = '';
+    var phoneTmp = '';
+    var genderTmp = '';
+    var tmpuri='';
+    UserRef.orderByChild ('Email')
+      .equalTo (this.props.typedEmail)
+      .on ('value', snap => {
+        snap.forEach (element => {
+          nameTmp = element.toJSON ().Name;
+          this.props.ChangeNameAction (nameTmp);
+          genderTmp = element.toJSON ().Gender;
+          this.props.ChangeGenderAction (genderTmp);
+          birthdayTmp = element.toJSON ().Birthday;
+          this.props.ChangeBirthdayAction (birthdayTmp);
+          phoneTmp = element.toJSON ().Phone;
+          this.props.ChangePhoneAction (phoneTmp);
+          console.log(element.toJSON ().urlAva);
+          tmpuri= element.toJSON ().urlAva;
+          this.props.ChangeAvaAction (tmpuri);
         });
       });
   }
@@ -216,6 +220,7 @@ function mapStateToProps(state) {
     typedBirthday: state.birthdayReducer,
     typedPhone: state.phoneReducer,
     typedGender: state.genderReducer,
+    uriAva: state.avaReducer,
   };
 }
 
@@ -239,6 +244,10 @@ function mapDispatchToProps(dispatch) {
 
     ChangeGenderAction: (typedGender) => {
       dispatch(ChangeGenderAction(typedGender));
+    },
+
+     ChangeAvaAction: uriAva => {
+      dispatch (ChangeAvaAction (uriAva));
     },
   };
 }

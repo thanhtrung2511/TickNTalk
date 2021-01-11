@@ -40,5 +40,8 @@ export const rootRef = firebase.database().ref();
 export const UserRef = rootRef.child('user');
 export const RoomRef = rootRef.child('room'); 
 export const MessageRef = rootRef.child('message'); 
+
+export const storage  = firebase.storage().ref();
+
 // console.log(RoomRef);
 

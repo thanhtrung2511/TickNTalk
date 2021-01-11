@@ -44,3 +44,11 @@ export function ChangeLoginStatus(isLogin){
         isLogin:isLogin
     }
 }
+
+
+export function ChangeAvaAction(urlAva){
+    return {
+        type:"CHANGE_AVA_ACTION",
+        UrlAva:urlAva
+    }
+}
