@@ -41,7 +41,7 @@ export default class RoomChatManagements extends React.Component {
                     placeholder="Tìm bạn bè..."
                     lightTheme="true"
                     containerStyle={{ marginHorizontal:8,backgroundColor: 'transparent' }}
-                    inputContainerStyle={{ backgroundColor:'whitesmoke',borderRadius:70/3}}
+                    inputContainerStyle={{ backgroundColor:'whitesmoke',borderRadius:24}}
                     leftIconContainerStyle={{marginLeft:16}}
                     inputStyle={{}}
                     placeholder="Tìm kiếm bạn bè.."

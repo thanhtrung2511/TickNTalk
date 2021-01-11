@@ -4,7 +4,6 @@ const roomReducer=(state="",action)=>{
     {
         case "CHANGE_ROOM_ID_ACTION": return action.roomID;
         default: return state;
-    
     }
 }
 export default  roomReducer;

@@ -35,6 +35,9 @@ export class ChatScreen extends React.Component {
   //   Fire.off();
 
   }
+
+
+
   render() {
     
     // const chat=<GiftedChat messages={this.state.messages} onSend={Fire.send} user={this.user}/>;
@@ -42,16 +45,17 @@ export class ChatScreen extends React.Component {
     return ( 
       <SafeAreaView style={styles.containerLI}> 
       <KeyboardAvoidingView style={styles.container} behavior="padding">
+
         <ChatHeader ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
                     Name={this.props.curRoomID}
                     Backward={this.goBack}
         ></ChatHeader>
         
         <ScrollView style={styles.ChatContainer}>
-          <ChatMessage_Orther  Content='Chàhttps://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
-                              ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
-          ></ChatMessage_Orther>
-           <ChatMessage_Mine Content='Chàhttps://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
+          <ChatMessage_Orther  Content="Chao ong"
+                              ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'>
+          </ChatMessage_Orther>
+          <ChatMessage_Mine Content='Chao ba'
                               Status={true}
                               ImageSource='https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
           ></ChatMessage_Mine>
@@ -67,8 +71,8 @@ export class ChatScreen extends React.Component {
                       maxLength={40}
                       numberOfLines={4}
                       onChangeText={(typedPassword)=>{
-                        this.setState({typedPassword});
-                      
+                        // this.setState({typedPassword});
+                        
                       }}
                     
                       value={this.state.password}/>
@@ -81,6 +85,8 @@ export class ChatScreen extends React.Component {
     )
   }
 }
+
+
 const mapStateToProps = (state) => {
   return{
       loggedInEmail: state.emailReducer,

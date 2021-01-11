@@ -19,16 +19,27 @@ import {
 } from "../components/Basic/Basic";
 import firebase from "firebase";
 import { SearchBar } from "react-native-elements";
-import { UserRef, RoomRef } from "../Fire";
+import { UserRef, RoomRef, MessageRef } from "../Fire";
 
 import { Card } from "react-native-paper";
 import { connect } from "react-redux";
 import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
 
+import {
+  GetFriendEmail, 
+  GetUserByEmail,
+  CheckRoomContainUser,
+  CountNumberOfMembers,
+  CreateNullRoom,
+  LoadLatestMessagesIntoRooms,
+} from "../Utilities/ChatRoomUtils";
+
 export class ChatFeed extends React.Component {
   state = {
     toSearchText: "",
     listUsers: [],
+    listRooms: [],
+    listMessages: [],
 
     listGroups: [],
     listFriends: [],
@@ -39,85 +50,117 @@ export class ChatFeed extends React.Component {
     filteredStranger: [],
   };
 
-  Refresh() {
-    this.FetchListUsers();
-    this.FetchListRooms();
+  componentDidMount=()=>
+  {
+    this.SubscribeDb();
+    // this.onChangeSearchText(this.state.toSearchText);
+  }
+  ChatScreenNav=(id)=>
+  {
+    this.props.UpdateRoomID(id);
+    this.props.navigation.navigate("ChatScr");
   }
 
-  componentDidMount = () => {
-    this.FetchChatRooms();
-  };
-  ChatScreenNav = (id) => {
-    this.props.updateRoomID(id);
-    console.log(id);
-    //Hãy update RoomID đã chọn lên Redux
-    this.props.navigation.navigate("ChatScr");
-  };
+  componentDidUpdate = (previousProp, previousState)=>{
+    if(
+      previousState.listMessages !== this.state.listMessages ||
+      previousState.listRooms !== this.state.listRooms ||
+      previousState.listUsers !== this.state.listUsers 
+      )
+    {
+      this.MyRefresh();
+    }
+  }
 
-  componentDidMount() {}
-
-  /// CuteTN Note: a huge violation of SRP
-  FetchChatRooms() {
+  SubscribeDb() {
     UserRef.on("value", (snapshot) => {
-      // temp list of strangers
       let users = [];
 
       snapshot.forEach((child) => {
-        users.push({
-          Email: child.toJSON().Email,
-          Phone: child.toJSON().Phone,
-          Name: child.toJSON().Name,
-        });
+        users.push(child.toJSON())
       });
 
       users.sort((x, y) => x.Name.toUpperCase() > y.Name.toUpperCase());
 
       this.setState({ listUsers: users });
+      // this.MyRefresh();
     });
 
     RoomRef.on("value", (snapshot) => {
-      let gr = [];
-      let fr = [];
-
-      // list of strangers
-      let st = this.state.listUsers.filter(
-        (user) =>
-          user.Email.toUpperCase() !== this.props.loggedInEmail.toUpperCase()
-      );
+      let rooms = [];
 
       snapshot.forEach((child) => {
+        const Data = child.toJSON();
         let room = {
           RoomID: child.key,
-          RoomName: child.toJSON().RoomName,
-          CreatedDate: child.toJSON().CreatedDate,
-          Members: child.toJSON().Members,
+          Data,
         };
 
-        if (this.CheckRoomContainUser(room, this.props.loggedInEmail)) {
-          let memberCnt = this.CountNumberOfMember(room);
-          if (memberCnt === 2) {
-            // add to friend list
-            fr.push(room);
-            // remove from stranger
-            let email = this.GetFriendEmail(room);
-            st = st.filter(
-              (user) => user.Email.toUpperCase() !== email.toUpperCase()
-            );
-          } else gr.push(room);
-        }
+        rooms.push(room);
       });
 
-      this.setState({ listStrangers: st });
-      this.setState({ listGroups: gr });
-      this.setState({ listFriends: fr });
+      this.setState({ listRooms: rooms });
+      // this.MyRefresh();
+    });
+
+    MessageRef.on("value", (snapshot) => {
+      // temp list of strangers
+      let msgs = [];
+
+      snapshot.forEach((child) => {
+        let msg = {
+          Id: child.key,
+          SenderEmail: child.toJSON().SenderEmail,
+          RoomID: child.toJSON().RoomID,
+          Data: child.toJSON().Data,
+        };
+
+        msgs.push(msg);
+      });
+
+      this.setState({ listMessages: msgs });
+      // this.MyRefresh();
     });
   }
 
-  GetFriendEmail(friendRoom) {
-    let result = friendRoom.Members[0];
-    if (result === this.props.loggedInEmail) result = friendRoom.Members[1];
+  MyRefresh() {
+    let tempRooms = this.state.listRooms;
+    const tempMsgs = this.state.listMessages;
+    LoadLatestMessagesIntoRooms(tempRooms, tempMsgs);
 
-    return result;
+    this.ArrangeChatRooms();
+    this.FilterSearchedRoom();
+  }
+
+  /// CuteTN Note: a huge violation of SRP
+  ArrangeChatRooms() {
+    let gr = [];
+    let fr = [];
+
+    // list of strangers
+    let st = this.state.listUsers.filter(
+      (user) =>
+        user.Email.toUpperCase() !== this.props.loggedInEmail.toUpperCase()
+    );
+
+    Object.values(this.state.listRooms).forEach((room)=>{
+      if (CheckRoomContainUser(room, this.props.loggedInEmail)) {
+        let memberCnt = CountNumberOfMembers(room);
+        if (memberCnt === 2) {
+          // add to friend list
+          fr.push(room);
+          // remove from stranger
+          let email = GetFriendEmail(room, this.props.loggedInEmail);
+          st = st.filter(
+            (user) => user.Email.toUpperCase() !== email.toUpperCase()
+          );
+        } else gr.push(room);
+      }
+    })
+
+    this.setState({ listStrangers: st });
+    this.setState({ listGroups: gr });
+    this.setState({ listFriends: fr });
   }
 
   // Remove from stranger list
@@ -127,27 +170,6 @@ export class ChatFeed extends React.Component {
     return strangerList.filter(
       (x) => x.Email.toUpperCase() !== email.toUpperCase()
     );
-  }
-
-  /// return undefined if not found
-  GetUserByEmail(email) {
-    return this.state.listUsers.find((user) => user.Email === email);
-  }
-
-  CheckRoomContainUser(room, email) {
-    let flagFound = false;
-    Object.values(room.Members).forEach((e) => {
-      if (e === email) {
-        flagFound = true;
-        return;
-      }
-    });
-
-    return flagFound;
-  }
-
-  CountNumberOfMember(room) {
-    return Object.values(room.Members).length;
   }
 
   /*
@@ -221,6 +243,15 @@ export class ChatFeed extends React.Component {
     }
 */
 
+  FilterSearchedRoom(toSearchText = "")
+  {
+    this.setState({
+      filteredFriends: this.state.listFriends,
+      filteredGroups: this.state.listGroups,
+      filteredStranger: this.state.listStrangers,
+    });
+  }
+
   onChangeSearchText(toSearchText) {
     // // this.state.filteredRooms =  this.state.listRooms.filter(this.isMatchedRoom);
     // let li = [];
@@ -237,11 +268,7 @@ export class ChatFeed extends React.Component {
     // li.sort((x,y) => (x.RoomName.toUpperCase() > y.RoomName.toUpperCase()));
 
     // this.setState({filteredRooms: li});
-    this.setState({
-      filteredFriends: this.state.listFriends,
-      filteredGroups: this.state.listGroups,
-      filteredStranger: this.state.listStrangers,
-    });
+    this.FilterSearchedRoom(toSearchText);
   }
 
   render() {
@@ -263,7 +290,7 @@ export class ChatFeed extends React.Component {
           >
             {/* <TextInput style={styles.input}
                       placeholder="Tìm kiếm bạn bè.."
-                      clearButtonMode={Platform.OS === "ios" ? true:false}
+                      // clearButtonMode={Platform.OS === "ios" ? true:false}
                       onChangeText={Text=>{
                         this.onChangeSearchText(Text);
                       }}>
@@ -278,10 +305,11 @@ export class ChatFeed extends React.Component {
               containerStyle={{
                 marginHorizontal: 8,
                 backgroundColor: "transparent",
+                width: "100%"
               }}
               inputContainerStyle={{
                 backgroundColor: "whitesmoke",
-                borderRadius: 70/3,
+                borderRadius: 23,
               }}
               leftIconContainerStyle={{ marginLeft: 16 }}
               inputStyle={{}}
@@ -302,14 +330,19 @@ export class ChatFeed extends React.Component {
                 alignItems="center"
                 data={this.state.filteredFriends}
                 renderItem={({ item, index }) => {
-                  let title = item.RoomName;
+                  let title = item.Data.RoomName;
+                  let roomId = item.RoomID;
+                  
+                  let latestMsgText = "";
+                  if(item.LatestMessage)
+                    latestMsgText = item.LatestMessage.Data.text;
 
                   // if title is nothing, then get friend's name
-                  if (title === "" || title === undefined) {
-                    const friendEmail = this.GetFriendEmail(item);
-                    const friend = this.GetUserByEmail(friendEmail);
+                  if (!title) {
+                    const friendEmail = GetFriendEmail(item, this.props.loggedInEmail);
+                    const friend = GetUserByEmail(this.state.listUsers, friendEmail);
 
-                    if (friend === undefined) title = "Người dùng TickNTalk";
+                    if (!friend) title = "Người dùng TickNTalk";
                     else title = friend.Name;
                   }
 
@@ -318,9 +351,9 @@ export class ChatFeed extends React.Component {
                       <MessageCard
                         ImageSource="https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
                         Name={title}
-                        LastestChat="chibi so ciu"
+                        LastestChat={latestMsgText}
                         isRead="true"
-                        onPress={this.ChatScreenNav}
+                        onPress={() => { this.ChatScreenNav(item); }}
                       ></MessageCard>
                     </Text>
                   );
@@ -341,8 +374,9 @@ export class ChatFeed extends React.Component {
                 alignItems="center"
                 data={this.state.filteredGroups}
                 renderItem={({ item, index }) => {
-                  const title = item.RoomName;
-                  const id = item.RoomID;
+                  const title = item.Data.RoomName;
+                  const roomId = item.RoomID;
+
                   return (
                     <Text>
                       <MessageCard
@@ -351,7 +385,7 @@ export class ChatFeed extends React.Component {
                         LastestChat="chibi so ciu"
                         isRead="true"
                         onPress={() => {
-                          this.ChatScreenNav(id);
+                          this.ChatScreenNav(item);
                         }}
                       ></MessageCard>
                     </Text>
@@ -375,9 +409,12 @@ export class ChatFeed extends React.Component {
                 renderItem={({ item, index }) => {
                   let title = item.Name;
 
-                  if (title === undefined || title === "") {
+                  if (!title) {
                     title = "Người dùng TickNTalk";
                   }
+
+                  const members = [this.props.loggedInEmail, item.Email];
+                  const nullRoom = CreateNullRoom(members);
 
                   return (
                     <Text>
@@ -386,6 +423,9 @@ export class ChatFeed extends React.Component {
                         Name={title}
                         LastestChat="Nhắn tin để kết bạn!"
                         isRead="true"
+                        onPress={() => {
+                          this.ChatScreenNav(nullRoom);
+                        }}
                       ></MessageCard>
                     </Text>
                   );
@@ -411,8 +451,8 @@ const mapDispatchToProps = (dispatch) => {
     Update: (loggedInEmail) => {
       dispatch(ChangeEmailAction(loggedInEmail));
     },
-    updateRoomID: (curID) => {
-      dispatch(ChangeRoomIDAction(curID));
+    UpdateRoomID: (curRoomID) => {
+      dispatch(ChangeRoomIDAction(curRoomID));
     },
   };
 };
