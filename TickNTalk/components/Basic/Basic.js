@@ -38,6 +38,7 @@ export const colors = {
     skin:"#FFF5D8",
     fushia:"#FF00FF",
     cyan: "lightblue",
+<<<<<<< HEAD
     Darkpink:"#f06292",
     // red: "#ff3b30",
     // orange: "#ff9500",
@@ -85,6 +86,9 @@ export const colors = {
   paleWhite: "#dfe6e9",
   white: "#fff",
   black: "#000",
+=======
+    Darkpink:"#f06292"
+>>>>>>> c7a456c1f7d5ec15f5c64a69003ab86e8b4e5a93
 };
 export const styles=StyleSheet.create({
     containerLI: {
