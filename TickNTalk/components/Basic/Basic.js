@@ -38,7 +38,53 @@ export const colors = {
     skin:"#FFF5D8",
     fushia:"#FF00FF",
     cyan: "lightblue",
-    Darkpink:"#f06292"
+    Darkpink:"#f06292",
+    // red: "#ff3b30",
+    // orange: "#ff9500",
+    // yellow: "#ffcc00",
+    // green: "#34c759",
+    // blue: "#007aff",
+    // indigo: "#5856d6",
+    // purple: "#af52de",
+    // pink: "#f29bd4",
+    // lightpink: "#f7e0f4",
+    // gray: "#8e8e93",
+    // dark: "#48484a",
+    // redDark: "#d70015",
+    // greenDark: "#32a852",
+    // gray2: "#aeaeb2",
+    // gray3: "#c7c7cc",
+    // gray5: "#e5e5ea",
+    // gray6: "#f2f2f7",
+    // white: "#ffffff",
+    // black: "#000000",
+    // skin:"#FFF5D8",
+    // fushia:"#FF00FF",
+    // cyan: "lightblue",
+    // primary: '#283593',
+  primaryLight: '#5f5fc4',
+  primaryDark: '#001064',
+  secondary: '#d32f2f',
+  secondaryLight: '#ff6659',
+  secondaryDark: '#9a0007',
+  red: '#f20544',
+  blue: '#85b4f2',
+  green: '#43a047',
+  lightGreen: '#76d275',
+  greenPastel: '#04d9b2',
+  darkGreen: '#00701a',
+  blueGreen: '#03a688',
+  purpleBlue: '#5550f2',
+  yellow: '#fdd835',
+  pink: '#d773d9',
+  darkPink: '#e91e63',
+  purple: '#7b1fa2',
+  skin: '#f29991',
+  orange: '#e64a19',
+  lightBlack: "#2d3436",
+  paleWhite: "#dfe6e9",
+  white: "#fff",
+  black: "#000",
 };
 export const styles=StyleSheet.create({
     containerLI: {
@@ -53,6 +99,26 @@ export const styles=StyleSheet.create({
         alignItems:"center",
         backgroundColor: colors.white,
     },
+ProfilePhotoContainer:{
+  backgroundColor: "#dfe6e9",
+  width: 200,
+  height: 200,
+  borderRadius: 100,
+  alignSelf: 'center',
+  marginTop: 16,
+  overflow: 'hidden',
+},
+
+DefaultProfilePhoto :{
+alignItems: 'center',
+ justifyContent: 'center',
+flex: 1,
+},
+
+ProfilePhoto: {
+flex: 1,
+},
+
     text: {
         fontSize: sizeFactor,
         marginBottom: sizeFactor * 0.75,
@@ -97,14 +163,7 @@ export const styles=StyleSheet.create({
         marginHorizontal: sizeFactor * 1.25,
         color: "black",
     },
-    image_icon:{
-        width:50,
-        height:50,
-        alignItems:"center",
-        justifyContent:"center",
-        borderRadius:70/3,
-        backgroundColor:colors.black
-    },
+
     input:{
         marginTop:sizeFactor*0.75,
         height:sizeFactor*3,
@@ -237,6 +296,24 @@ export const styles=StyleSheet.create({
          alignItems: 'center',
          justifyContent:"flex-start"
      },
+  
+   profileImgContainer: {
+    borderRadius: 75,
+    width: 130,
+    height: 130,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+   profileImg: {
+    width: 130,
+    height: 130,
+    borderRadius: 75,
+  },
+
 })
 export const MessageCard =(props)=>
 {

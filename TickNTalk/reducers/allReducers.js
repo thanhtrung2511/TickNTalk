@@ -6,6 +6,7 @@ import phoneReducer from './phoneReducer'
 import roomReducer from './roomReducer'
 import isLoginReducer from './isLoginReducer'
 import genderReducer from './genderReducer'
+import avaReducer from './avaReducer'
 //import { firebaseReducer } from 'react-redux-firebase'
 
 
@@ -17,6 +18,7 @@ const allReducers = combineReducers({
     roomReducer,
     phoneReducer,   
     genderReducer,
+    avaReducer,
     //firebase: firebaseReducer
 })
 export default allReducers
