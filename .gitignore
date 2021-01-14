@@ -351,5 +351,6 @@ MigrationBackup/
 
 # Expo
 .expo
+.gradle
 __generated__
 web-build
