@@ -23,9 +23,11 @@ export class LoginScreen extends React.Component {
   componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        console.log(user);
         this.setState({ loading: false, authenticated: true });
         this.props.Update(user.email);
       } else {
+        console.log(user);
         this.setState({ loading: false, authenticated: false });
       }
     });

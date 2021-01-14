@@ -19,7 +19,7 @@ import { UserRef } from "../Fire";
 import DatePicker from "react-native-datepicker";
 import { styles, ButtonMod } from "../components/Basic/Basic";
 import DropDownPicker from "react-native-dropdown-picker";
-
+import {colors} from "../components/Basic/Basic"
 class PersonalInfoEdit extends React.Component {
   constructor(props) {
     super(props);
@@ -53,7 +53,15 @@ class PersonalInfoEdit extends React.Component {
     return (
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
-          <Text style={styles.mini_header} wrapped={true} numberOfLines={2}>Chỉnh sửa thông tin cá nhân</Text>
+        <View style={{ backgroundColor: colors.lightpink,width:"100%",alignItems:"center" }}>
+          <View
+            style={{ width: "90%" }}
+            justifyContent="space-between"
+            flexDirection="row"
+          >
+            <Text style={styles.header}>Chỉnh sửa thông tin</Text>
+          </View>
+          </View>
           <View style={{ marginTop: 32, flexDirection: "column" }}>
             <View>
               <Text>Họ và tên</Text>

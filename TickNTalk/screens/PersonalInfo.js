@@ -127,10 +127,7 @@ export class PersonalInFo extends React.Component {
             >
               <View alignItems="center">
               <BasicImage
-              source={{
-                uri:
-                  "https://instagram.fsgn3-1.fna.fbcdn.net/v/t51.2885-19/s150x150/123146532_711576649507850_6303894487975334088_n.jpg?_nc_ht=instagram.fsgn3-1.fna.fbcdn.net&_nc_ohc=RNr9jnrIEykAX9kLF7D&tp=1&oh=916b52756169c6965cd3f764de1f273b&oe=60171A44",
-              }}
+              source={{uri:this.props.uriAva}}
               Icon={150}
               Round={100}
             ></BasicImage>

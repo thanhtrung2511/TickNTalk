@@ -135,7 +135,7 @@ const AppNavigator = createStackNavigator(
   
   {
     index: 0,
-    initialRouteName: 'SignIn',
+    initialRouteName: 'Login',
     headerMode: 'none',
     navigationOptions: {
       gesturesEnabled: false

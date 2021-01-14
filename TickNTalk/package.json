@@ -21,11 +21,7 @@
     "@react-navigation/stack": "^5.12.6",
     "apisauce": "^2.0.0",
     "expo": "^40.0.0",
-<<<<<<< HEAD
-    "expo-cli": "^3.28.2",
-=======
     "expo-cli": "^3.28.6",
->>>>>>> c7a456c1f7d5ec15f5c64a69003ab86e8b4e5a93
     "expo-image-picker": "^9.2.1",
     "expo-permissions": "^10.0.0",
     "expo-status-bar": "^1.0.2",
