@@ -32,10 +32,10 @@ import {
   ChangeBirthdayAction,
   ChangePhoneAction,
   ChangeGenderAction,
-    ChangeAvaAction,
-} from '../actions/index';
-import {connect, Provider} from 'react-redux';
-import {UserRef} from '../Fire';
+  ChangeAvaAction,
+} from "../actions/index";
+import { connect, Provider } from "react-redux";
+import { UserRef } from "../Fire";
 
 export class PersonalInFo extends React.Component {
   constructor(props) {
@@ -50,13 +50,20 @@ export class PersonalInFo extends React.Component {
   ChangeAva = () => {
     this.props.navigation.navigate("Avatar");
   };
-
+  ResetRedux=()=>{
+    this.props.ChangeNameAction (""); 
+    this.props.ChangeBirthdayAction ("");
+    this.props.ChangePhoneAction("");
+    this.props.ChangeGenderAction("");
+    this.props.ChangeAvaAction("");
+  }
   LogOut = () => {
     firebase
       .auth()
       .signOut()
       .then(() => {
         // Sign-out successful.
+        this.ResetRedux();
         this.props.navigation.replace("Login");
       })
       .catch((error) => {
@@ -68,27 +75,27 @@ export class PersonalInFo extends React.Component {
     this.props.navigation.navigate("EditMyInfo");
   };
 
-  componentDidMount () {
-    var nameTmp = '';
-    var birthdayTmp = '';
-    var phoneTmp = '';
-    var genderTmp = '';
-    var tmpuri='';
-    UserRef.orderByChild ('Email')
-      .equalTo (this.props.typedEmail)
-      .on ('value', snap => {
-        snap.forEach (element => {
-          nameTmp = element.toJSON ().Name;
-          this.props.ChangeNameAction (nameTmp);
-          genderTmp = element.toJSON ().Gender;
-          this.props.ChangeGenderAction (genderTmp);
-          birthdayTmp = element.toJSON ().Birthday;
-          this.props.ChangeBirthdayAction (birthdayTmp);
-          phoneTmp = element.toJSON ().Phone;
-          this.props.ChangePhoneAction (phoneTmp);
-          console.log(element.toJSON ().urlAva);
-          tmpuri= element.toJSON ().urlAva;
-          this.props.ChangeAvaAction (tmpuri);
+  componentDidMount() {
+    var nameTmp = "";
+    var birthdayTmp = "";
+    var phoneTmp = "";
+    var genderTmp = "";
+    var tmpuri = "";
+    UserRef.orderByChild("Email")
+      .equalTo(this.props.typedEmail)
+      .on("value", (snap) => {
+        snap.forEach((element) => {
+          nameTmp = element.toJSON().Name;
+          this.props.ChangeNameAction(nameTmp);
+          genderTmp = element.toJSON().Gender;
+          this.props.ChangeGenderAction(genderTmp);
+          birthdayTmp = element.toJSON().Birthday;
+          this.props.ChangeBirthdayAction(birthdayTmp);
+          phoneTmp = element.toJSON().Phone;
+          this.props.ChangePhoneAction(phoneTmp);
+          //console.log(element.toJSON ().urlAva);
+          tmpuri = element.toJSON().urlAva;
+          this.props.ChangeAvaAction(tmpuri);
         });
       });
   }
@@ -97,76 +104,129 @@ export class PersonalInFo extends React.Component {
     return (
       <SafeAreaView style={[styles.containerLI]}>
         <View style={styles.container}>
-          <View style={{ backgroundColor: colors.lightpink,width:"100%",alignItems:"center" }}>
           <View
-            style={{ width: "90%" }}
-            justifyContent="space-between"
-            flexDirection="row"
+            style={{
+              backgroundColor: colors.lightpink,
+              width: "100%",
+              alignItems: "center",
+            }}
           >
-            <Text style={styles.header}>Thông tin cá nhân</Text>
-          </View>
+            <View
+              style={{ width: "90%" }}
+              justifyContent="space-between"
+              flexDirection="row"
+            >
+              <Text style={styles.header}>Thông tin cá nhân</Text>
+            </View>
           </View>
           <View
-            style={{ flexDirection: "column", width: "100%" ,paddingVertical:16}}
-            justifyContent="space-around"
+            style={{
+              flexDirection: "column",
+              width: "100%",
+              paddingVertical: 8,
+            }}
+            justifyContent="space-between"
             alignItems="center"
             backgroundColor={colors.lightpink}
-            
           >
-            
             <View
               style={{
                 flexDirection: "column",
                 padding: 8,
                 justifyContent: "flex-start",
-                backgroundColor: "whitesmoke",
+                backgroundColor: colors.white,
                 borderRadius: 70 / 5,
                 width: "90%",
-              
               }}
             >
               <View alignItems="center">
-              <BasicImage
-              source={{uri:this.props.uriAva}}
-              Icon={150}
-              Round={100}
-            ></BasicImage>
-            </View>
+                <TouchableOpacity
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 160,
+                    height: 160,
+                    borderRadius: 100,
+                  }}
+                  onPress={this.ChangeAva}
+                >
+                  <BasicImage
+                    //style={{ borderColor: "whitesmoke", borderWidth: 5 }}
+                    source={{ uri: this.props.uriAva?this.props.uriAva: "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"}}
+                    Icon={150}
+                    Round={100}
+                  ></BasicImage>
+                </TouchableOpacity>
+              </View>
               <View
                 style={{
+                  borderColor: colors.lightpink,
+                  borderWidth: 2,
+                  borderRadius:70/5,
                   flexDirection: "column",
                   paddingVertical: 8,
                   paddingHorizontal: 16,
                   justifyContent: "space-around",
+                  shadowOffset:{ width:1, height:1},
+                  shadowOpacity: 0.2,
+                  borderStyle:"solid",
                 }}
               >
-                <View justifyContent="space-between" flexDirection="row">
-                  <Text style={{fontSize:16, fontWeight: "800" }}>Email:</Text>
-                  <Text style={{ fontSize:16, fontWeight: "400" }}>
+                <View
+                  style={{ paddingVertical: 8 }}
+                  justifyContent="space-between"
+                  flexDirection="row"
+                >
+                  <Text style={{ fontSize: 16, fontWeight: "800" }}>
+                    Email:
+                  </Text>
+                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
                     {this.props.typedEmail}
                   </Text>
                 </View>
-                <View justifyContent="space-between" flexDirection="row">
-                  <Text style={{ fontSize:16, fontWeight: "800" }}>Tên:</Text>
-                  <Text style={{ fontSize:16, fontWeight: "400" }}>
+                <View
+                  style={{ paddingVertical: 8 }}
+                  justifyContent="space-between"
+                  flexDirection="row"
+                >
+                  <Text style={{ fontSize: 16, fontWeight: "800" }}>Tên:</Text>
+                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
                     {this.props.typedName}
                   </Text>
                 </View>
-                <View justifyContent="space-between" flexDirection="row">
-                  <Text style={{ fontSize:16, fontWeight: "800" }}>Giới tính:</Text>
-                  <Text style={{ fontSize:16, fontWeight: "400" }}>
+                <View
+                  style={{ paddingVertical: 8 }}
+                  justifyContent="space-between"
+                  flexDirection="row"
+                >
+                  <Text style={{ fontSize: 16, fontWeight: "800" }}>
+                    Giới tính:
+                  </Text>
+                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
                     {this.props.typedGender}
                   </Text>
                 </View>
-                <View justifyContent="space-between" flexDirection="row">
-                  <Text style={{ fontSize:16, fontWeight: "800" }}>Ngày sinh:</Text>
-                  <Text style={{ fontSize:16, fontWeight: "400" }}>
+                <View
+                  style={{ paddingVertical: 8 }}
+                  justifyContent="space-between"
+                  flexDirection="row"
+                >
+                  <Text style={{ fontSize: 16, fontWeight: "800" }}>
+                    Ngày sinh:
+                  </Text>
+                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
                     {this.props.typedBirthday}
                   </Text>
                 </View>
-                <View justifyContent="space-between" flexDirection="row">
-                  <Text style={{ fontSize:16, fontWeight: "800" }}>Số điện thoại:</Text>
-                  <Text style={{ ffontSize:16, ontWeight: "400" }}>
+                <View
+                  style={{ paddingVertical: 8 }}
+                  justifyContent="space-between"
+                  flexDirection="row"
+                >
+                  <Text style={{ fontSize: 16, fontWeight: "800" }}>
+                    Số điện thoại:
+                  </Text>
+                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
                     {this.props.typedPhone}
                   </Text>
                 </View>
@@ -174,37 +234,31 @@ export class PersonalInFo extends React.Component {
             </View>
           </View>
           <View
-              style={{
-                alignItems: "center",
-                height: "40%",
-                flexDirection: "column",
-                justifyContent: "space-around",
-                width: "100%",
-                
-              }}
-            >
-              <ButtonMod
-                styleText={{ color: colors.white }}
-                Text="Chỉnh sửa thông tin cá nhân"
-                onPress={this.ChangeInfo}
-              ></ButtonMod>
-              <ButtonMod
-                styleText={{ color: colors.white }}
-                Text="Cập nhật ảnh đại diện"
-                onPress={this.ChangeAva}
-              ></ButtonMod>
-              <ButtonMod
-                styleText={{ color: colors.white }}
-                Text="Đổi mật khẩu"
-                onPress={this.ChangePass}
-              ></ButtonMod>
-              <ButtonMod
-                styleText={{ color: colors.white }}
-                styleContainer={{ backgroundColor: colors.Darkpink }}
-                Text="Đăng xuất"
-                onPress={this.LogOut}
-              ></ButtonMod>
-            </View>
+            style={{
+              alignItems: "center",
+              height: "30%",
+              flexDirection: "column",
+              justifyContent: "space-around",
+              width: "100%",
+            }}
+          >
+            <ButtonMod
+              styleText={{ color: colors.white }}
+              Text="Chỉnh sửa thông tin cá nhân"
+              onPress={this.ChangeInfo}
+            ></ButtonMod>
+            <ButtonMod
+              styleText={{ color: colors.white }}
+              Text="Đổi mật khẩu"
+              onPress={this.ChangePass}
+            ></ButtonMod>
+            <ButtonMod
+              styleText={{ color: colors.white }}
+              styleContainer={{ backgroundColor: colors.Darkpink }}
+              Text="Đăng xuất"
+              onPress={this.LogOut}
+            ></ButtonMod>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -243,8 +297,8 @@ function mapDispatchToProps(dispatch) {
       dispatch(ChangeGenderAction(typedGender));
     },
 
-     ChangeAvaAction: uriAva => {
-      dispatch (ChangeAvaAction (uriAva));
+    ChangeAvaAction: (uriAva) => {
+      dispatch(ChangeAvaAction(uriAva));
     },
   };
 }

@@ -30,7 +30,7 @@ const TabNavigator= createBottomTabNavigator(
         screen: ChatFeed,
         navigationOptions:{
             tabBarLabel:({ focused, tintColor }) => (
-                <Text  style={{fontSize:8,color:focused?colors.Darkpink:colors.black}} >Tin nhắn</Text>
+                <Text  style={{fontSize:12,color:focused?colors.Darkpink:colors.black}} >Tin nhắn</Text>
               ),      
             tabBarOption:{
                 tabStyle:{
@@ -60,7 +60,7 @@ const TabNavigator= createBottomTabNavigator(
         screen: RoomChatManagement,
         navigationOptions:{
             tabBarLabel:({ focused, tintColor }) => (
-                <Text  style={{fontSize:8,color:focused?colors.Darkpink:colors.black}} >Nhóm</Text>
+                <Text  style={{fontSize:12,color:focused?colors.Darkpink:colors.black}} >Nhóm</Text>
               ), 
             tabBarOption:{
                 tabStyle:{
@@ -90,7 +90,7 @@ const TabNavigator= createBottomTabNavigator(
         screen: PersonalInfo,
         navigationOptions:{
             tabBarLabel:({ focused, tintColor }) => (
-                <Text  style={{fontSize:8,color:focused?colors.Darkpink:colors.black}} >Thông tin cá nhân</Text>
+                <Text  style={{fontSize:12,color:focused?colors.Darkpink:colors.black}} >Thông tin cá nhân</Text>
               ), 
             tabBarOption:{
                 tabStyle:{

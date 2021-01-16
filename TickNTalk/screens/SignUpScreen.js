@@ -15,10 +15,11 @@ import {
   styles,
   BasicImage,
   LoginBottom,
-  createOKAlert,
+  createOneButtonAlert,
   sizeFactor,
 } from "../components/Basic/Basic";
 import { connect } from "react-redux";
+import {ChangeEmailAction} from "../actions/index"
 
 export class SignUpScreen extends React.Component {
   constructor(props) {
@@ -77,13 +78,14 @@ export class SignUpScreen extends React.Component {
         this.state.typedPassword
       )
       .then((resp) => {
-        createOKAlert({
+        createOneButtonAlert({
           Text: "Đã tạo tài khoản thành công",
-          onPress: () => this.AddUserToDatabase(),
+          onPress: this.AddUserToDatabase(),
+          TextAction:"Xác nhận"
         });
       })
       .catch((error) => {
-        if (error != null) createOKAlert({ Text: "Email này đã được sử dụng" });
+        if (error != null) createOneButtonAlert({ Text: "Email này đã được sử dụng", TextAction:"Thử lại" });
       });
   };
   CheckAccount = () => {
@@ -94,9 +96,9 @@ export class SignUpScreen extends React.Component {
     ) {
       this.state.typedPassword.toString() !==
       this.state.typedRepassword.toString()
-        ? createOKAlert({ Text: "Mật khẩu nhập lại không đúng" ,onPress:()=>this.ResetFields()})
+        ? createOneButtonAlert({ Text: "Mật khẩu nhập lại không đúng" ,TextAction:"Thử lại" ,onPress:this.ResetFields()})
         : this.setState({ canCreateAccount: true });
-    } else createOKAlert({ Text: "Chưa điền đầy đủ thông tin" });
+    } else createOneButtonAlert({ Text: "Chưa điền đầy đủ thông tin" , TextAction:"Thử lại"});
     if (this.state.canCreateAccount) {
       this.SignUpWithEmailAndPassword();
     }

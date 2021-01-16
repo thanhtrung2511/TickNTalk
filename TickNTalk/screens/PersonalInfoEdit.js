@@ -17,7 +17,7 @@ import {
 import { connect, Provider } from "react-redux";
 import { UserRef } from "../Fire";
 import DatePicker from "react-native-datepicker";
-import { styles, ButtonMod } from "../components/Basic/Basic";
+import { styles, ButtonMod,createOneButtonAlert } from "../components/Basic/Basic";
 import DropDownPicker from "react-native-dropdown-picker";
 import {colors} from "../components/Basic/Basic"
 class PersonalInfoEdit extends React.Component {
@@ -29,7 +29,7 @@ class PersonalInfoEdit extends React.Component {
     };
   }
 
-  EditMyInfo = () => {
+  EditMyInfo = async() => {
     var ref = UserRef.orderByChild("Email").equalTo(this.props.typedEmail);
     var NameTmp = this.props.typedname;
     var PhoneTmp = this.props.typedPhone;
@@ -45,13 +45,13 @@ class PersonalInfoEdit extends React.Component {
         });
       });
     });
-
-    this.props.navigation.goBack();
+    createOneButtonAlert({ Text:"Cập nhật thông tin thành công",TextAction:"Đồng ý",onPress:this.props.navigation.goBack()})
+    
   };
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.containerLI}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
         <View style={{ backgroundColor: colors.lightpink,width:"100%",alignItems:"center" }}>
           <View
@@ -86,6 +86,7 @@ class PersonalInfoEdit extends React.Component {
 
             <View>
               <Text>Ngày sinh</Text>
+              <View alignItems= "center" >
               <DatePicker
                 date={this.props.typedBirthday}
                 mode="date"
@@ -101,14 +102,16 @@ class PersonalInfoEdit extends React.Component {
                     top: 4,
                     marginLeft: 0,
                   },
-                  dateInput: {
-                    marginLeft: 40,
-                  },
+                  dateInput: [
+                    
+                    styles.input,{marginLeft: 0}]
+                  ,
                 }}
                 onDateChange={(date) => {
                   this.props.ChangeBirthdayAction(date);
                 }}
               />
+              </View>
             </View>
             <View>
               <Text>Giới tính</Text>
@@ -120,7 +123,7 @@ class PersonalInfoEdit extends React.Component {
                 defaultValue={
                   this.props.typedGender === "" ? "Nam" : this.props.typedGender
                 }
-                containerStyle={{ height: 40 }}
+                containerStyle={styles.input}
                 style={{ backgroundColor: "#fafafa" }}
                 itemStyle={{
                   justifyContent: "flex-start",

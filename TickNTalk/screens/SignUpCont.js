@@ -29,7 +29,7 @@ class SignUpCont extends React.Component {
     super(props);
     this.unsubscriber = null;
     this.state = {
-      typedGender: "",
+      typedGender: "Nam",
       typedBirthday: "",
       typedPhone: "",
       typedname: "",
@@ -62,77 +62,104 @@ class SignUpCont extends React.Component {
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <Text style={styles.header}>Thêm thông tin cá nhân</Text>
-        <View
-          style={{
-            marginTop: 16,
-            flexDirection: "column",
-            justifyContent: "space-around",
-          }}
-        >
-          <View>
-            <Text>Họ và tên</Text>
-            <TextInput
-              header="Họ và tên"
-              style={styles.input}
-              value={this.state.typedname}
-              onChangeText={(text) => this.setState({ typedname: text })}
+      <SafeAreaView style={styles.containerLI}>
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <View style={{ backgroundColor: colors.lightpink,width:"100%",alignItems:"center" }}>
+          <View
+            style={{ width: "90%" }}
+            justifyContent="space-between"
+            flexDirection="row"
+          >
+            <Text style={styles.header}>Thêm thông tin cá nhân</Text>
+          </View>
+          </View>
+          <View style={{ marginTop: 32, flexDirection: "column" }}>
+            <View>
+              <Text>Họ và tên</Text>
+              <TextInput
+                header="Họ và tên"
+                style={styles.input}
+                value={this.props.typedname}
+                onChangeText={(text) => this.setState({typedname: text})}
+              />
+            </View>
+            <View>
+              <Text>Số điện thoại</Text>
+              <TextInput
+                header="Số điện thoại"
+                style={styles.input}
+                placeholder="012345678"
+                keyboardType="phone-pad"
+                value={this.props.typedPhone}
+                onChangeText={(text) => this.setState({typedPhone: text})}
+              />
+            </View>
+
+            <View>
+              <Text>Ngày sinh</Text>
+              <View alignItems= "center" >
+              <DatePicker
+                date={this.props.typedBirthday}
+                mode="date"
+                format="DD-MM-YYYY"
+                cancelBtnText="Cancel"
+                confirmBtnText="Confirm"
+                minDate="01-01-1975"
+                maxDate="01-01-2020"
+                customStyles={{
+                  dateIcon: {
+                    position: "absolute",
+                    left: 0,
+                    top: 4,
+                    marginLeft: 0,
+                  },
+                  dateInput: [
+                    
+                    styles.input,{marginLeft: 0}]
+                  ,
+                }}
+                onDateChange={(date) => {
+                  this.setState({typedBirthday:date});
+                }}
+              />
+              </View>
+            </View>
+            <View>
+              <Text>Giới tính</Text>
+              <DropDownPicker
+                items={[
+                  { label: "Nam", value: "Nam", hidden: true },
+                  { label: "Nữ", value: "Nữ" },
+                ]}
+                defaultValue={
+                  this.state.typedGender === "" ? "Nam" : this.state.typedGender
+                }
+                containerStyle={styles.input}
+                style={{ backgroundColor: "#fafafa" }}
+                itemStyle={{
+                  justifyContent: "flex-start",
+                }}
+                dropDownStyle={{ backgroundColor: "#fafafa" }}
+                onChangeItem={(typedGender) =>
+                  this.setState({typedGender:typedGender})
+                }
+              />
+            </View>
+          </View>
+          <View style={{ marginTop:64, height:"20%",justifyContent:'space-around',flexDirection:"column",alignItems:"center" }}>
+            <ButtonMod
+              
+              onPress={this.UpdateInfo}
+              Text="Lưu thay đổi"
+            />
+            <ButtonMod
+              styleContainer={{backgroundColor:colors.Darkpink}}
+              styleText={{color:colors.white}}
+              onPress={this.IgnoreUpdate}
+              Text="Bỏ qua và tiếp tục"
             />
           </View>
-          <View>
-            <Text>Số điện thoại</Text>
-            <TextInput
-              header="Số điện thoại"
-              style={styles.input}
-              placeholder="012345678"
-              keyboardType="phone-pad"
-              value={this.props.typedPhone}
-              onChangeText={(text) => this.setState({ typedPhone: text })}
-            />
-          </View>
-          <View>
-            <Text>Ngày sinh</Text>
-            <DatePicker
-              date={this.state.typedBirthday}
-              backgroundColor={colors.skin}
-              mode="date"
-              format="DD-MM-YYYY"
-              cancelBtnText="Cancel"
-              confirmBtnText="Confirm"
-              minDate="01-01-1975"
-              maxDate="01-01-2020"
-              onDateChange={(date) => {
-                this.setState({ date });
-              }}
-            />
-          </View>
-          <View>
-            <Text>Giới tính</Text>
-            <DropDownPicker
-              items={[
-                { label: "Nam", value: "Nam", hidden: true },
-                { label: "Nữ", value: "Nữ" },
-              ]}
-              defaultValue={
-                this.state.typedGender === "" ? "Nam" : this.state.typedGender
-              }
-              containerStyle={{ height: 40 }}
-              style={{ backgroundColor: colors.skin }}
-              itemStyle={{
-                justifyContent: "flex-start",
-              }}
-              dropDownStyle={{ backgroundColor: colors.skin }}
-              onChangeItem={(text) =>
-                this.setState({ typedGender: text.value })
-              }
-            />
-          </View>
-        </View>
-        <ButtonMod onPress={this.UpdateInfo} Text="Hoàn thành" />
-        <ButtonMod onPress={this.IgnoreUpdate} Text="Bỏ qua" />
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }

@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  Alert,KeyboardAvoidingView
+  Alert,KeyboardAvoidingView,
 } from 'react-native';
 import {
   SafeAreaView,
@@ -18,7 +18,7 @@ import {EvilIcons} from '@expo/vector-icons';
 import firebase from 'firebase';
 import {UserRef} from '../Fire';
 import {connect} from 'react-redux';
-import {ButtonMod,styles} from '../components/Basic/Basic'
+import {ButtonMod,styles,colors,createOneButtonAlert} from '../components/Basic/Basic'
 
 export class ChangePass extends React.Component {
   static navigationOptions = {
@@ -57,80 +57,64 @@ export class ChangePass extends React.Component {
             this.state.newPassword.toString () !=
             this.state.Repassword.toString ()
           ) {
-            this.setState ({
-              showError: 'Mật khẩu nhập lại không khớp',
-              SignUpColor: 'red',
-            });
+            createOneButtonAlert({ Text:'Mật khẩu nhập lại không khớp',TextAction:"Thử lại"})
+            
           } else {
             this.setState ({showError: ' '});
             var user = firebase.auth ().currentUser;
             user
               .updatePassword (this.state.newPassword)
               .then (() => {
-                this.setState ({showError: 'Đổi mật khẩu thành công'});
-                this.setState ({SignUpColor: 'green'});
-                this.Continue();
+                createOneButtonAlert({ Text:'Đổi mật khẩu thành công',TextAction:"Tiếp tục",onPress:this.Continue()})
               })
               .catch (error => {
-                this.setState ({
-                  showError: 'Mật khẩu phải hơn 6 ký tự',
-                  SignUpColor: 'red',
-                });
+                createOneButtonAlert({ Text:'Mật khẩu phải hơn 6 ký tự',TextAction:"Thử lại"})
               });
           }
           console.log (this.state.Repassword, this.state.currentPassword);
         })
         .catch (error => {
-          this.setState ({
-            showError: 'Mật khẩu cũ không đúng',
-            SignUpColor: 'red',
-          });
+          createOneButtonAlert({ Text:'Mật khẩu cũ không đúng',TextAction:"Thử lại"})
         });
     } else
-      this.setState ({
-        showError: 'Lỗi! Chưa điền thông tin đầy đủ',
-        SignUpColor: 'red',
-      });
+    createOneButtonAlert({ Text:'Chưa nhập đủ thông tin',TextAction:"Thử lại"})
+            
   };
 
   Continue=() =>
     {
-      this.props.navigation.navigate("MyInfo")
+      this.props.navigation.replace("PersonalInfo");
+      this.setState({currentPassword: '',
+      newPassword: '',
+      Repassword: '',});
     }
 
   render () {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.containerLI}>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <Text style={styles.header}>Đổi mật khẩu</Text>
+        <View style={{ backgroundColor: colors.lightpink,width:"100%",alignItems:"center" }}>
+          <View
+            style={{ width: "90%" }}
+            justifyContent="space-between"
+            flexDirection="row"
+          >
+            <Text style={styles.header}>Đổi mật khẩu</Text>
+          </View>
+          </View>
         <View
           style={{ marginTop: 16, flexDirection: 'column'}}
-          justifyContent="center"
+          justifyContent="space-between"
+          alignItems="center"
         >
-          <View
-            style={{
-              flexDirection: 'row',
-              marginLeft: -32,
-              padding: 64,
-              backgroundColor: 'white',
-              borderRadius: 70 / 5,
-            }}
-          >
-
-            <View
-              style={{ marginTop: 16, flexDirection: 'column'}}
-            >
-              <Text style={{fontWeight: '800'}}>Phương Vy</Text>
-              <Text>test@gmail.com</Text>
-            </View>
-          </View>
+          
           <TextInput
             style={styles.input}
             secureTextEntry={true}
             placeholder="Nhập mật khẩu cũ"
             onChangeText={currentPassword => {
               this.setState ({currentPassword});
-              this.setState ({showError: ' '});
+              
             }}
             value={this.state.currentPassword}
           />
@@ -141,7 +125,7 @@ export class ChangePass extends React.Component {
             placeholder="Nhập mật khẩu mới"
             onChangeText={newPassword => {
               this.setState ({newPassword});
-              this.setState ({showError: ' '});
+            
             }}
             value={this.state.newPassword}
           />
@@ -152,16 +136,14 @@ export class ChangePass extends React.Component {
             placeholder="Nhập lại mật khẩu"
             onChangeText={Repassword => {
               this.setState ({Repassword});
-              this.setState ({showError: ' '});
+             
             }}
             value={this.state.Repassword}
           />
-          <Text style={{color: this.state.SignUpColor}}>
-            {this.state.showError}
-          </Text>
+          <ButtonMod styleContainer={{marginTop:32}} onPress={this.Change_pass} Text="Xác nhận"/>
         </View>
 
-        <ButtonMod onPress={this.Change_pass} Text="Xác nhận"/>
+        
       </KeyboardAvoidingView>
       </SafeAreaView>
     );

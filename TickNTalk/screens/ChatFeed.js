@@ -26,7 +26,7 @@ import { connect } from "react-redux";
 import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
 
 import {
-  GetFriendEmail, 
+  GetFriendEmail,
   GetUserByEmail,
   CheckRoomContainUser,
   CountNumberOfMembers,
@@ -50,34 +50,32 @@ export class ChatFeed extends React.Component {
     filteredStranger: [],
   };
 
-  componentDidMount=()=>
-  {
+  componentDidMount = () => {
     this.SubscribeDb();
+    this.FilterSearchedRoom();
     // this.onChangeSearchText(this.state.toSearchText);
-  }
-  ChatScreenNav=(id)=>
-  {
+  };
+  ChatScreenNav = (id) => {
     this.props.UpdateRoomID(id);
     this.props.navigation.navigate("ChatScr");
-  }
+  };
 
-  componentDidUpdate = (previousProp, previousState)=>{
-    if(
+  componentDidUpdate = (previousProp, previousState) => {
+    if (
       previousState.listMessages !== this.state.listMessages ||
       previousState.listRooms !== this.state.listRooms ||
-      previousState.listUsers !== this.state.listUsers 
-      )
-    {
+      previousState.listUsers !== this.state.listUsers
+    ) {
       this.MyRefresh();
     }
-  }
+  };
 
   SubscribeDb() {
     UserRef.on("value", (snapshot) => {
       let users = [];
 
       snapshot.forEach((child) => {
-        users.push(child.toJSON())
+        users.push(child.toJSON());
       });
 
       users.sort((x, y) => x.Name.toUpperCase() > y.Name.toUpperCase());
@@ -143,7 +141,7 @@ export class ChatFeed extends React.Component {
         user.Email.toUpperCase() !== this.props.loggedInEmail.toUpperCase()
     );
 
-    Object.values(this.state.listRooms).forEach((room)=>{
+    Object.values(this.state.listRooms).forEach((room) => {
       if (CheckRoomContainUser(room, this.props.loggedInEmail)) {
         let memberCnt = CountNumberOfMembers(room);
         if (memberCnt === 2) {
@@ -156,7 +154,7 @@ export class ChatFeed extends React.Component {
           );
         } else gr.push(room);
       }
-    })
+    });
 
     this.setState({ listStrangers: st });
     this.setState({ listGroups: gr });
@@ -243,8 +241,7 @@ export class ChatFeed extends React.Component {
     }
 */
 
-  FilterSearchedRoom(toSearchText = "")
-  {
+  FilterSearchedRoom(toSearchText = "") {
     this.setState({
       filteredFriends: this.state.listFriends,
       filteredGroups: this.state.listGroups,
@@ -275,17 +272,23 @@ export class ChatFeed extends React.Component {
     return (
       <SafeAreaView style={styles.containerLI}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <View style={{ backgroundColor: colors.lightpink,width:"100%",alignItems:"center" }}>
           <View
-            style={{ width: "90%" }}
-            justifyContent="space-between"
-            flexDirection="row"
+            style={{
+              backgroundColor: colors.lightpink,
+              width: "100%",
+              alignItems: "center",
+            }}
           >
-            <Text style={styles.header}>Tin nhắn</Text>
-          </View>
+            <View
+              style={{ width: "90%" }}
+              justifyContent="space-between"
+              flexDirection="row"
+            >
+              <Text style={styles.header}>Tin nhắn</Text>
+            </View>
           </View>
           <View
-            style={{flexDirection: "column" }}
+            style={{ flexDirection: "column" }}
             justifyContent="space-between"
           >
             {/* <TextInput style={styles.input}
@@ -295,31 +298,30 @@ export class ChatFeed extends React.Component {
                         this.onChangeSearchText(Text);
                       }}>
                 </TextInput> */}
-            
 
-            <ScrollView style={{maxHeight:"92%"}}>
-            <SearchBar
-              platform={Platform.OS}
-              placeholder="Tìm bạn bè..."
-              lightTheme="true"
-              containerStyle={{
-                marginHorizontal: 8,
-                backgroundColor: "transparent",
-                width: "100%"
-              }}
-              inputContainerStyle={{
-                backgroundColor: "whitesmoke",
-                borderRadius: 23,
-              }}
-              leftIconContainerStyle={{ marginLeft: 16 }}
-              inputStyle={{}}
-              placeholder="Tìm kiếm bạn bè.."
-              onChangeText={(Text) => {
-                this.setState({ toSearchText: Text });
-                this.onChangeSearchText(Text);
-              }}
-              value={this.state.toSearchText}
-            />
+            <ScrollView style={{ maxHeight: "94%" }}>
+              <SearchBar
+                platform={Platform.OS}
+                placeholder="Tìm bạn bè..."
+                lightTheme="true"
+                containerStyle={{
+                  marginHorizontal: 8,
+                  backgroundColor: "transparent",
+                  width: "95%",
+                }}
+                inputContainerStyle={{
+                  backgroundColor: "whitesmoke",
+                  borderRadius: 23,
+                }}
+                leftIconContainerStyle={{ marginLeft: 16 }}
+                inputStyle={{}}
+                placeholder="Tìm kiếm bạn bè.."
+                onChangeText={(Text) => {
+                  this.setState({ toSearchText: Text });
+                  this.onChangeSearchText(Text);
+                }}
+                value={this.state.toSearchText}
+              />
               <Text
                 style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
               >
@@ -332,16 +334,26 @@ export class ChatFeed extends React.Component {
                 renderItem={({ item, index }) => {
                   let title = item.Data.RoomName;
                   let roomId = item.RoomID;
-                  
+
+                  let SystemAva =
+                    "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
                   let latestMsgText = "";
-                  if(item.LatestMessage)
+                  if (item.LatestMessage)
                     latestMsgText = item.LatestMessage.Data.text;
 
                   // if title is nothing, then get friend's name
                   if (!title) {
-                    const friendEmail = GetFriendEmail(item, this.props.loggedInEmail);
-                    const friend = GetUserByEmail(this.state.listUsers, friendEmail);
-
+                    const friendEmail = GetFriendEmail(
+                      item,
+                      this.props.loggedInEmail
+                    );
+                    const friend = GetUserByEmail(
+                      this.state.listUsers,
+                      friendEmail
+                    );
+                    var userAva;
+                    if (friend) userAva = friend.urlAva;
+                    console.log(userAva);
                     if (!friend) title = "Người dùng TickNTalk";
                     else title = friend.Name;
                   }
@@ -349,11 +361,13 @@ export class ChatFeed extends React.Component {
                   return (
                     <Text>
                       <MessageCard
-                        ImageSource="https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
+                        ImageSource={userAva ? userAva : SystemAva}
                         Name={title}
                         LastestChat={latestMsgText}
                         isRead="true"
-                        onPress={() => { this.ChatScreenNav(item); }}
+                        onPress={() => {
+                          this.ChatScreenNav(item);
+                        }}
                       ></MessageCard>
                     </Text>
                   );

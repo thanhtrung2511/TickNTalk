@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {Text,TextInput, View,SafeAreaView,KeyboardAvoidingView,ScrollView } from 'react-native'
-import {Button,styles,BasicImage,LoginBottom,sizeFactor,createOKAlert} from '../components/Basic/Basic'
+import {Button,styles,BasicImage,LoginBottom,sizeFactor,createOneButtonAlert} from '../components/Basic/Basic'
 
 import firebase from 'firebase'
 import {ChangeEmailAction, ChangeLoginStatus} from '../actions/index'
@@ -24,7 +24,7 @@ export class SignInScreen extends React.Component {
         this.SignInContinue();
       })
       .catch((error)=>{
-        createOKAlert({ Text:"Tên đăng nhập hoặc mật khẩu không đúng"})
+        createOneButtonAlert({ Text:"Tên đăng nhập hoặc mật khẩu không đúng",TextAction:"Thử lại"})
       })
     }
     SignInWithGoogle=()=>{}
@@ -70,7 +70,7 @@ export class SignInScreen extends React.Component {
                 <Text style={styles.FogetPassword}>Quên mật khẩu?</Text>
                 
               </View>
-              <View style={{marginTop: sizeFactor*5.1}}>
+              <View style={{marginTop: sizeFactor*2.1}}>
               <LoginBottom OnPressNormal={this.SignInWithEmailAndPassword}
                            OnPressGoogle={this.SignInWithGoogle}
                            TextNormal="Đăng nhập"
