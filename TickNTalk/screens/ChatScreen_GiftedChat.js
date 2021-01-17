@@ -5,7 +5,7 @@ import {
   SafeAreaView,
   View,
   ScrollView,
-  TextInput,
+  Text,
   KeyboardAvoidingView,
   ActivityIndicator,
   Platform,
@@ -232,6 +232,13 @@ export class ChatScreen_GiftedChat extends React.Component {
       </View>
     );
   }
+  renderChatEmpty(props){
+    return (
+      
+        <View></View>
+      
+    ); 
+  }
   render() {
     const chatBody = (
       <GiftedChat
@@ -241,6 +248,7 @@ export class ChatScreen_GiftedChat extends React.Component {
         user={{
           _id: this.props.loggedInEmail.toUpperCase(),
           avatar: this.props.curAva,
+          name:this.props.curName,
         }}
         showUserAvatar
         renderUsernameOnMessage
@@ -251,6 +259,7 @@ export class ChatScreen_GiftedChat extends React.Component {
         renderSend={this.renderSend}
          renderLoading={this.renderLoading}
         renderActions={this.renderActions}
+        renderChatEmpty={this.renderChatEmpty}
         onPressActionButton={() => ({
           //code gửi ảnh
         })}
@@ -296,6 +305,7 @@ const mapStateToProps = (state) => {
     loggedInEmail: state.emailReducer,
     curRoom: state.roomReducer,
     curAva: state.avaReducer,
+    curName:state.nameReducer,
   };
 };
 

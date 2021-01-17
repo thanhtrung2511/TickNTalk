@@ -17,9 +17,8 @@ import UpdateAvaScreen from './UpdateAvaScreen'
 import SignUpCont from './SignUpCont'
 import ChatScreen_GiftedChat from './ChatScreen_GiftedChat'
 import {colors} from '../components/Basic/Basic'
-import { MaterialIcons } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons,MaterialIcons,AntDesign } from '@expo/vector-icons';
+
 import {Text,View} from 'react-native'
 import {connect} from 'react-redux'
 import { ChangeLoginStatus } from '../actions';
@@ -52,7 +51,7 @@ const TabNavigator= createBottomTabNavigator(
                 inactiveTintColor: 'gray'
             },
             tabBarIcon: ({ focused, tintColor }) => (
-                <MaterialIcons name="message" size={24} color={focused?colors.Darkpink:colors.black} />
+                <AntDesign name="message1" size={24} color={focused?colors.Darkpink:colors.black} />
               )
         }
     },
@@ -82,7 +81,7 @@ const TabNavigator= createBottomTabNavigator(
                 inactiveTintColor: 'gray'
             },
             tabBarIcon: ({ focused, tintColor }) => (
-                <FontAwesome name="group" size={24} color={focused?colors.Darkpink:colors.black} />
+                <MaterialCommunityIcons name="account-group-outline" size={24} color={focused?colors.Darkpink:colors.black} />
               )
         }
     },
@@ -113,7 +112,7 @@ const TabNavigator= createBottomTabNavigator(
                 inactiveTintColor: 'gray'
             },
             tabBarIcon: ({ focused, tintColor }) => (
-                <Ionicons name="ios-person" size={24} color={focused?colors.Darkpink:colors.black} />         )
+                <MaterialIcons name="person-outline" size={24} color={focused?colors.Darkpink:colors.black} />         )
         }
     }
     }

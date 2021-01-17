@@ -329,7 +329,7 @@ export class ChatFeed extends React.Component {
                   if (this.state.addNewFriend) {this.setState({headerText:"Tin nhắn",iconName:"person-add"})}
                   else {this.setState({headerText: "Tìm bạn mới",iconName:"backspace"})};
                 }}
-                size={40}
+                size={30}
                 color="whitesmoke"
               />
             </View>
