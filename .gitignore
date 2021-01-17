@@ -356,3 +356,4 @@ yarn.lock
 .gradle
 __generated__
 web-build
+.DS_Store
