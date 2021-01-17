@@ -52,7 +52,8 @@ export class ChatFeed extends React.Component {
 
   componentDidMount = () => {
     this.SubscribeDb();
-    this.FilterSearchedRoom();
+    // this.FilterSearchedRoom();
+    this.MyRefresh();
     // this.onChangeSearchText(this.state.toSearchText);
   };
   ChatScreenNav = (id) => {
@@ -126,8 +127,13 @@ export class ChatFeed extends React.Component {
     const tempMsgs = this.state.listMessages;
     LoadLatestMessagesIntoRooms(tempRooms, tempMsgs);
 
-    this.ArrangeChatRooms();
-    this.FilterSearchedRoom();
+    this.SortChatRoomsByTime(tempRooms).then(
+      (result) =>
+      {
+        this.ArrangeChatRooms();
+        this.FilterSearchedRoom();
+      }
+    );
   }
 
   /// CuteTN Note: a huge violation of SRP
@@ -161,6 +167,26 @@ export class ChatFeed extends React.Component {
     this.setState({ listFriends: fr });
   }
 
+  async SortChatRoomsByTime(listRooms)
+  {
+    await listRooms.sort((a, b) => {
+      if(a && b &&
+        a.LatestMessage && b.LatestMessage &&
+        a.LatestMessage.Data && b.LatestMessage.Data && 
+        a.LatestMessage.Data.createdAt && b.LatestMessage.Data.createdAt)
+        return a.LatestMessage.Data.createdAt < b.LatestMessage.Data.createdAt;
+      else
+        return true;
+    }
+    )
+
+    console.log("ehehe");
+
+    // this.state.listRooms = listRooms;
+    // this.setState({listRooms : listRooms});
+    // listRooms = tempRooms;
+  }
+
   // Remove from stranger list
   RemoveFromStrangers(strangerList, email) {
     if (strangerList === undefined) return [];
@@ -168,6 +194,11 @@ export class ChatFeed extends React.Component {
     return strangerList.filter(
       (x) => x.Email.toUpperCase() !== email.toUpperCase()
     );
+  }
+
+  RenderAllRoomsByTime()
+  {
+
   }
 
   /*
@@ -353,7 +384,6 @@ export class ChatFeed extends React.Component {
                     );
                     var userAva;
                     if (friend) userAva = friend.urlAva;
-                    console.log(userAva);
                     if (!friend) title = "Người dùng TickNTalk";
                     else title = friend.Name;
                   }
