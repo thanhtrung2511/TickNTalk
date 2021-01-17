@@ -348,9 +348,11 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-
+Metro.config.js
+yarn.lock
 # Expo
-.expo
+.expo/
+.vscode
 .gradle
 __generated__
 web-build
