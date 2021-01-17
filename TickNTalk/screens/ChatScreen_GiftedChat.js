@@ -204,7 +204,7 @@ export class ChatScreen_GiftedChat extends React.Component {
         containerStyle={{
           // width: windowWidth,
           // backgroundColor: "black",
-          alignItems: "left",
+          alignItems: "center",
           justifyContent: "center",
           //padding:4,
           height: "auto",
@@ -246,10 +246,10 @@ export class ChatScreen_GiftedChat extends React.Component {
         renderUsernameOnMessage
         alwaysShowSend
         isTyping
-        renderComposer={this.renderComposer}
+         renderComposer={this.renderComposer}
         renderInputToolbar={this.renderInputToolbar}
         renderSend={this.renderSend}
-        renderLoading={this.renderLoading}
+         renderLoading={this.renderLoading}
         renderActions={this.renderActions}
         onPressActionButton={() => ({
           //code gửi ảnh
@@ -258,8 +258,8 @@ export class ChatScreen_GiftedChat extends React.Component {
     );
     if (Platform.OS === "android") {
       return (
-        <SafeAreaView style={styles.containerLI}>
-          <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <SafeAreaView style={[styles.containerLI],{paddingTop:25,height:"99.5%"}}>
+          <KeyboardAvoidingView style={[styles.containerLI,{height:"100%"}]} behavior="padding">
             <ChatHeader
               ImageSource={
                 this.state.friend.ava!==""
@@ -277,7 +277,11 @@ export class ChatScreen_GiftedChat extends React.Component {
     return (
       <SafeAreaView style={styles.containerLI}>
         <ChatHeader
-          ImageSource={this.state.friend.ava}
+            ImageSource={
+              this.state.friend.ava!==""
+                ? this.state.friend.ava
+                : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
+            }
           Name={this.state.friend.name}
           Backward={this.goBack}
         ></ChatHeader>

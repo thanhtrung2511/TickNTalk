@@ -20,7 +20,7 @@ import {colors} from '../components/Basic/Basic'
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import {Text} from 'react-native'
+import {Text,View} from 'react-native'
 import {connect} from 'react-redux'
 import { ChangeLoginStatus } from '../actions';
 
@@ -30,7 +30,7 @@ const TabNavigator= createBottomTabNavigator(
         screen: ChatFeed,
         navigationOptions:{
             tabBarLabel:({ focused, tintColor }) => (
-                <Text  style={{fontSize:12,color:focused?colors.Darkpink:colors.black}} >Tin nhắn</Text>
+                <View style={{alignItems:"center"}}><Text  style={{fontSize:12,color:focused?colors.Darkpink:colors.black}} >Tin nhắn</Text></View>
               ),      
             tabBarOption:{
                 tabStyle:{
@@ -60,7 +60,7 @@ const TabNavigator= createBottomTabNavigator(
         screen: RoomChatManagement,
         navigationOptions:{
             tabBarLabel:({ focused, tintColor }) => (
-                <Text  style={{fontSize:12,color:focused?colors.Darkpink:colors.black}} >Nhóm</Text>
+                <View style={{alignItems:"center"}}><Text  style={{fontSize:12,color:focused?colors.Darkpink:colors.black}} >Nhóm</Text></View>
               ), 
             tabBarOption:{
                 tabStyle:{
@@ -90,7 +90,8 @@ const TabNavigator= createBottomTabNavigator(
         screen: PersonalInfo,
         navigationOptions:{
             tabBarLabel:({ focused, tintColor }) => (
-                <Text  style={{fontSize:12,color:focused?colors.Darkpink:colors.black}} >Thông tin cá nhân</Text>
+                <View style={{alignItems:"center"}}><Text  style={{fontSize:12,color:focused?colors.Darkpink:colors.black}} >Thông tin cá nhân</Text>
+                </View>
               ), 
             tabBarOption:{
                 tabStyle:{

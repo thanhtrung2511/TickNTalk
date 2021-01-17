@@ -454,7 +454,7 @@ export const ChatHeader = (props) => {
         {Platform.OS === "ios" ? (
           <Ionicons name="ios-arrow-back" size={24} color="black" />
         ) : (
-          <Ionicons name="md-arrow-round-back" size={24} color="black" />
+          <Ionicons name="md-arrow-back" size={24} color="black" />
         )}
       </TouchableOpacity>
       <TouchableOpacity
