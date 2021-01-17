@@ -95,7 +95,10 @@ class PersonalInfoEdit extends React.Component {
                 confirmBtnText="Confirm"
                 minDate="01-01-1975"
                 maxDate="01-01-2020"
+                style={styles.input}
                 customStyles={{
+                 
+                  
                   dateIcon: {
                     position: "absolute",
                     left: 0,
