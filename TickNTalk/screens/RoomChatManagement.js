@@ -76,7 +76,7 @@ export default class RoomChatManagements extends React.Component {
                 }}
                 leftIconContainerStyle={{ marginLeft: 16 }}
                 inputStyle={{}}
-                placeholder="Tìm kiếm bạn bè.."
+                placeholder="Tìm kiếm nhóm.."
                 onChangeText={(Text) => {
                   this.setState({ toSearchText: Text });
                   this.onChangeSearchText(Text);

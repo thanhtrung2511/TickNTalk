@@ -1,22 +1,38 @@
 import React, { useState } from "react";
 import {
-  Platform,
   FlatList,
   TouchableOpacity,
   SafeAreaView,
   View,
   ScrollView,
-  TextInput,
+  Text,
   KeyboardAvoidingView,
+  ActivityIndicator,
+  Platform,
 } from "react-native";
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import {
+  GiftedChat,
+  Bubble,
+  Send,
+  InputToolbar,
+  Composer,
+  Actions,
+} from "react-native-gifted-chat";
 import Fire, { RoomRef } from "../Fire";
-import { styles, ChatHeader, colors } from "../components/Basic/Basic";
+import {
+  styles,
+  ChatHeader,
+  colors,
+  sizeFactor,
+  windowWidth,
+  windowHeight,
+  ButtonIcon,
+} from "../components/Basic/Basic";
 import { Ionicons } from "@expo/vector-icons";
 import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
 import { connect } from "react-redux";
 import { UserRef, MessageRef } from "../Fire";
-import { CreateNullRoom,GetFriendEmail } from "../Utilities/ChatRoomUtils";
+import { CreateNullRoom, GetFriendEmail } from "../Utilities/ChatRoomUtils";
 
 export class ChatScreen_GiftedChat extends React.Component {
   state = {
@@ -53,13 +69,13 @@ export class ChatScreen_GiftedChat extends React.Component {
     var nameTmp = "";
     var avaTmp = "";
     UserRef.orderByChild("Email")
-      .equalTo(GetFriendEmail(this.props.curRoom,this.props.loggedInEmail))
+      .equalTo(GetFriendEmail(this.props.curRoom, this.props.loggedInEmail))
       .on("value", (snap) => {
         snap.forEach((element) => {
           nameTmp = element.toJSON().Name;
-         
+
           avaTmp = element.toJSON().urlAva;
-          this.setState({friend:{name:nameTmp,ava:avaTmp}});
+          this.setState({ friend: { name: nameTmp, ava: avaTmp } });
         });
       });
   }
@@ -137,16 +153,15 @@ export class ChatScreen_GiftedChat extends React.Component {
   }
   renderBubble(props) {
     return (
-      // Step 3: return the component
       <Bubble
         {...props}
         wrapperStyle={{
           right: {
-            // Here is the color change
-            backgroundColor: colors.pink,
+            backgroundColor: colors.lightpink,
           },
           left: {
-            backgroundColor: colors.gray3,
+            maxWidth: sizeFactor * 14,
+            backgroundColor: colors.gray5,
           },
         }}
         textStyle={{
@@ -157,32 +172,129 @@ export class ChatScreen_GiftedChat extends React.Component {
       />
     );
   }
+  renderSend(props) {
+    return (
+      <Send {...props}>
+        <View style={styles.sendingContainer}>
+          <Ionicons name="md-send" size={32} color={colors.Darkpink} />
+        </View>
+      </Send>
+    );
+  }
+  renderLoading(props) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6646ee" />
+      </View>
+    );
+  }
+  renderComposer(props) {
+    return (
+      <Composer
+        {...props}
+        textInputStyle={{ borderRadius: 70 / 3, backgroundColor: "whitesmoke" }}
+        placeholder="Aa"
+      />
+    );
+  }
+  renderInputToolbar(props) {
+    return (
+      <InputToolbar
+        {...props}
+        containerStyle={{
+          // width: windowWidth,
+          // backgroundColor: "black",
+          alignItems: "center",
+          justifyContent: "center",
+          //padding:4,
+          height: "auto",
+          flexDirection: "row",
+        }}
+        primaryStyle={{
+          // borderRadius: 70 / 3,
+          // backgroundColor: colors.white,
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexDirection: "row",
+          // width: sizeFactor * 15,
+        }}
+      ></InputToolbar>
+    );
+  }
+  renderActions(props) {
+    return (
+      <View style={styles.customActionsContainer}>
+        <ButtonIcon
+          MaterialFamilyIconName="camera-alt"
+          color={colors.pink}
+          size={24}
+        />
+      </View>
+    );
+  }
+  renderChatEmpty(props){
+    return (
+      
+        <View></View>
+      
+    ); 
+  }
   render() {
+    const chatBody = (
+      <GiftedChat
+        renderBubble={this.renderBubble}
+        messages={this.state.messages}
+        onSend={(newMessage) => this.HandlePressSend(newMessage)}
+        user={{
+          _id: this.props.loggedInEmail.toUpperCase(),
+          avatar: this.props.curAva,
+          name:this.props.curName,
+        }}
+        showUserAvatar
+        renderUsernameOnMessage
+        alwaysShowSend
+        isTyping
+         renderComposer={this.renderComposer}
+        renderInputToolbar={this.renderInputToolbar}
+        renderSend={this.renderSend}
+         renderLoading={this.renderLoading}
+        renderActions={this.renderActions}
+        renderChatEmpty={this.renderChatEmpty}
+        onPressActionButton={() => ({
+          //code gửi ảnh
+        })}
+      ></GiftedChat>
+    );
+    if (Platform.OS === "android") {
+      return (
+        <SafeAreaView style={[styles.containerLI],{paddingTop:25,height:"99.5%"}}>
+          <KeyboardAvoidingView style={[styles.containerLI,{height:"100%"}]} behavior="padding">
+            <ChatHeader
+              ImageSource={
+                this.state.friend.ava!==""
+                  ? this.state.friend.ava
+                  : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
+              }
+              Name={this.state.friend.name}
+              Backward={this.goBack}
+            ></ChatHeader>
+            <View style={styles.ChatContainer}>{chatBody}</View>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      );
+    }
     return (
       <SafeAreaView style={styles.containerLI}>
-        <KeyboardAvoidingView
-          style={[styles.container, { backgroundColor: colors.lightpink }]}
-          behavior="padding"
-        >
-          <ChatHeader
-            ImageSource={this.state.friend.ava}
-            Name={this.state.friend.name}
-            Backward={this.goBack}
-          ></ChatHeader>
-          <View style={styles.ChatContainer}>
-            <GiftedChat
-              renderBubble={this.renderBubble}
-              messages={this.state.messages}
-              onSend={(newMessage) => this.HandlePressSend(newMessage)}
-              user={{
-                _id: this.props.loggedInEmail.toUpperCase(),
-                avatar: this.props.curAva,
-              }}
-              showUserAvatar
-              alwaysShowSend
-            ></GiftedChat>
-          </View>
-        </KeyboardAvoidingView>
+        <ChatHeader
+            ImageSource={
+              this.state.friend.ava!==""
+                ? this.state.friend.ava
+                : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
+            }
+          Name={this.state.friend.name}
+          Backward={this.goBack}
+        ></ChatHeader>
+        <View style={styles.ChatContainer}>{chatBody}</View>
       </SafeAreaView>
     );
   }
@@ -193,6 +305,7 @@ const mapStateToProps = (state) => {
     loggedInEmail: state.emailReducer,
     curRoom: state.roomReducer,
     curAva: state.avaReducer,
+    curName:state.nameReducer,
   };
 };
 

@@ -104,8 +104,10 @@ class SignUpCont extends React.Component {
                 format="DD-MM-YYYY"
                 cancelBtnText="Cancel"
                 confirmBtnText="Confirm"
+                defaultValue="01-01-1975"
                 minDate="01-01-1975"
                 maxDate="01-01-2020"
+                style={styles.input}
                 customStyles={{
                   dateIcon: {
                     position: "absolute",

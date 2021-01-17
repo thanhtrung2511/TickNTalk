@@ -111,7 +111,17 @@ export const styles = StyleSheet.create({
     marginTop: 16,
     overflow: "hidden",
   },
-
+  sendingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: colors.gray6,
+  },
   DefaultProfilePhoto: {
     alignItems: "center",
     justifyContent: "center",
@@ -254,14 +264,19 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
-    backgroundColor: "rgba(0, 0, 0, 0)",
+    //backgroundColor: "red",
     width: 50,
+    height: 50,
     borderRadius: 70 / 5,
   },
   ChatBox: {
     padding: sizeFactor * 0.5,
     backgroundColor: colors.white,
     borderRadius: 70 / 5,
+  },
+  customActionsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   ChatScreen_Banner: {
     width: windowWidth,
@@ -287,11 +302,9 @@ export const styles = StyleSheet.create({
     marginLeft: sizeFactor * 0.5,
   },
   ChatContainer: {
-    height: "90%" ,
+    flex:1,
     width: windowWidth,
-    paddingVertical: sizeFactor * 0.2,
-    paddingHorizontal: sizeFactor,
-    backgroundColor: colors.white,
+    backgroundColor: "whitesmoke",
   },
   ChatMessage: {
     width: windowWidth * 0.8,
@@ -378,7 +391,7 @@ export const ButtonIcon = (props) => {
       <MaterialIcons
         name={props.MaterialFamilyIconName}
         size={props.size}
-        color={"whitesmoke"}
+        color={props.color}
       ></MaterialIcons>
     </TouchableOpacity>
   );
@@ -441,7 +454,7 @@ export const ChatHeader = (props) => {
         {Platform.OS === "ios" ? (
           <Ionicons name="ios-arrow-back" size={24} color="black" />
         ) : (
-          <Ionicons name="md-arrow-round-back" size={24} color="black" />
+          <Ionicons name="md-arrow-back" size={24} color="black" />
         )}
       </TouchableOpacity>
       <TouchableOpacity

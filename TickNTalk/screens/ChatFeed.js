@@ -16,6 +16,7 @@ import {
   windowHeight,
   sizeFactor,
   colors,
+  ButtonIcon,
 } from "../components/Basic/Basic";
 import firebase from "firebase";
 import { SearchBar } from "react-native-elements";
@@ -48,11 +49,16 @@ export class ChatFeed extends React.Component {
     filteredGroups: [],
     filteredFriends: [],
     filteredStranger: [],
+
+    addNewFriend: false,
+    headerText:"Tin nhắn",
+    iconName:"person-add",
   };
 
   componentDidMount = () => {
     this.SubscribeDb();
-    this.FilterSearchedRoom();
+    // this.FilterSearchedRoom();
+    this.MyRefresh();
     // this.onChangeSearchText(this.state.toSearchText);
   };
   ChatScreenNav = (id) => {
@@ -126,8 +132,13 @@ export class ChatFeed extends React.Component {
     const tempMsgs = this.state.listMessages;
     LoadLatestMessagesIntoRooms(tempRooms, tempMsgs);
 
-    this.ArrangeChatRooms();
-    this.FilterSearchedRoom();
+    this.SortChatRoomsByTime(tempRooms).then(
+      (result) =>
+      {
+        this.ArrangeChatRooms();
+        this.FilterSearchedRoom();
+      }
+    );
   }
 
   /// CuteTN Note: a huge violation of SRP
@@ -161,6 +172,26 @@ export class ChatFeed extends React.Component {
     this.setState({ listFriends: fr });
   }
 
+  async SortChatRoomsByTime(listRooms)
+  {
+    await listRooms.sort((a, b) => {
+      if(a && b &&
+        a.LatestMessage && b.LatestMessage &&
+        a.LatestMessage.Data && b.LatestMessage.Data && 
+        a.LatestMessage.Data.createdAt && b.LatestMessage.Data.createdAt)
+        return a.LatestMessage.Data.createdAt < b.LatestMessage.Data.createdAt;
+      else
+        return true;
+    }
+    )
+
+   
+
+    // this.state.listRooms = listRooms;
+    // this.setState({listRooms : listRooms});
+    // listRooms = tempRooms;
+  }
+
   // Remove from stranger list
   RemoveFromStrangers(strangerList, email) {
     if (strangerList === undefined) return [];
@@ -168,6 +199,11 @@ export class ChatFeed extends React.Component {
     return strangerList.filter(
       (x) => x.Email.toUpperCase() !== email.toUpperCase()
     );
+  }
+
+  RenderAllRoomsByTime()
+  {
+
   }
 
   /*
@@ -269,6 +305,7 @@ export class ChatFeed extends React.Component {
   }
 
   render() {
+    
     return (
       <SafeAreaView style={styles.containerLI}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -284,7 +321,17 @@ export class ChatFeed extends React.Component {
               justifyContent="space-between"
               flexDirection="row"
             >
-              <Text style={styles.header}>Tin nhắn</Text>
+              <Text style={styles.header}>{this.state.headerText}</Text>
+              <ButtonIcon
+                MaterialFamilyIconName={this.state.iconName}
+                onPress={() => {
+                  this.setState({ addNewFriend: !this.state.addNewFriend });
+                  if (this.state.addNewFriend) {this.setState({headerText:"Tin nhắn",iconName:"person-add"})}
+                  else {this.setState({headerText: "Tìm bạn mới",iconName:"backspace"})};
+                }}
+                size={30}
+                color="whitesmoke"
+              />
             </View>
           </View>
           <View
@@ -322,129 +369,130 @@ export class ChatFeed extends React.Component {
                 }}
                 value={this.state.toSearchText}
               />
-              <Text
-                style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
-              >
-                BẠN BÈ
-              </Text>
-              <FlatList
-                style={styles.ChatBox}
-                alignItems="center"
-                data={this.state.filteredFriends}
-                renderItem={({ item, index }) => {
-                  let title = item.Data.RoomName;
-                  let roomId = item.RoomID;
+              {!this.state.addNewFriend ? (
+                <View>
+                  <Text
+                    style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
+                  >
+                    BẠN BÈ
+                  </Text>
+                  <FlatList
+                    style={styles.ChatBox}
+                    alignItems="center"
+                    data={this.state.filteredFriends}
+                    renderItem={({ item, index }) => {
+                      let title = item.Data.RoomName;
+                      let roomId = item.RoomID;
 
-                  let SystemAva =
-                    "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
-                  let latestMsgText = "";
-                  if (item.LatestMessage)
-                    latestMsgText = item.LatestMessage.Data.text;
+                      let SystemAva =
+                        "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
+                      let latestMsgText = "";
+                      if (item.LatestMessage)
+                        latestMsgText = item.LatestMessage.Data.text;
 
-                  // if title is nothing, then get friend's name
-                  if (!title) {
-                    const friendEmail = GetFriendEmail(
-                      item,
-                      this.props.loggedInEmail
-                    );
-                    const friend = GetUserByEmail(
-                      this.state.listUsers,
-                      friendEmail
-                    );
-                    var userAva;
-                    if (friend) userAva = friend.urlAva;
-                    console.log(userAva);
-                    if (!friend) title = "Người dùng TickNTalk";
-                    else title = friend.Name;
+                      // if title is nothing, then get friend's name
+                      if (!title) {
+                        const friendEmail = GetFriendEmail(
+                          item,
+                          this.props.loggedInEmail
+                        );
+                        const friend = GetUserByEmail(
+                          this.state.listUsers,
+                          friendEmail
+                        );
+                        var userAva;
+                        if (friend) userAva = friend.urlAva;
+                        if (!friend) title = "Người dùng TickNTalk";
+                        else title = friend.Name;
+                      }
+
+                      return (
+                        <Text>
+                          <MessageCard
+                            ImageSource={userAva ? userAva : SystemAva}
+                            Name={title}
+                            LastestChat={latestMsgText}
+                            isRead="true"
+                            onPress={() => {
+                              this.ChatScreenNav(item);
+                            }}
+                          ></MessageCard>
+                        </Text>
+                      );
+                    }}
+                  ></FlatList>
+
+                  {
+                    ///////////////////////////////////////////////////////////////////////////////
                   }
 
-                  return (
-                    <Text>
-                      <MessageCard
-                        ImageSource={userAva ? userAva : SystemAva}
-                        Name={title}
-                        LastestChat={latestMsgText}
-                        isRead="true"
-                        onPress={() => {
-                          this.ChatScreenNav(item);
-                        }}
-                      ></MessageCard>
-                    </Text>
-                  );
-                }}
-              ></FlatList>
+                  <Text
+                    style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
+                  >
+                    NHÓM
+                  </Text>
+                  <FlatList
+                    style={styles.ChatBox}
+                    alignItems="center"
+                    data={this.state.filteredGroups}
+                    renderItem={({ item, index }) => {
+                      const title = item.Data.RoomName;
+                      const roomId = item.RoomID;
 
-              {
-                ///////////////////////////////////////////////////////////////////////////////
-              }
+                      return (
+                        <Text>
+                          <MessageCard
+                            ImageSource="https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
+                            Name={title}
+                            LastestChat="chibi so ciu"
+                            isRead="true"
+                            onPress={() => {
+                              this.ChatScreenNav(item);
+                            }}
+                          ></MessageCard>
+                        </Text>
+                      );
+                    }}
+                  ></FlatList>
+                </View>
+              ) : (
+                <View>
+                  <Text
+                    style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
+                  >
+                    TÌM BẠN MỚI
+                  </Text>
+                  <FlatList
+                    style={styles.ChatBox}
+                    alignItems="center"
+                    data={this.state.filteredStranger}
+                    renderItem={({ item, index }) => {
+                      let title = item.Name;
 
-              <Text
-                style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
-              >
-                NHÓM
-              </Text>
-              <FlatList
-                style={styles.ChatBox}
-                alignItems="center"
-                data={this.state.filteredGroups}
-                renderItem={({ item, index }) => {
-                  const title = item.Data.RoomName;
-                  const roomId = item.RoomID;
+                      if (!title) {
+                        title = "Người dùng TickNTalk";
+                      }
 
-                  return (
-                    <Text>
-                      <MessageCard
-                        ImageSource="https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
-                        Name={title}
-                        LastestChat="chibi so ciu"
-                        isRead="true"
-                        onPress={() => {
-                          this.ChatScreenNav(item);
-                        }}
-                      ></MessageCard>
-                    </Text>
-                  );
-                }}
-              ></FlatList>
+                      const members = [this.props.loggedInEmail, item.Email];
+                      const nullRoom = CreateNullRoom(members);
 
-              {
-                ///////////////////////////////////////////////////////////////////////////////
-              }
-
-              <Text
-                style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
-              >
-                TÌM BẠN MỚI
-              </Text>
-              <FlatList
-                style={styles.ChatBox}
-                alignItems="center"
-                data={this.state.filteredStranger}
-                renderItem={({ item, index }) => {
-                  let title = item.Name;
-
-                  if (!title) {
-                    title = "Người dùng TickNTalk";
-                  }
-
-                  const members = [this.props.loggedInEmail, item.Email];
-                  const nullRoom = CreateNullRoom(members);
-
-                  return (
-                    <Text>
-                      <MessageCard
-                        ImageSource="https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
-                        Name={title}
-                        LastestChat="Nhắn tin để kết bạn!"
-                        isRead="true"
-                        onPress={() => {
-                          this.ChatScreenNav(nullRoom);
-                        }}
-                      ></MessageCard>
-                    </Text>
-                  );
-                }}
-              ></FlatList>
+                      return (
+                        <Text>
+                          <MessageCard
+                            ImageSource="https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
+                            Name={title}
+                            LastestChat="Nhắn tin để kết bạn!"
+                            isRead="true"
+                            onPress={() => {
+                              this.ChatScreenNav(nullRoom);
+                            }}
+                          ></MessageCard>
+                        </Text>
+                      );
+                    }}
+                  ></FlatList>
+                </View>
+              )}
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
