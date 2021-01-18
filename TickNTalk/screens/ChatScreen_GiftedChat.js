@@ -121,8 +121,8 @@ export class ChatScreen_GiftedChat extends React.Component {
 
     this.props.UpdateRoomID(tempRoom);
   }
-  goToInfo=()=>{
-    this.props.navigation.replace('ChatInf');
+  ChatInfoNav=()=>{
+    this.props.navigation.navigate("ChatInf");
   }
   SendMessage(newMessage = []) {
     if (newMessage[0] === undefined) return;
@@ -284,8 +284,8 @@ export class ChatScreen_GiftedChat extends React.Component {
                   : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
               }
               Name={this.state.friend.name}
-              Backward={this.goBack}
-              goToInfo={this.goToInfo}
+              goBack={this.goBack}
+              goToInfo={this.ChatInfoNav}
             ></ChatHeader>
             <View style={styles.ChatContainer}>{chatBody}</View>
           </KeyboardAvoidingView>
@@ -301,7 +301,9 @@ export class ChatScreen_GiftedChat extends React.Component {
                 : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
             }
           Name={this.state.friend.name}
-          Backward={this.goBack}
+          
+          goBack={this.goBack}
+          goToInfo={this.ChatInfoNav}
         ></ChatHeader>
         <View style={styles.ChatContainer}>{chatBody}</View>
       </SafeAreaView>

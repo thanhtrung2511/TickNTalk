@@ -25,6 +25,7 @@ import {
   sizeFactor,
   windowWidth,
 } from "../components/Basic/Basic";
+import {GetFriendEmail} from "../Utilities/ChatRoomUtils"
 import firebase from "firebase";
 import {
   ChangeEmailAction,
@@ -41,6 +42,9 @@ export class ChatInfo extends React.Component {
   constructor(props) {
     super(props);
     this.unsubscriber = null;
+    this.state={
+        friend: { name: "", ava: "" ,age:"",gender:"",},
+    };
   }
 
   ChangePass = () => {
@@ -74,32 +78,30 @@ export class ChatInfo extends React.Component {
   ChangeInfo = () => {
     this.props.navigation.navigate("EditMyInfo");
   };
-
-  componentDidMount() {
+  getFriend=() =>{
     var nameTmp = "";
-    var birthdayTmp = "";
-    var phoneTmp = "";
+    var avaTmp = "";
     var genderTmp = "";
-    var tmpuri = "";
+    var ageTmp="";
     UserRef.orderByChild("Email")
-      .equalTo(this.props.typedEmail)
+      .equalTo(GetFriendEmail(this.props.curRoom, this.props.loggedInEmail))
       .on("value", (snap) => {
         snap.forEach((element) => {
           nameTmp = element.toJSON().Name;
-          this.props.ChangeNameAction(nameTmp);
           genderTmp = element.toJSON().Gender;
-          this.props.ChangeGenderAction(genderTmp);
-          birthdayTmp = element.toJSON().Birthday;
-          this.props.ChangeBirthdayAction(birthdayTmp);
-          phoneTmp = element.toJSON().Phone;
-          this.props.ChangePhoneAction(phoneTmp);
-          //console.log(element.toJSON ().urlAva);
-          tmpuri = element.toJSON().urlAva;
-          this.props.ChangeAvaAction(tmpuri);
+          ageTmp = element.toJSON().Birthday;
+          avaTmp = element.toJSON().urlAva;
+          this.setState({ friend: { name: nameTmp, ava: avaTmp ,age:ageTmp,gender:genderTmp,} });
         });
       });
   }
 
+  componentDidMount() {
+    this.getFriend();
+  }
+  goBack=()=>{
+    this.props.navigation.goBack();
+  }
   render() {
     return (
       <SafeAreaView style={[styles.containerLI]}>
@@ -116,7 +118,7 @@ export class ChatInfo extends React.Component {
               justifyContent="space-between"
               flexDirection="row"
             >
-              <Text style={styles.header}>Thông tin cá nhân</Text>
+                <ButtonIcon MaterialFamilyIconName="arrow-back" size={33} color={colors.black} onPress={this.goBack}/>
             </View>
           </View>
           <View
@@ -133,30 +135,21 @@ export class ChatInfo extends React.Component {
               style={{
                 flexDirection: "column",
                 padding: 8,
-                justifyContent: "flex-start",
+                justifyContent: "space-around",
                 backgroundColor: colors.white,
                 borderRadius: 70 / 5,
                 width: "90%",
               }}
             >
               <View alignItems="center">
-                <TouchableOpacity
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: 160,
-                    height: 160,
-                    borderRadius: 100,
-                  }}
-                  onPress={this.ChangeAva}
-                >
+                
                   <BasicImage
                     //style={{ borderColor: "whitesmoke", borderWidth: 5 }}
-                    source={{ uri: this.props.uriAva?this.props.uriAva: "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"}}
+                    source={{ uri: this.state.friend.ava?this.state.friend.ava: "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"}}
                     Icon={150}
                     Round={100}
                   ></BasicImage>
-                </TouchableOpacity>
+                
               </View>
               <View
                 style={{
@@ -172,26 +165,15 @@ export class ChatInfo extends React.Component {
                   borderStyle:"solid",
                 }}
               >
+                
                 <View
                   style={{ paddingVertical: 8 }}
                   justifyContent="space-between"
                   flexDirection="row"
                 >
-                  <Text style={{ fontSize: 16, fontWeight: "800" }}>
-                    Email:
-                  </Text>
+                  <Text style={{ fontSize: 16, fontWeight: "800" }}>Họ tên:</Text>
                   <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                    {this.props.typedEmail}
-                  </Text>
-                </View>
-                <View
-                  style={{ paddingVertical: 8 }}
-                  justifyContent="space-between"
-                  flexDirection="row"
-                >
-                  <Text style={{ fontSize: 16, fontWeight: "800" }}>Tên:</Text>
-                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                    {this.props.typedName}
+                    {this.state.friend.name}
                   </Text>
                 </View>
                 <View
@@ -203,7 +185,7 @@ export class ChatInfo extends React.Component {
                     Giới tính:
                   </Text>
                   <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                    {this.props.typedGender}
+                    {this.state.friend.gender}
                   </Text>
                 </View>
                 <View
@@ -215,21 +197,10 @@ export class ChatInfo extends React.Component {
                     Ngày sinh:
                   </Text>
                   <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                    {this.props.typedBirthday}
+                    {this.state.friend.age}
                   </Text>
                 </View>
-                <View
-                  style={{ paddingVertical: 8 }}
-                  justifyContent="space-between"
-                  flexDirection="row"
-                >
-                  <Text style={{ fontSize: 16, fontWeight: "800" }}>
-                    Số điện thoại:
-                  </Text>
-                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                    {this.props.typedPhone}
-                  </Text>
-                </View>
+                
               </View>
             </View>
           </View>
@@ -266,12 +237,8 @@ export class ChatInfo extends React.Component {
 }
 function mapStateToProps(state) {
   return {
-    typedEmail: state.emailReducer,
-    typedName: state.nameReducer,
-    typedBirthday: state.birthdayReducer,
-    typedPhone: state.phoneReducer,
-    typedGender: state.genderReducer,
-    uriAva: state.avaReducer,
+    loggedInEmail: state.emailReducer,
+    curRoom: state.roomReducer,
   };
 }
 
@@ -279,26 +246,6 @@ function mapDispatchToProps(dispatch) {
   return {
     ChangeEmailAction: (typedEmail) => {
       dispatch(ChangeEmailAction(typedEmail));
-    },
-
-    ChangeNameAction: (typedName) => {
-      dispatch(ChangeNameAction(typedName));
-    },
-
-    ChangeBirthdayAction: (typedBirthday) => {
-      dispatch(ChangeBirthdayAction(typedBirthday));
-    },
-
-    ChangePhoneAction: (typedPhone) => {
-      dispatch(ChangePhoneAction(typedPhone));
-    },
-
-    ChangeGenderAction: (typedGender) => {
-      dispatch(ChangeGenderAction(typedGender));
-    },
-
-    ChangeAvaAction: (uriAva) => {
-      dispatch(ChangeAvaAction(uriAva));
     },
   };
 }
