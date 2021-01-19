@@ -105,7 +105,7 @@ export class SignUpScreen extends React.Component {
   };
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.containerLI}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           <View style={{ alignItems: "center" }}>
             <View style={{ alignItems: "center" }} justifyContent="center">

@@ -22,7 +22,6 @@ import firebase from "firebase";
 import { SearchBar } from "react-native-elements";
 import { UserRef, RoomRef, MessageRef } from "../Fire";
 
-import { Card } from "react-native-paper";
 import { connect } from "react-redux";
 import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
 

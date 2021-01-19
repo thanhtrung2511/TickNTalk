@@ -51,7 +51,7 @@ export class LoginScreen extends React.Component {
     if (this.state.loading) return null; // Render loading/splash screen etc
 
     return (
-      <SafeAreaView style={[styles.containerLI,{backgroundColor: "white"}]}>
+      <SafeAreaView style={[styles.containerLI,{backgroundColor: "whitesmoke"}]}>
         <View style={{ alignItems: "center" }}>
           <View style={{ marginTop: 32, alignItems: "center" }}>
             <BasicImage Icon={200} source={require("../assets/Logo.png")} />

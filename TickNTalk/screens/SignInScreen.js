@@ -17,6 +17,7 @@ import {
 } from "../components/Basic/Basic";
 //import { GoogleSignin } from "react-native-google-signin";
 import firebase from "firebase";
+import Expo from 'expo';
 import { ChangeEmailAction, ChangeLoginStatus } from "../actions/index";
 import { connect } from "react-redux";
 
@@ -49,19 +50,24 @@ export class SignInScreen extends React.Component {
       });
   };
   SignInWithGoogle = async () => {
-    // const { idToken } = await GoogleSignin.signIn();
-    // const googleCredential = await firebase.auth.GoogleAuthProvider.credential(
-    //   idToken
-    // );
-    // firebase.auth().signInWithCredential(googleCredential).then(()=>{
-    //   this.SignInContinue();
-    // })
-    // .catch(err => {
-    //   createOneButtonAlert({
-    //     Text: "Lỗi không đăng nhập được với Google",
-    //     TextAction: "Thử lại",
-    //   });
-    // })
+    try {
+      const result = await Expo.Google.logInAsync({
+        androidClientId:
+          "940541027502-t7ea2uq69ckasdjbh7e86ev4roac5ajq.apps.googleusercontent.com",
+        behavior: "web",
+        iosClientId:
+          "940541027502-aferp9bdbjs01ln667sn6jk163vddnh8.apps.googleusercontent.com",
+        scopes: ["profile", "email"],
+      });
+
+      if (result.type === "success") {
+        return result.accessToken;
+      } else {
+        return { cancelled: true };
+      }
+    } catch (e) {
+      return { error: true };
+    }
   };
   SignInContinue = () => {
     this.props.UpdateIsLogin(true);
@@ -75,7 +81,7 @@ export class SignInScreen extends React.Component {
   };
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.containerLI}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           <View style={{ alignItems: "center" }}>
             <BasicImage Icon={200} source={require("../assets/Logo.png")} />
@@ -107,7 +113,7 @@ export class SignInScreen extends React.Component {
             <View style={{ marginTop: sizeFactor * 2.1 }}>
               <LoginBottom
                 OnPressNormal={this.SignInWithEmailAndPassword}
-                OnPressGoogle={this.SignInWithGoogle}
+                OnPressGoogle={async ()=>{this.SignInWithGoogle();}}
                 TextNormal="Đăng nhập"
                 TextGoogle="Đăng nhập với Google"
                 TextStatic="Bạn chưa có tài khoản?"
