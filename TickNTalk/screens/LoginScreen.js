@@ -43,10 +43,13 @@ export class LoginScreen extends React.Component {
   Dashboard = () => {
     this.props.navigation.replace("Dashboard");
   }
+  componentDidUpdate(){
+
+    if (this.state.authenticated) this.Dashboard();
+  }
   render() {
     if (this.state.loading) return null; // Render loading/splash screen etc
 
-    if (this.state.authenticated) this.Dashboard();
     return (
       <SafeAreaView style={[styles.containerLI,{backgroundColor: "white"}]}>
         <View style={{ alignItems: "center" }}>

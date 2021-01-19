@@ -387,7 +387,7 @@ export const ButtonMod = (props) => {
 };
 export const ButtonIcon = (props) => {
   return (
-    <TouchableOpacity style={styles.SmallButton} onPress={props.onPress}>
+    <TouchableOpacity style={[styles.SmallButton,props.style]} onPress={props.onPress}>
       <MaterialIcons
         name={props.MaterialFamilyIconName}
         size={props.size}
@@ -450,17 +450,13 @@ export const ChatMessage_Mine = (props) => {
 export const ChatHeader = (props) => {
   return (
     <View style={styles.ChatScreen_Banner}>
-      <TouchableOpacity onPress={props.Backward}>
-        {Platform.OS === "ios" ? (
-          <Ionicons name="ios-arrow-back" size={24} color="black" />
-        ) : (
-          <Ionicons name="md-arrow-back" size={24} color="black" />
-        )}
-      </TouchableOpacity>
+      <ButtonIcon MaterialFamilyIconName="arrow-back" onPress={props.goBack} size={24} color={colors.black}/>
       <TouchableOpacity
         style={{
           flexDirection: "row",
           alignItems: "center",
+          width:"auto",
+          height:"auto",
         }}
         onPress={props.goToInfo}
       >
@@ -480,12 +476,8 @@ export const ChatHeader = (props) => {
           {props.Name}
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={{ marginLeft: 16 }} onPress={props.Call}>
-        <Ionicons name="ios-call" size={24} color="black" />
-      </TouchableOpacity>
-      <TouchableOpacity style={{ marginLeft: 16 }} onPress={props.Video}>
-        <Ionicons name="ios-videocam" size={24} color="black" />
-      </TouchableOpacity>
+      <ButtonIcon MaterialFamilyIconName="call" onPress={props.Call} size={24} color={colors.black}/>
+      <ButtonIcon MaterialFamilyIconName="videocam" onPress={props.Video} size={24} color={colors.black}/>
     </View>
   );
 };
