@@ -35,6 +35,7 @@ import {
   LoadLatestMessagesIntoRooms,
   MatchSearchRoomScore,
   MatchSearchStringScore,
+  MatchSearchUserScore,
 } from "../Utilities/ChatRoomUtils";
 
 console.disableYellowBox = true;
@@ -319,6 +320,15 @@ export class ChatFeed extends React.Component {
 
     gr.sort((g1, g2) => g1.MatchScore < g2.MatchScore);
     this.setState({ filteredGroups : gr });
+
+    let str = this.state.listStrangers.map((stranger) => {
+      let tempStr = JSON.parse((JSON.stringify(stranger)));
+      tempStr.MatchScore = MatchSearchUserScore(toSearchText, stranger)
+      return tempStr;
+    }).filter((stranger) => stranger.MatchScore !== 0);
+
+    str.sort((s1, s2) => s1.MatchScore < s2.MatchScore);
+    this.setState({ filteredStranger : str });
   }
 
   onChangeSearchText(toSearchText) {
