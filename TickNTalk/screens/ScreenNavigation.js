@@ -125,7 +125,7 @@ const AppNavigator = createStackNavigator(
     SignUp: SignUpScreen,
     EditMyInfo: PersonalInfoEdit ,
     ChatScr:ChatScreen_GiftedChat,
-    ChatInfo: ChatInfo,
+    ChatInf: ChatInfo,
     Dashboard: TabNavigator,
     ChangePass: ChangePass,
     PersonalInfo: PersonalInfo,

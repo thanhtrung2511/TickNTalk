@@ -65,7 +65,7 @@ export class ChatScreen_GiftedChat extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     // console.log("CuteTN Debug: " + JSON.stringify(this.state.messages));
   }
-  getFriend() {
+  getFriend=() =>{
     var nameTmp = "";
     var avaTmp = "";
     UserRef.orderByChild("Email")
@@ -121,7 +121,9 @@ export class ChatScreen_GiftedChat extends React.Component {
 
     this.props.UpdateRoomID(tempRoom);
   }
-
+  ChatInfoNav=()=>{
+    this.props.navigation.navigate("ChatInf");
+  }
   SendMessage(newMessage = []) {
     if (newMessage[0] === undefined) return;
 
@@ -229,6 +231,11 @@ export class ChatScreen_GiftedChat extends React.Component {
           color={colors.pink}
           size={24}
         />
+        <ButtonIcon
+          MaterialFamilyIconName="mic"
+          color={colors.pink}
+          size={24}
+        />
       </View>
     );
   }
@@ -242,6 +249,7 @@ export class ChatScreen_GiftedChat extends React.Component {
   render() {
     const chatBody = (
       <GiftedChat
+        keyboardShouldPersistTaps="handled"
         renderBubble={this.renderBubble}
         messages={this.state.messages}
         onSend={(newMessage) => this.HandlePressSend(newMessage)}
@@ -268,7 +276,7 @@ export class ChatScreen_GiftedChat extends React.Component {
     if (Platform.OS === "android") {
       return (
         <SafeAreaView style={[styles.containerLI],{paddingTop:25,height:"99.5%"}}>
-          <KeyboardAvoidingView style={[styles.containerLI,{height:"100%"}]} behavior="padding">
+          <KeyboardAvoidingView style={[styles.containerLI,{height:"100%"}]} behavior="auto" on>
             <ChatHeader
               ImageSource={
                 this.state.friend.ava!==""
@@ -276,7 +284,8 @@ export class ChatScreen_GiftedChat extends React.Component {
                   : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
               }
               Name={this.state.friend.name}
-              Backward={this.goBack}
+              goBack={this.goBack}
+              goToInfo={this.ChatInfoNav}
             ></ChatHeader>
             <View style={styles.ChatContainer}>{chatBody}</View>
           </KeyboardAvoidingView>
@@ -292,7 +301,9 @@ export class ChatScreen_GiftedChat extends React.Component {
                 : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
             }
           Name={this.state.friend.name}
-          Backward={this.goBack}
+          
+          goBack={this.goBack}
+          goToInfo={this.ChatInfoNav}
         ></ChatHeader>
         <View style={styles.ChatContainer}>{chatBody}</View>
       </SafeAreaView>
