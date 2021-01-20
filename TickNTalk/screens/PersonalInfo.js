@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  ScrollView,
   Image,
   KeyboardAvoidingView,
 } from "react-native";
@@ -103,6 +104,7 @@ export class PersonalInFo extends React.Component {
   render() {
     return (
       <SafeAreaView style={[styles.containerLI]}>
+      <ScrollView>
         <View style={styles.container}>
           <View
             style={{
@@ -260,6 +262,7 @@ export class PersonalInFo extends React.Component {
             ></ButtonMod>
           </View>
         </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
