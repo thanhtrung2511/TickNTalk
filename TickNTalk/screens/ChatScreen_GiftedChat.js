@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from 'react';
 import {
   FlatList,
   TouchableOpacity,
@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   Platform,
-} from "react-native";
+} from 'react-native';
 import {
   GiftedChat,
   Bubble,
@@ -17,8 +17,11 @@ import {
   InputToolbar,
   Composer,
   Actions,
-} from "react-native-gifted-chat";
-import Fire, { RoomRef } from "../Fire";
+  MessageImage,
+  MessageVideo,
+} from 'react-native-gifted-chat';
+import {Video} from 'expo-av';
+import Fire, {RoomRef, storage, uidR} from '../Fire';
 import {
   styles,
   ChatHeader,
@@ -27,30 +30,166 @@ import {
   windowWidth,
   windowHeight,
   ButtonIcon,
-} from "../components/Basic/Basic";
-import { Ionicons } from "@expo/vector-icons";
-import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
-import { connect } from "react-redux";
-import { UserRef, MessageRef } from "../Fire";
-import { CreateNullRoom, GetFriendEmail } from "../Utilities/ChatRoomUtils";
+  createOneButtonAlert,
+} from '../components/Basic/Basic';
+import {Ionicons} from '@expo/vector-icons';
+import {ChangeRoomIDAction, ChangeEmailAction} from '../actions/index';
+import {connect} from 'react-redux';
+import {UserRef, MessageRef} from '../Fire';
+import {CreateNullRoom, GetFriendEmail} from '../Utilities/ChatRoomUtils';
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+import {Alert} from 'react-native';
 
 export class ChatScreen_GiftedChat extends React.Component {
   state = {
     messages: [],
-    room: "",
+    room: '',
     member: [],
-    friend: { name: "", ava: "" },
+    friend: {name: '', ava: ''},
+    currentMessage: '',
+    currentVideo: '',
   };
 
-  ImageSend = () => {};
+  componentDidUpdate () {
+    //console.log("thycute : " + this.props.uriAva);
+  }
+
+  getPermissions = async () => {
+    if (Platform.OS !== 'web') {
+      const {status} = await Permissions.askAsync (Permissions.CAMERA_ROLL);
+      return status;
+    }
+  };
+  uploadPhoto = async uri => {
+    try {
+      console.log ('1');
+      const photo = await this.getBlob (uri);
+      console.log ('2');
+      const uploadUri =
+        this.props.typedEmail +
+        '_' +
+        (Platform.OS === 'ios' ? uri.replace ('file://', '') : uri).substring (
+          uri.lastIndexOf ('/') + 1
+        );
+
+      const imageRef = storage.child (uploadUri);
+      await imageRef.put (photo);
+      const url = await imageRef.getDownloadURL ();
+      console.log (url);
+      this.setState ({currentMessage: url});
+      this.setState ({currentVideo: ''});
+      return url;
+    } catch (error) {
+      createOneButtonAlert ({Text: 'Đã có lỗi ', TextAction: 'Đồng ý'});
+    }
+  };
+
+  getBlob = async uri => {
+    //console.log("Uri get blob: " + uri);
+    return await new Promise ((resolve, reject) => {
+      const xhr = new XMLHttpRequest ();
+
+      xhr.onload = () => {
+        resolve (xhr.response);
+      };
+      xhr.onerror = () => {
+        reject (new TypeError ('Network request fails'));
+      };
+
+      xhr.responseType = 'blob';
+      xhr.open ('GET', uri, true);
+      xhr.send (null);
+    });
+  };
+
+  pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync ({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 0.5,
+      });
+      if (!result.cancelled) {
+        this.uploadPhoto (result.uri);
+      }
+    } catch (error) {
+      createOneButtonAlert ({
+        Text: 'Đã có lỗi xảy ra trong lúc chọn ảnh',
+        TextAction: 'Đồng ý',
+      });
+    }
+  };
+
+  ImageSend = async () => {
+    const status = await this.getPermissions ();
+
+    if (status !== 'granted') {
+      alert ('We need permissions to get access to your camera library');
+      return;
+    }
+
+    this.pickImage ();
+  };
+
+  uploadVideo = async uri => {
+    try {
+      console.log ('1');
+      const photo = await this.getBlob (uri);
+      console.log ('2');
+      const uploadUri =
+        this.props.typedEmail +
+        '_' +
+        (Platform.OS === 'ios' ? uri.replace ('file://', '') : uri).substring (
+          uri.lastIndexOf ('/') + 1
+        );
+
+      const imageRef = storage.child (uploadUri);
+      await imageRef.put (photo);
+      const url = await imageRef.getDownloadURL ();
+      this.setState ({currentVideo: url});
+      return url;
+    } catch (error) {
+      createOneButtonAlert ({Text: 'Đã có lỗi ', TextAction: 'Đồng ý'});
+    }
+  };
+
+  pickVideo = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync ({
+        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        allowsEditing: true,
+        quality: 0.5,
+      });
+      if (!result.cancelled) {
+        this.uploadVideo (result.uri);
+      }
+    } catch (error) {
+      createOneButtonAlert ({
+        Text: 'Đã có lỗi xảy ra trong lúc chọn ảnh',
+        TextAction: 'Đồng ý',
+      });
+    }
+  };
+
+  VideoSend = async () => {
+    const status = await this.getPermissions ();
+
+    if (status !== 'granted') {
+      alert ('We need permissions to get access to your camera library');
+      return;
+    }
+
+    this.pickVideo ();
+  };
 
   goBack = () => {
-    this.props.navigation.goBack();
+    this.props.navigation.goBack ();
   };
 
-  componentDidMount() {
-    this.FetchMessages();
-    this.getFriend();
+  componentDidMount () {
+    this.FetchMessages ();
+    this.getFriend ();
     // Fire.get(message =>
     //   this.setState(previous  =>  ({
     //     messages: GiftedChat.append(previous.messages,message)
@@ -58,78 +197,80 @@ export class ChatScreen_GiftedChat extends React.Component {
     // );
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     // Fire.off();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate (prevProps, prevState) {
     // console.log("CuteTN Debug: " + JSON.stringify(this.state.messages));
   }
-  getFriend=() =>{
-    var nameTmp = "";
-    var avaTmp = "";
-    UserRef.orderByChild("Email")
-      .equalTo(GetFriendEmail(this.props.curRoom, this.props.loggedInEmail))
-      .on("value", (snap) => {
-        snap.forEach((element) => {
-          nameTmp = element.toJSON().Name;
+  getFriend = () => {
+    var nameTmp = '';
+    var avaTmp = '';
+    UserRef.orderByChild ('Email')
+      .equalTo (GetFriendEmail (this.props.curRoom, this.props.loggedInEmail))
+      .on ('value', snap => {
+        snap.forEach (element => {
+          nameTmp = element.toJSON ().Name;
 
-          avaTmp = element.toJSON().urlAva;
-          this.setState({ friend: { name: nameTmp, ava: avaTmp } });
+          avaTmp = element.toJSON ().urlAva;
+          this.setState ({friend: {name: nameTmp, ava: avaTmp}});
         });
       });
-  }
-  FetchMessages() {
-    MessageRef.on("value", (snapshot) => {
+  };
+  FetchMessages () {
+    MessageRef.on ('value', snapshot => {
       // temp list of strangers
       let msgs = [];
 
-      snapshot.forEach((child) => {
+      snapshot.forEach (child => {
         let msg = {
           Id: child.key,
-          SenderEmail: child.toJSON().SenderEmail,
-          RoomID: child.toJSON().RoomID,
-          Data: child.toJSON().Data,
+          SenderEmail: child.toJSON ().SenderEmail,
+          RoomID: child.toJSON ().RoomID,
+          Data: child.toJSON ().Data,
         };
 
         if (msg.Data)
           if (msg.RoomID === this.props.curRoom.RoomID) {
-            msgs.push(msg.Data);
+            msgs.push (msg.Data);
           }
       });
 
-      msgs.sort((x, y) => x.createdAt < y.createdAt);
+      msgs.sort ((x, y) => x.createdAt < y.createdAt);
 
-      this.setState({ messages: msgs });
+      this.setState ({messages: msgs});
     });
   }
 
-  CreateNewRoom(members) {
-    let newRoom = CreateNullRoom(members);
-    newRoom.Data.CreatedDate = Date.now();
+  CreateNewRoom (members) {
+    let newRoom = CreateNullRoom (members);
+    newRoom.Data.CreatedDate = Date.now ();
 
     return newRoom;
   }
 
-  async PushAndUseNewRoom(newRoom) {
-    const newRoomDataRef = await RoomRef.push(newRoom.Data);
+  async PushAndUseNewRoom (newRoom) {
+    const newRoomDataRef = await RoomRef.push (newRoom.Data);
 
     let tempRoom = {
       RoomID: newRoomDataRef.key,
       Data: newRoom.Data,
     };
 
-    this.props.UpdateRoomID(tempRoom);
+    this.props.UpdateRoomID (tempRoom);
   }
-  ChatInfoNav=()=>{
-    this.props.navigation.navigate("ChatInf");
-  }
-  SendMessage(newMessage = []) {
+  ChatInfoNav = () => {
+    this.props.navigation.navigate ('ChatInf');
+  };
+  SendMessage (newMessage = []) {
     if (newMessage[0] === undefined) return;
 
     // CuteTN Note: Add new message to Firebase
-    newMessage[0].createdAt = Date.parse(newMessage[0].createdAt); // CuteTN Note: somehow, Firebase cannot understand Giftedchat data :)
-    MessageRef.push({
+    if (this.state.currentVideo) newMessage[0].video = this.state.currentVideo;
+    newMessage[0].image = this.state.currentMessage;
+    newMessage[0].createdAt = Date.parse (newMessage[0].createdAt); // CuteTN Note: somehow, Firebase cannot understand Giftedchat data :)
+    MessageRef.push ({
       SenderEmail: this.props.loggedInEmail,
       RoomID: this.props.curRoom.RoomID,
       Data: newMessage[0],
@@ -137,23 +278,24 @@ export class ChatScreen_GiftedChat extends React.Component {
 
     const msgs = this.state.messages;
     // this.setState({ messages: GiftedChat.append(msgs, newMessage) }); // CuteTN Note: this is BUGGY :)
-    GiftedChat.append(msgs, newMessage);
+    GiftedChat.append (msgs, newMessage);
   }
 
   // helper method that is sends a message
-  async HandlePressSend(newMessage = []) {
+  async HandlePressSend (newMessage = []) {
     if (!this.props.curRoom.RoomID) {
       const members = this.props.curRoom.Data.Members;
-      const newRoom = this.CreateNewRoom(members);
-      this.PushAndUseNewRoom(newRoom).then((value) => {
+      const newRoom = this.CreateNewRoom (members);
+      this.PushAndUseNewRoom (newRoom).then (value => {
         this.state.messages = [];
-        this.SendMessage(newMessage);
+        this.SendMessage (newMessage);
       });
     } else {
-      this.SendMessage(newMessage);
+      this.SendMessage (newMessage);
     }
+    this.setState ({currentMessage: '', currentVideo: ''});
   }
-  renderBubble(props) {
+  renderBubble (props) {
     return (
       <Bubble
         {...props}
@@ -168,13 +310,13 @@ export class ChatScreen_GiftedChat extends React.Component {
         }}
         textStyle={{
           right: {
-            color: "#fff",
+            color: '#fff',
           },
         }}
       />
     );
   }
-  renderSend(props) {
+  renderSend (props) {
     return (
       <Send {...props}>
         <View style={styles.sendingContainer}>
@@ -183,110 +325,134 @@ export class ChatScreen_GiftedChat extends React.Component {
       </Send>
     );
   }
-  renderLoading(props) {
+  renderLoading (props) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#6646ee" />
       </View>
     );
   }
-  renderComposer(props) {
+  renderComposer (props) {
     return (
       <Composer
         {...props}
-        textInputStyle={{ borderRadius: 70 / 3, backgroundColor: "whitesmoke" }}
+        textInputStyle={{borderRadius: 70 / 3, backgroundColor: 'whitesmoke'}}
         placeholder="Aa"
       />
     );
   }
-  renderInputToolbar(props) {
+  renderInputToolbar (props) {
     return (
       <InputToolbar
         {...props}
         containerStyle={{
           // width: windowWidth,
           // backgroundColor: "black",
-          alignItems: "center",
-          justifyContent: "center",
+          alignItems: 'center',
+          justifyContent: 'center',
           //padding:4,
-          height: "auto",
-          flexDirection: "row",
+          height: 'auto',
+          flexDirection: 'row',
         }}
         primaryStyle={{
           // borderRadius: 70 / 3,
           // backgroundColor: colors.white,
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexDirection: "row",
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexDirection: 'row',
           // width: sizeFactor * 15,
         }}
-      ></InputToolbar>
+      />
     );
   }
-  renderActions(props) {
+  renderActions (props) {
     return (
       <View style={styles.customActionsContainer}>
         <ButtonIcon
-          MaterialFamilyIconName="camera-alt"
+          MaterialFamilyIconName="image"
           color={colors.pink}
           size={24}
+          onPress={props.onPressCamera}
         />
         <ButtonIcon
-          MaterialFamilyIconName="mic"
+          MaterialFamilyIconName="videocam"
           color={colors.pink}
           size={24}
+          onPress={props.onPressVideo}
         />
       </View>
     );
   }
-  renderChatEmpty(props){
-    return (
-      
-        <View></View>
-      
-    ); 
+  renderChatEmpty (props) {
+    return <View />;
   }
-  render() {
+
+  renderMessageImage (props) {
+    return <MessageImage {...props} source={props.currentMessage.image} />;
+  }
+
+  renderMessageVideo (props) {
+    return (
+      <View style={{padding: 20}}>
+        <Video
+          resizeMode="contain"
+          useNativeControls
+          shouldPlay={false}
+          source={{uri: props.currentMessage.video}}
+          style={{width: 200, height: 200}}
+        />
+      </View>
+    );
+  }
+
+  render () {
     const chatBody = (
       <GiftedChat
         keyboardShouldPersistTaps="handled"
         renderBubble={this.renderBubble}
         messages={this.state.messages}
-        onSend={(newMessage) => this.HandlePressSend(newMessage)}
+        onSend={newMessage => this.HandlePressSend (newMessage)}
         user={{
-          _id: this.props.loggedInEmail.toUpperCase(),
+          _id: this.props.loggedInEmail.toUpperCase (),
           avatar: this.props.curAva,
-          name:this.props.curName,
+          name: this.props.curName,
         }}
         showUserAvatar
         renderUsernameOnMessage
         alwaysShowSend
         isTyping
-         renderComposer={this.renderComposer}
+        renderComposer={this.renderComposer}
         renderInputToolbar={this.renderInputToolbar}
         renderSend={this.renderSend}
-         renderLoading={this.renderLoading}
+        renderLoading={this.renderLoading}
         renderActions={this.renderActions}
         renderChatEmpty={this.renderChatEmpty}
-        onPressActionButton={() => ({
-          //code gửi ảnh
-        })}
-      ></GiftedChat>
+        renderMessageVideo={this.renderMessageVideo}
+        renderMessageImage={this.renderMessageImage}
+        onPressVideo={this.VideoSend}
+        onPressCamera={this.ImageSend}
+      />
     );
-    if (Platform.OS === "android") {
+    if (Platform.OS === 'android') {
       return (
-        <SafeAreaView style={[styles.containerLI],{paddingTop:25,height:"99.5%"}}>
-          <KeyboardAvoidingView style={[styles.containerLI,{height:"100%"}]} behavior="auto" on>
+        <SafeAreaView
+          style={([styles.containerLI], {paddingTop: 25, height: '99.5%'})}
+        >
+          <KeyboardAvoidingView
+            style={[styles.containerLI, {height: '100%'}]}
+            behavior="auto"
+            on
+          >
             <ChatHeader
               ImageSource={
-                this.state.friend.ava!==""
+                this.state.friend.ava !== ''
                   ? this.state.friend.ava
-                  : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
+                  : 'https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
               }
               Name={this.state.friend.name}
               goBack={this.goBack}
               goToInfo={this.ChatInfoNav}
-            ></ChatHeader>
+            />
             <View style={styles.ChatContainer}>{chatBody}</View>
           </KeyboardAvoidingView>
         </SafeAreaView>
@@ -295,42 +461,40 @@ export class ChatScreen_GiftedChat extends React.Component {
     return (
       <SafeAreaView style={styles.containerLI}>
         <ChatHeader
-            ImageSource={
-              this.state.friend.ava!==""
-                ? this.state.friend.ava
-                : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
-            }
+          ImageSource={
+            this.state.friend.ava !== ''
+              ? this.state.friend.ava
+              : 'https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8'
+          }
           Name={this.state.friend.name}
-          
           goBack={this.goBack}
           goToInfo={this.ChatInfoNav}
-        ></ChatHeader>
+        />
         <View style={styles.ChatContainer}>{chatBody}</View>
       </SafeAreaView>
     );
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     loggedInEmail: state.emailReducer,
     curRoom: state.roomReducer,
     curAva: state.avaReducer,
-    curName:state.nameReducer,
+    curName: state.nameReducer,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    Update: (loggedInEmail) => {
-      dispatch(ChangeEmailAction(loggedInEmail));
+    Update: loggedInEmail => {
+      dispatch (ChangeEmailAction (loggedInEmail));
     },
-    UpdateRoomID: (curRoom) => {
-      dispatch(ChangeRoomIDAction(curRoom));
+    UpdateRoomID: curRoom => {
+      dispatch (ChangeRoomIDAction (curRoom));
     },
   };
 };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ChatScreen_GiftedChat);
+export default connect (mapStateToProps, mapDispatchToProps) (
+  ChatScreen_GiftedChat
+);
