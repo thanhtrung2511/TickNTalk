@@ -1,13 +1,13 @@
-import React, { Component } from "react";
+import React from "react";
 import {
-  Image,
+
   SafeAreaView,
   Text,
   TextInput,
   View,
-  ScrollView,
+
   KeyboardAvoidingView,
-  TouchableOpacity,
+ 
 } from "react-native";
 import firebase from "firebase";
 import { UserRef } from "../Fire";

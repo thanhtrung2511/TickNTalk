@@ -4,7 +4,7 @@ import {createStackNavigator} from 'react-navigation-stack'
 import React from 'react'
 
 import LoginScreen from './LoginScreen'
-import ChatScreen from './ChatScreen'
+//import ChatScreen from './ChatScreen'
 import PersonalInfo from './PersonalInfo'
 import PersonalInfoEdit from './PersonalInfoEdit'
 import ChatFeed from './ChatFeed'

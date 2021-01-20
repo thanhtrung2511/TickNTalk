@@ -1,12 +1,5 @@
-import React, { Component, useState } from "react";
-import { Text, TextInput, View, KeyboardAvoidingView } from "react-native";
-import {
-  SafeAreaView,
-  NavigationContainer,
-} from "react-native-safe-area-context";
-import { EvilIcons } from "@expo/vector-icons";
-// import styles from '../screens/components/editprofile/Styles';
-import firebase from "firebase";
+import React from "react";
+import { Text, TextInput, View, KeyboardAvoidingView,SafeAreaView } from "react-native";
 import {
   ChangeEmailAction,
   ChangeNameAction,
@@ -14,7 +7,7 @@ import {
   ChangePhoneAction,
   ChangeGenderAction,
 } from "../actions/index";
-import { connect, Provider } from "react-redux";
+import { connect } from "react-redux";
 import { UserRef } from "../Fire";
 import DatePicker from "react-native-datepicker";
 import { styles, ButtonMod,createOneButtonAlert } from "../components/Basic/Basic";

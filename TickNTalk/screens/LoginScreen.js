@@ -1,7 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import { View, Text, SafeAreaView } from "react-native";
 import {
-  MessageCard,
   LoginButton,
   BasicImage,
   styles,

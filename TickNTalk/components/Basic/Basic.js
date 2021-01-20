@@ -557,10 +557,9 @@ export const createTwoButtonAlert = (props) =>
       },
       {
         text: props.okBtnText,
-        onPress: () => 
-          props.onPressOK
+        onPress: () => {
+          props.onPressOK}
         ,
       },
     ],
-    { cancelable: false }
   );

@@ -1,20 +1,12 @@
-import React, { Component } from "react";
+import React from "react";
 import {
-  Button,
+  
   Text,
-  TextInput,
-  View,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,ScrollView,
+  SafeAreaView,
+  View,ScrollView,
   KeyboardAvoidingView,
 } from "react-native";
-import {
-  SafeAreaView,
-  NavigationContainer,
-} from "react-native-safe-area-context";
-import { EvilIcons } from "@expo/vector-icons";
+
 import { styles, ButtonIcon, colors } from "../components/Basic/Basic";
 import { SearchBar } from "react-native-elements";
 

@@ -1,24 +1,14 @@
-import React, { Component, useState } from "react";
+import React from "react";
 import {
   Text,
   TextInput,
   View,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  Button,KeyboardAvoidingView
-} from "react-native";
-import {
   SafeAreaView,
-  NavigationContainer,
-} from "react-native-safe-area-context";
-import { EvilIcons } from "@expo/vector-icons";
-// import styles from '../screens/components/editprofile/Styles';
-import firebase from "firebase";
+  KeyboardAvoidingView
+} from "react-native";
 
-import { connect, Provider } from "react-redux";
+
+import { connect } from "react-redux";
 import { UserRef } from "../Fire";
 import DatePicker from "react-native-datepicker";
 import { styles, ButtonIcon, ButtonMod,colors } from "../components/Basic/Basic";

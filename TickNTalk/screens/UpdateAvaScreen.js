@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React from "react";
 import {
   View,
   Platform,
@@ -9,22 +9,15 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
 } from "react-native";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 // import {Text} from '../Text';
 import "firebase/auth";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
-import { connect, Provider } from "react-redux";
-// import {FirebaseContext} from '../screens/FirebaseContext';
-import { UserContext } from "../screens/UserContext";
+import { connect } from "react-redux";
 import { colors, styles, ButtonMod,createTwoButtonAlert,createOneButtonAlert } from "../components/Basic/Basic";
 import {
-  ChangeEmailAction,
-  ChangeNameAction,
-  ChangeBirthdayAction,
-  ChangePhoneAction,
-  ChangeGenderAction,
   ChangeAvaAction,
 } from "../actions/index";
 import { UserRef, storage, uidR } from "../Fire";
@@ -221,9 +214,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    ChangeEmailAction: (typedEmail) => {
-      dispatch(ChangeEmailAction(typedEmail));
-    },
 
     ChangeAvaAction: (uriAva) => {
       dispatch(ChangeAvaAction(uriAva));

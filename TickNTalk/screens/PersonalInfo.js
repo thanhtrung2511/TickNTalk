@@ -1,20 +1,15 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Text,
-  TextInput,
+  
   View,
-  Dimensions,
-  StyleSheet,
+  
   TouchableOpacity,
-  FlatList,
-  ScrollView,
-  Image,
-  KeyboardAvoidingView,
+  
+  ScrollView,SafeAreaView,
+  
 } from "react-native";
-import {
-  SafeAreaView,
-  NavigationContainer,
-} from "react-native-safe-area-context";
+
 import { EvilIcons } from "@expo/vector-icons";
 // import styles from '../screens/components/profile/Styles';
 import {
@@ -35,7 +30,7 @@ import {
   ChangeGenderAction,
   ChangeAvaAction,
 } from "../actions/index";
-import { connect, Provider } from "react-redux";
+import { connect } from "react-redux";
 import { UserRef } from "../Fire";
 
 export class PersonalInFo extends React.Component {

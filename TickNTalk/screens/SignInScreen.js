@@ -8,7 +8,6 @@ import {
   ScrollView,
 } from "react-native";
 import {
-  Button,
   styles,
   BasicImage,
   LoginBottom,

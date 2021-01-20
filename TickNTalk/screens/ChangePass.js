@@ -3,20 +3,11 @@ import {
   Text,
   TextInput,
   View,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  Alert,KeyboardAvoidingView,
+  KeyboardAvoidingView,SafeAreaView
 } from 'react-native';
-import {
-  SafeAreaView,
-  NavigationContainer,
-} from 'react-native-safe-area-context';
-import {EvilIcons} from '@expo/vector-icons';
+
+
 import firebase from 'firebase';
-import {UserRef} from '../Fire';
 import {connect} from 'react-redux';
 import {ButtonMod,styles,colors,createOneButtonAlert} from '../components/Basic/Basic'
 

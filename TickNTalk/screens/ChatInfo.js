@@ -1,20 +1,5 @@
-import React, { Component } from "react";
-import {
-  Text,
-  TextInput,
-  View,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  KeyboardAvoidingView,
-} from "react-native";
-import {
-  SafeAreaView,
-  NavigationContainer,
-} from "react-native-safe-area-context";
-import { EvilIcons } from "@expo/vector-icons";
+import React from "react";
+import { Text, View, SafeAreaView } from "react-native";
 // import styles from '../screens/components/profile/Styles';
 import {
   styles,
@@ -24,26 +9,20 @@ import {
   colors,
   sizeFactor,
   windowWidth,
+  createTwoButtonAlert,
 } from "../components/Basic/Basic";
-import {GetFriendEmail} from "../Utilities/ChatRoomUtils"
+import { GetFriendEmail } from "../Utilities/ChatRoomUtils";
 import firebase from "firebase";
-import {
-  ChangeEmailAction,
-  ChangeNameAction,
-  ChangeBirthdayAction,
-  ChangePhoneAction,
-  ChangeGenderAction,
-  ChangeAvaAction,
-} from "../actions/index";
-import { connect, Provider } from "react-redux";
-import { UserRef } from "../Fire";
+
+import { connect } from "react-redux";
+import { UserRef, MessageRef } from "../Fire";
 
 export class ChatInfo extends React.Component {
   constructor(props) {
     super(props);
     this.unsubscriber = null;
-    this.state={
-        friend: { name: "", ava: "" ,age:"",gender:"",},
+    this.state = {
+      friend: { name: "", ava: "", age: "", gender: "" },
     };
   }
 
@@ -54,35 +33,47 @@ export class ChatInfo extends React.Component {
   ChangeAva = () => {
     this.props.navigation.navigate("Avatar");
   };
-  ResetRedux=()=>{
-    this.props.ChangeNameAction (""); 
-    this.props.ChangeBirthdayAction ("");
-    this.props.ChangePhoneAction("");
-    this.props.ChangeGenderAction("");
-    this.props.ChangeAvaAction("");
-  }
-  LogOut = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        // Sign-out successful.
-        this.ResetRedux();
-        this.props.navigation.replace("Login");
-      })
-      .catch((error) => {
-        // An error happened.
-      });
-  };
+   deleteMessage= async() =>{
+    MessageRef.on("value", (snapshot) => {
+      // temp list of strangers
+      let msgs = [];
 
-  ChangeInfo = () => {
-    this.props.navigation.navigate("EditMyInfo");
+      snapshot.forEach((child) => {
+        let msg = {
+          Id: child.key,
+          SenderEmail: child.toJSON().SenderEmail,
+          RoomID: child.toJSON().RoomID,
+          Data: child.toJSON().Data,
+        };
+
+        if (msg.Data)
+          if (msg.RoomID === this.props.curRoom.RoomID) {
+            await firebase
+              .database()
+              .ref("message")
+              .child("" + msg.Id)
+              .remove();
+          }
+      });
+    });
+    this.props.navigation.goBack();
   };
-  getFriend=() =>{
+  confirmDelete() {
+    createTwoButtonAlert({
+      Content:
+        "Bạn có thật sự muốn xóa toàn bộ tin nhắn của cuộc hội thoại này? Thao tác này sẽ không được hoàn lại",
+      cancelBtnText: "Hủy",
+      okBtnText: "Đồng ý",
+      onPressOK:()=> this.deleteMessage()
+    
+    });
+  }
+
+  getFriend = () => {
     var nameTmp = "";
     var avaTmp = "";
     var genderTmp = "";
-    var ageTmp="";
+    var ageTmp = "";
     UserRef.orderByChild("Email")
       .equalTo(GetFriendEmail(this.props.curRoom, this.props.loggedInEmail))
       .on("value", (snap) => {
@@ -91,17 +82,24 @@ export class ChatInfo extends React.Component {
           genderTmp = element.toJSON().Gender;
           ageTmp = element.toJSON().Birthday;
           avaTmp = element.toJSON().urlAva;
-          this.setState({ friend: { name: nameTmp, ava: avaTmp ,age:ageTmp,gender:genderTmp,} });
+          this.setState({
+            friend: {
+              name: nameTmp,
+              ava: avaTmp,
+              age: ageTmp,
+              gender: genderTmp,
+            },
+          });
         });
       });
-  }
+  };
 
   componentDidMount() {
     this.getFriend();
   }
-  goBack=()=>{
+  goBack = () => {
     this.props.navigation.goBack();
-  }
+  };
   render() {
     return (
       <SafeAreaView style={[styles.containerLI]}>
@@ -118,7 +116,12 @@ export class ChatInfo extends React.Component {
               justifyContent="space-between"
               flexDirection="row"
             >
-                <ButtonIcon MaterialFamilyIconName="arrow-back" size={33} color={colors.black} onPress={this.goBack}/>
+              <ButtonIcon
+                MaterialFamilyIconName="arrow-back"
+                size={33}
+                color={colors.black}
+                onPress={this.goBack}
+              />
             </View>
           </View>
           <View
@@ -142,36 +145,39 @@ export class ChatInfo extends React.Component {
               }}
             >
               <View alignItems="center">
-                
-                  <BasicImage
-                    //style={{ borderColor: "whitesmoke", borderWidth: 5 }}
-                    source={{ uri: this.state.friend.ava?this.state.friend.ava: "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"}}
-                    Icon={150}
-                    Round={100}
-                  ></BasicImage>
-                
+                <BasicImage
+                  //style={{ borderColor: "whitesmoke", borderWidth: 5 }}
+                  source={{
+                    uri: this.state.friend.ava
+                      ? this.state.friend.ava
+                      : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8",
+                  }}
+                  Icon={150}
+                  Round={100}
+                ></BasicImage>
               </View>
               <View
                 style={{
                   borderColor: colors.lightpink,
                   borderWidth: 2,
-                  borderRadius:70/5,
+                  borderRadius: 70 / 5,
                   flexDirection: "column",
                   paddingVertical: 8,
                   paddingHorizontal: 16,
                   justifyContent: "space-around",
-                  shadowOffset:{ width:1, height:1},
+                  shadowOffset: { width: 1, height: 1 },
                   shadowOpacity: 0.2,
-                  borderStyle:"solid",
+                  borderStyle: "solid",
                 }}
               >
-                
                 <View
                   style={{ paddingVertical: 8 }}
                   justifyContent="space-between"
                   flexDirection="row"
                 >
-                  <Text style={{ fontSize: 16, fontWeight: "800" }}>Họ tên:</Text>
+                  <Text style={{ fontSize: 16, fontWeight: "800" }}>
+                    Họ tên:
+                  </Text>
                   <Text style={{ fontSize: 16, fontWeight: "600" }}>
                     {this.state.friend.name}
                   </Text>
@@ -200,7 +206,6 @@ export class ChatInfo extends React.Component {
                     {this.state.friend.age}
                   </Text>
                 </View>
-                
               </View>
             </View>
           </View>
@@ -215,19 +220,13 @@ export class ChatInfo extends React.Component {
           >
             <ButtonMod
               styleText={{ color: colors.white }}
-              Text="Chỉnh sửa thông tin cá nhân"
-              onPress={this.ChangeInfo}
-            ></ButtonMod>
-            <ButtonMod
-              styleText={{ color: colors.white }}
-              Text="Đổi mật khẩu"
-              onPress={this.ChangePass}
+              Text="Xóa tin nhắn"
+              onPress={()=>this.confirmDelete()}
             ></ButtonMod>
             <ButtonMod
               styleText={{ color: colors.white }}
               styleContainer={{ backgroundColor: colors.Darkpink }}
-              Text="Đăng xuất"
-              onPress={this.LogOut}
+              Text="Chặn người này"
             ></ButtonMod>
           </View>
         </View>
@@ -243,10 +242,6 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    ChangeEmailAction: (typedEmail) => {
-      dispatch(ChangeEmailAction(typedEmail));
-    },
-  };
+  return {};
 }
 export default connect(mapStateToProps, mapDispatchToProps)(ChatInfo);
