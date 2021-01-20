@@ -40,7 +40,7 @@ export function CreateNullRoom(members) {
 
 // WARNING 1: this function modify directly to listRooms
 // WARNING 2: this function takes O(MN), N = listRooms.length, M = listMessages.length
-export function LoadLatestMessagesIntoRooms(listRooms, listMessages)
+export async function LoadLatestMessagesIntoRooms(listRooms, listMessages)
 {
   Object.values(listRooms).forEach((room) => {
     Object.values(listMessages).forEach((msg) => {
@@ -57,4 +57,51 @@ export function LoadLatestMessagesIntoRooms(listRooms, listMessages)
       }
     })
   })
+}
+
+
+
+export function MatchSearchStringScore(targetString, testString){
+  let cntCharTarget = 0;
+  
+  if(!testString || !targetString)
+    return 0;
+
+  for(let cntCharTest = 0; cntCharTest < testString.length; cntCharTest++)
+  {
+    if(targetString[cntCharTarget].toUpperCase() === testString[cntCharTest].toUpperCase())
+    {
+      cntCharTarget++;
+
+      if(cntCharTarget === targetString.length)
+        break;
+    }
+  }
+
+  return cntCharTarget;
+}
+
+export function MatchSearchUserScore(targetString, testUser){
+  if(!testUser || !targetString)
+    return 0;
+
+  return Math.max(
+    MatchSearchStringScore(targetString, testUser.Email),
+    MatchSearchStringScore(targetString, testUser.Name),
+    MatchSearchStringScore(targetString, testUser.Phone)
+  );
+}
+
+export function MatchSearchRoomScore(targetString, testRoom, listUsers){
+
+  if(!testRoom || !targetString)
+    return 0;
+
+  const bestMatchMember = Object.values(testRoom.Data.Members).map((email) => {
+    let user = GetUserByEmail(listUsers, email);
+    return MatchSearchUserScore(targetString, user);
+  }
+  ).reduce((a, b) => a > b? a:b);
+
+  return Math.max(bestMatchMember, MatchSearchStringScore(targetString, testRoom.Data.RoomName));
 }

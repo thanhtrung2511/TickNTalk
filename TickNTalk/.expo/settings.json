@@ -5,6 +5,10 @@
   "dev": true,
   "minify": false,
   "urlRandomness": null,
+<<<<<<< HEAD
   "https": false,
   "devClient": false
+=======
+  "https": false
+>>>>>>> CuteTN_B1
 }
