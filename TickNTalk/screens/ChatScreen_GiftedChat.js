@@ -17,8 +17,9 @@ import {
   InputToolbar,
   Composer,
   Actions,
+  MessageImage
 } from "react-native-gifted-chat";
-import Fire, { RoomRef } from "../Fire";
+import Fire, { RoomRef, storage, uidR  } from "../Fire";
 import {
   styles,
   ChatHeader,
@@ -27,12 +28,16 @@ import {
   windowWidth,
   windowHeight,
   ButtonIcon,
+  createOneButtonAlert
 } from "../components/Basic/Basic";
 import { Ionicons } from "@expo/vector-icons";
 import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
 import { connect } from "react-redux";
 import { UserRef, MessageRef } from "../Fire";
 import { CreateNullRoom, GetFriendEmail } from "../Utilities/ChatRoomUtils";
+import * as Permissions from "expo-permissions";
+import * as ImagePicker from 'expo-image-picker'
+import { Alert } from 'react-native'
 
 export class ChatScreen_GiftedChat extends React.Component {
   state = {
@@ -40,9 +45,94 @@ export class ChatScreen_GiftedChat extends React.Component {
     room: "",
     member: [],
     friend: { name: "", ava: "" },
+     currentMessage: "",
+
+    
   };
 
-  ImageSend = () => {};
+  componentDidUpdate() {
+    //console.log("thycute : " + this.props.uriAva);
+  }
+
+  getPermissions = async () => {
+    if (Platform.OS !== "web") {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      return status;
+    }
+  };
+  uploadProfilePhoto = async (uri) => {
+    try {
+      console.log("1");
+      const photo = await this.getBlob(uri);
+      console.log("2");
+      const uploadUri =
+        this.props.typedEmail +
+        "_" +
+        (Platform.OS === "ios" ? uri.replace("file://", "") : uri).substring(
+          uri.lastIndexOf("/") + 1
+        );
+
+      const imageRef = storage.child(uploadUri);
+      await imageRef.put(photo);
+      const url = await imageRef.getDownloadURL();
+      console.log(url);
+       this.setState({currentMessage:url});
+      return url;
+    } catch (error) {
+      createOneButtonAlert({ Text: "Đã có lỗi ",TextAction:"Đồng ý"});
+      //console.log("Error when uploading profile photo ", error.message);
+    }
+  };
+
+
+  getBlob = async (uri) => {
+    //console.log("Uri get blob: " + uri);
+    return await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.onload = () => {
+        resolve(xhr.response);
+      };
+      xhr.onerror = () => {
+        reject(new TypeError("Network request fails"));
+      };
+
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    });
+  };
+  pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+
+        quality: 0.5,
+      });
+      if (!result.cancelled) {
+     //   this.setState({currentMessage:result.uri});
+     this.uploadProfilePhoto(result.uri);
+      }
+    } catch (error) {
+      createOneButtonAlert({ Text: "Đã có lỗi xảy ra trong lúc chọn ảnh",TextAction:"Đồng ý"});
+      //console.log("Error when picking image: " + error);
+    }
+  };
+
+
+
+  ImageSend = async () => {
+    const status = await this.getPermissions();
+
+    if (status !== "granted") {
+      alert("We need permissions to get access to your camera library");
+      return;
+    }
+
+    this.pickImage();
+   
+  };
 
   goBack = () => {
     this.props.navigation.goBack();
@@ -128,6 +218,7 @@ export class ChatScreen_GiftedChat extends React.Component {
     if (newMessage[0] === undefined) return;
 
     // CuteTN Note: Add new message to Firebase
+    newMessage[0].image= this.state.currentMessage;
     newMessage[0].createdAt = Date.parse(newMessage[0].createdAt); // CuteTN Note: somehow, Firebase cannot understand Giftedchat data :)
     MessageRef.push({
       SenderEmail: this.props.loggedInEmail,
@@ -142,16 +233,19 @@ export class ChatScreen_GiftedChat extends React.Component {
 
   // helper method that is sends a message
   async HandlePressSend(newMessage = []) {
+    console.log("A");
     if (!this.props.curRoom.RoomID) {
       const members = this.props.curRoom.Data.Members;
       const newRoom = this.CreateNewRoom(members);
       this.PushAndUseNewRoom(newRoom).then((value) => {
         this.state.messages = [];
         this.SendMessage(newMessage);
+        
       });
     } else {
       this.SendMessage(newMessage);
     }
+    this.setState({currentMessage:""});
   }
   renderBubble(props) {
     return (
@@ -230,8 +324,9 @@ export class ChatScreen_GiftedChat extends React.Component {
           MaterialFamilyIconName="camera-alt"
           color={colors.pink}
           size={24}
+          onPress={props.onPressCamera}
         />
-        <ButtonIcon
+    <ButtonIcon
           MaterialFamilyIconName="mic"
           color={colors.pink}
           size={24}
@@ -245,6 +340,15 @@ export class ChatScreen_GiftedChat extends React.Component {
         <View></View>
       
     ); 
+  }
+
+  renderMessageImage(props) {
+    return(
+   <MessageImage
+    {...props}
+    source={props.currentMessage.image}
+   ></MessageImage>
+    );
   }
   render() {
     const chatBody = (
@@ -268,9 +372,8 @@ export class ChatScreen_GiftedChat extends React.Component {
          renderLoading={this.renderLoading}
         renderActions={this.renderActions}
         renderChatEmpty={this.renderChatEmpty}
-        onPressActionButton={() => ({
-          //code gửi ảnh
-        })}
+        renderMessageImage={this.renderMessageImage}
+        onPressCamera={(newMessage)=>{this.ImageSend()}}
       ></GiftedChat>
     );
     if (Platform.OS === "android") {
