@@ -31,8 +31,7 @@ export class ChatScreen extends React.Component {
   //     }))
   //   );
   // }
-  // componentWillUnmount(){
-  //   Fire.off();
+
 
   }
 

@@ -5,7 +5,7 @@ import {
   Text,
   TextInput,
   View,
-
+ Alert,
   KeyboardAvoidingView,
  
 } from "react-native";
@@ -78,25 +78,35 @@ export class SignUpScreen extends React.Component {
         this.state.typedPassword
       )
       .then((resp) => {
-        createOneButtonAlert({
-          Text: "Đã tạo tài khoản thành công",
-          onPress: this.AddUserToDatabase(),
-          TextAction:"Xác nhận"
-        });
+        Alert.alert(
+          'Thông báo',
+          'Đã tạo tài khoản thành công',
+          [
+            {text: 'Đồng ý',onPress:()=>this.AddUserToDatabase(), style: 'cancel'},
+          ],
+          { cancelable: false });
       })
       .catch((error) => {
-        if (error != null) createOneButtonAlert({ Text: "Email này đã được sử dụng", TextAction:"Thử lại" });
+        console.error(error);
+        //if (error != null) createOneButtonAlert({ Text: "Email này đã được sử dụng", TextAction:"Thử lại" });
       });
   };
   CheckAccount = () => {
     if (
-      this.state.typedEmail != "" &&
+      this.props.typedEmail != "" &&
       this.state.typedPassword != "" &&
       this.state.typedRepassword != ""
     ) {
       this.state.typedPassword.toString() !==
       this.state.typedRepassword.toString()
-        ? createOneButtonAlert({ Text: "Mật khẩu nhập lại không đúng" ,TextAction:"Thử lại" ,onPress:this.ResetFields()})
+        ?Alert.alert(
+          'Thông báo',
+          'Mật khẩu nhập lại không đúng',
+          [
+            {text: 'Thử lại',onPress:()=>this.ResetFields(), style: 'cancel'},
+          ],
+          { cancelable: false }
+        )
         : this.setState({ canCreateAccount: true });
     } else createOneButtonAlert({ Text: "Chưa điền đầy đủ thông tin" , TextAction:"Thử lại"});
     if (this.state.canCreateAccount) {

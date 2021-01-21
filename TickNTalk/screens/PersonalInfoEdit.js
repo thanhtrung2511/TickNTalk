@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TextInput, View, KeyboardAvoidingView,SafeAreaView } from "react-native";
+import { Text, TextInput, View, KeyboardAvoidingView,SafeAreaView ,Alert} from "react-native";
 import {
   ChangeEmailAction,
   ChangeNameAction,
@@ -38,7 +38,15 @@ class PersonalInfoEdit extends React.Component {
         });
       });
     });
-    createOneButtonAlert({ Text:"Cập nhật thông tin thành công",TextAction:"Đồng ý",onPress:this.props.navigation.goBack()})
+    Alert.alert(
+      'Thông báo',
+      'Cập nhật thông tin thành công',
+      [
+        
+        {text: 'Đồng ý', style: 'cancel',onPress:()=>this.props.navigation.goBack()},
+      ],
+      { cancelable: false }
+    );
     
   };
 
@@ -119,10 +127,11 @@ class PersonalInfoEdit extends React.Component {
                 defaultValue={
                   this.props.typedGender === "" ? "Nam" : this.props.typedGender
                 }
+                value={this.props.typedGender}
                 containerStyle={styles.input}
                 style={{ backgroundColor: "#fafafa" }}
                 itemStyle={{
-                  justifyContent: "flex-start",
+                  justifyContent: "center",
                 }}
                 dropDownStyle={{ backgroundColor: "#fafafa" }}
                 onChangeItem={(typedGender) =>

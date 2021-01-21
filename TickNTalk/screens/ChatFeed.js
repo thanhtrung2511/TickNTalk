@@ -50,8 +50,8 @@ export class ChatFeed extends React.Component {
     filteredStranger: [],
 
     addNewFriend: false,
-    headerText:"Tin nhắn",
-    iconName:"person-add",
+    headerText: "Tin nhắn",
+    iconName: "person-add",
   };
 
   componentDidMount = () => {
@@ -131,13 +131,10 @@ export class ChatFeed extends React.Component {
     const tempMsgs = this.state.listMessages;
     LoadLatestMessagesIntoRooms(tempRooms, tempMsgs);
 
-    this.SortChatRoomsByTime(tempRooms).then(
-      (result) =>
-      {
-        this.ArrangeChatRooms();
-        this.FilterSearchedRoom();
-      }
-    );
+    this.SortChatRoomsByTime(tempRooms).then((result) => {
+      this.ArrangeChatRooms();
+      this.FilterSearchedRoom();
+    });
   }
 
   /// CuteTN Note: a huge violation of SRP
@@ -171,20 +168,21 @@ export class ChatFeed extends React.Component {
     this.setState({ listFriends: fr });
   }
 
-  async SortChatRoomsByTime(listRooms)
-  {
+  async SortChatRoomsByTime(listRooms) {
     await listRooms.sort((a, b) => {
-      if(a && b &&
-        a.LatestMessage && b.LatestMessage &&
-        a.LatestMessage.Data && b.LatestMessage.Data && 
-        a.LatestMessage.Data.createdAt && b.LatestMessage.Data.createdAt)
+      if (
+        a &&
+        b &&
+        a.LatestMessage &&
+        b.LatestMessage &&
+        a.LatestMessage.Data &&
+        b.LatestMessage.Data &&
+        a.LatestMessage.Data.createdAt &&
+        b.LatestMessage.Data.createdAt
+      )
         return a.LatestMessage.Data.createdAt < b.LatestMessage.Data.createdAt;
-      else
-        return true;
-    }
-    )
-
-   
+      else return true;
+    });
 
     // this.state.listRooms = listRooms;
     // this.setState({listRooms : listRooms});
@@ -200,10 +198,7 @@ export class ChatFeed extends React.Component {
     );
   }
 
-  RenderAllRoomsByTime()
-  {
-
-  }
+  RenderAllRoomsByTime() {}
 
   /*
     FetchListRooms()
@@ -304,7 +299,6 @@ export class ChatFeed extends React.Component {
   }
 
   render() {
-    
     return (
       <SafeAreaView style={styles.containerLI}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -325,8 +319,17 @@ export class ChatFeed extends React.Component {
                 MaterialFamilyIconName={this.state.iconName}
                 onPress={() => {
                   this.setState({ addNewFriend: !this.state.addNewFriend });
-                  if (this.state.addNewFriend) {this.setState({headerText:"Tin nhắn",iconName:"person-add"})}
-                  else {this.setState({headerText: "Tìm bạn mới",iconName:"backspace"})};
+                  if (this.state.addNewFriend) {
+                    this.setState({
+                      headerText: "Tin nhắn",
+                      iconName: "person-add",
+                    });
+                  } else {
+                    this.setState({
+                      headerText: "Tìm bạn mới",
+                      iconName: "backspace",
+                    });
+                  }
                 }}
                 size={30}
                 color="whitesmoke"
@@ -471,6 +474,10 @@ export class ChatFeed extends React.Component {
                       if (!title) {
                         title = "Người dùng TickNTalk";
                       }
+                      let ava = item.urlAva;
+                      if (!ava)
+                        ava =
+                          "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
 
                       const members = [this.props.loggedInEmail, item.Email];
                       const nullRoom = CreateNullRoom(members);
@@ -478,7 +485,7 @@ export class ChatFeed extends React.Component {
                       return (
                         <Text>
                           <MessageCard
-                            ImageSource="https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
+                            ImageSource={ava}
                             Name={title}
                             LastestChat="Nhắn tin để kết bạn!"
                             isRead="true"

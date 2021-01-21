@@ -112,14 +112,14 @@ export const styles = StyleSheet.create({
     overflow: "hidden",
   },
   sendingContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
   },
   loadingContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     color: colors.gray6,
   },
   DefaultProfilePhoto: {
@@ -205,7 +205,7 @@ export const styles = StyleSheet.create({
     marginLeft: sizeFactor * 14,
     color: colors.blue,
     marginTop: 16,
-    fontWeight:"600"
+    fontWeight: "600",
   },
   Login_button: {
     width: sizeFactor * 15,
@@ -249,7 +249,7 @@ export const styles = StyleSheet.create({
   SignText: {
     color: colors.blue,
     marginLeft: 10,
-    fontWeight:"600",
+    fontWeight: "600",
   },
   Sign: {
     color: colors.black,
@@ -276,14 +276,15 @@ export const styles = StyleSheet.create({
   },
   customActionsContainer: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   ChatScreen_Banner: {
     width: windowWidth,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    paddingHorizontal:8,paddingVertical: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
   },
   ChatScreen_Bottom: {
     width: windowWidth,
@@ -302,7 +303,7 @@ export const styles = StyleSheet.create({
     marginLeft: sizeFactor * 0.5,
   },
   ChatContainer: {
-    flex:1,
+    flex: 1,
     width: windowWidth,
     backgroundColor: "whitesmoke",
   },
@@ -333,7 +334,11 @@ export const styles = StyleSheet.create({
 export const MessageCard = (props) => {
   return (
     <TouchableOpacity style={styles.MessageCard} onPress={props.onPress}>
-      <BasicImage Icon={50} source={{ uri: props.ImageSource }} Round={100}></BasicImage>
+      <BasicImage
+        Icon={50}
+        source={{ uri: props.ImageSource }}
+        Round={100}
+      ></BasicImage>
       <View
         style={{
           paddingTop: 5,
@@ -387,7 +392,10 @@ export const ButtonMod = (props) => {
 };
 export const ButtonIcon = (props) => {
   return (
-    <TouchableOpacity style={[styles.SmallButton,props.style]} onPress={props.onPress}>
+    <TouchableOpacity
+      style={[styles.SmallButton, props.style]}
+      onPress={props.onPress}
+    >
       <MaterialIcons
         name={props.MaterialFamilyIconName}
         size={props.size}
@@ -399,14 +407,16 @@ export const ButtonIcon = (props) => {
 export const BasicImage = (props) => {
   return (
     <Image
-      style={[{
-        width: props.Icon,
-        height: props.Icon,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: props.Round,
-
-      },props.style]}
+      style={[
+        {
+          width: props.Icon,
+          height: props.Icon,
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: props.Round,
+        },
+        props.style,
+      ]}
       source={props.source}
     />
   );
@@ -450,17 +460,26 @@ export const ChatMessage_Mine = (props) => {
 export const ChatHeader = (props) => {
   return (
     <View style={styles.ChatScreen_Banner}>
-      <ButtonIcon MaterialFamilyIconName="arrow-back" onPress={props.goBack} size={24} color={colors.black}/>
+      <ButtonIcon
+        MaterialFamilyIconName="arrow-back"
+        onPress={props.goBack}
+        size={24}
+        color={colors.black}
+      />
       <TouchableOpacity
         style={{
           flexDirection: "row",
           alignItems: "center",
-          width:"auto",
-          height:"auto",
+          width: "auto",
+          height: "auto",
         }}
         onPress={props.goToInfo}
       >
-        <BasicImage Icon={35} Round={100} source={{ uri: props.ImageSource }}></BasicImage>
+        <BasicImage
+          Icon={35}
+          Round={100}
+          source={{ uri: props.ImageSource }}
+        ></BasicImage>
 
         <Text
           style={{
@@ -476,8 +495,18 @@ export const ChatHeader = (props) => {
           {props.Name}
         </Text>
       </TouchableOpacity>
-      <ButtonIcon MaterialFamilyIconName="call" onPress={props.Call} size={24} color={colors.black}/>
-      <ButtonIcon MaterialFamilyIconName="videocam" onPress={props.Video} size={24} color={colors.black}/>
+      <ButtonIcon
+        MaterialFamilyIconName="call"
+        onPress={props.Call}
+        size={24}
+        color={colors.black}
+      />
+      <ButtonIcon
+        MaterialFamilyIconName="videocam"
+        onPress={props.Video}
+        size={24}
+        color={colors.black}
+      />
     </View>
   );
 };
@@ -529,37 +558,26 @@ export const LoginBottom = (props) => {
     </View>
   );
 };
-export const createOneButtonAlert = (props) =>
-  Alert.alert(
-    "Thông báo",
-    props.Text,
-    [
-      {
-        text: props.TextAction,
-        onPress: () => {
-          props.onPress;
-        },
-      },
-    ],
-    
-  );
-export const createTwoButtonAlert = (props) =>
-  Alert.alert(
-    "Thông báo",
-    props.Content,
-    [
-      {
-        text: props.cancelBtnText,
-        onPress: () => {
-          props.onPressCancel;
-        },
-        style: "cancel",
-      },
-      {
-        text: props.okBtnText,
-        onPress: () => {
-          props.onPressOK}
-        ,
-      },
-    ],
-  );
+export const createOneButtonAlert = (props) => {
+  Alert.alert("Thông báo", props.Text, [
+    {
+      text: props.TextAction,
+      onPress: () => props.onPress,
+    },
+  ]);
+};
+export const createTwoButtonAlert = async (props) => {
+  Alert.alert("Thông báo", props.Content, [
+    {
+      style:"cancel",
+      text: props.cancelBtnText,
+      onPress: () => props.onPressCancel,
+      style: "cancel",
+    },
+    {
+      text: props.okBtnText,
+      onPress: () => props.onPressOK,
+    },
+    { cancelable: false },
+  ]);
+};

@@ -14,7 +14,7 @@ import {
   Composer,
   Actions,
   MessageImage,
-  MessageVideo,
+  AccessoryBar,
 } from "react-native-gifted-chat";
 import { Video } from "expo-av";
 import Fire, { RoomRef, storage, uidR } from "../Fire";
@@ -44,10 +44,9 @@ export class ChatScreen_GiftedChat extends React.Component {
     friend: { name: "", ava: "" },
     currentMessage: "",
     currentVideo: "",
-    text:"",
+    text: "",
+    isTyping: false,
   };
-
-  
 
   getPermissions = async () => {
     if (Platform.OS !== "web") {
@@ -73,7 +72,7 @@ export class ChatScreen_GiftedChat extends React.Component {
       //console.log (url);
       this.setState({ currentMessage: url });
       this.setState({ currentVideo: "" });
-      this.setState({text:'Đã đính kèm một ảnh'});
+      this.setState({ text: "Đã đính kèm một ảnh" });
       return url;
     } catch (error) {
       createOneButtonAlert({ Text: "Đã có lỗi ", TextAction: "Đồng ý" });
@@ -118,7 +117,7 @@ export class ChatScreen_GiftedChat extends React.Component {
 
   ImageSend = async () => {
     const status = await this.getPermissions();
-    
+
     if (status !== "granted") {
       alert("We need permissions to get access to your camera library");
       return;
@@ -143,8 +142,8 @@ export class ChatScreen_GiftedChat extends React.Component {
       await imageRef.put(photo);
       const url = await imageRef.getDownloadURL();
       this.setState({ currentVideo: url });
-      this.setState({currentMessage:""});
-      this.setState({text:'Đã đính kèm một video'});
+      this.setState({ currentMessage: "" });
+      this.setState({ text: "Đã đính kèm một video" });
       return url;
     } catch (error) {
       createOneButtonAlert({ Text: "Đã có lỗi ", TextAction: "Đồng ý" });
@@ -184,7 +183,7 @@ export class ChatScreen_GiftedChat extends React.Component {
     this.props.navigation.goBack();
   };
 
-  componentDidMount() {
+  componentWillMount() {
     this.FetchMessages();
     this.getFriend();
     // Fire.get(message =>
@@ -193,9 +192,15 @@ export class ChatScreen_GiftedChat extends React.Component {
     //   }))
     // );
   }
+  componentDidMount() {
+    this.setState({isTyping: false,});
+    // Fire.get(message =>
+    //   this.setState(previous  =>  ({
+    //     messages: GiftedChat.append(previous.messages,message)
+    //   }))
+    // );
+  }
 
-  
-  
   getFriend = () => {
     var nameTmp = "";
     var avaTmp = "";
@@ -261,7 +266,8 @@ export class ChatScreen_GiftedChat extends React.Component {
     // CuteTN Note: Add new message to Firebase
     //console.log("aaa",this.state.currentVideo)
     if (this.state.currentVideo) newMessage[0].video = this.state.currentVideo;
-    if (this.state.currentMessage) newMessage[0].image = this.state.currentMessage;
+    if (this.state.currentMessage)
+      newMessage[0].image = this.state.currentMessage;
     newMessage[0].createdAt = Date.parse(newMessage[0].createdAt); // CuteTN Note: somehow, Firebase cannot understand Giftedchat data :)
     MessageRef.push({
       SenderEmail: this.props.loggedInEmail,
@@ -334,6 +340,11 @@ export class ChatScreen_GiftedChat extends React.Component {
       />
     );
   }
+  setIsTyping = () => {
+    this.setState({
+      isTyping: !this.state.isTyping,
+    })
+  }
   renderInputToolbar(props) {
     return (
       <InputToolbar
@@ -381,21 +392,25 @@ export class ChatScreen_GiftedChat extends React.Component {
   }
 
   renderMessageImage(props) {
-    return <MessageImage {...props} source={props.currentMessage.image} imageStyle={{width:200, height:200}}/>;
+    return (
+      <MessageImage
+        {...props}
+        source={props.currentMessage.image}
+        imageStyle={{ width: 200, height: 200 }}
+      />
+    );
   }
 
   renderMessageVideo(props) {
     return (
-      <View style={{ padding: 20 }}>
-        <Video
-          resizeMode="contain"
-          useNativeControls
-          shouldPlay={false}
-          source={{ uri: props.currentMessage.video }}
-          style={{ width: 200, height: 300 }}
-        />
-      </View>
-    );
+      <Video
+        resizeMode="contain"
+        useNativeControls
+        shouldPlay={false}
+        source={{ uri: props.currentMessage.video }}
+        style={{ width: 200, height: 300 }}
+      />
+     );
   }
 
   render() {
@@ -410,12 +425,22 @@ export class ChatScreen_GiftedChat extends React.Component {
           avatar: this.props.curAva,
           name: this.props.curName,
         }}
-        onInputTextChanged={(text) => this.setState({ text:text })}
+        onInputTextChanged={(text) => {this.setState({ text: text });this.setIsTyping();}}
         text={this.state.text}
-        showUserAvatar
-        renderUsernameOnMessage
-        alwaysShowSend={this.state.text?true:false||this.state.currentVideo?true:false||this.state.currentMessage?true:false}
-        isTyping
+        //showUserAvatar
+        showAvatarForEveryMessage
+        //renderUsernameOnMessage
+        alwaysShowSend={
+          this.state.text
+            ? true
+            : false || this.state.currentVideo
+            ? true
+            : false || this.state.currentMessage
+            ? true
+            : false
+        }
+        isTyping={this.state.isTyping}
+        //renderFooter
         renderComposer={this.renderComposer}
         renderInputToolbar={this.renderInputToolbar}
         renderSend={this.renderSend}

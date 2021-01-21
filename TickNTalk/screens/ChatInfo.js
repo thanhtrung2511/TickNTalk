@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, SafeAreaView } from "react-native";
+import { Text, View, SafeAreaView,Alert } from "react-native";
 // import styles from '../screens/components/profile/Styles';
 import {
   styles,
@@ -34,7 +34,7 @@ export class ChatInfo extends React.Component {
     this.props.navigation.navigate("Avatar");
   };
    deleteMessage= async() =>{
-    MessageRef.on("value", (snapshot) => {
+    await MessageRef.on("value", (snapshot) => {
       // temp list of strangers
       let msgs = [];
 
@@ -48,7 +48,7 @@ export class ChatInfo extends React.Component {
 
         if (msg.Data)
           if (msg.RoomID === this.props.curRoom.RoomID) {
-            await firebase
+             firebase
               .database()
               .ref("message")
               .child("" + msg.Id)
@@ -56,17 +56,27 @@ export class ChatInfo extends React.Component {
           }
       });
     });
+    Alert.alert(
+      'Thông báo',
+      'Đã xóa toàn bộ tin nhắn',
+      [
+        
+        {text: 'OK', style: 'cancel'},
+      ],
+      { cancelable: false }
+    );
     this.props.navigation.goBack();
   };
-  confirmDelete() {
-    createTwoButtonAlert({
-      Content:
-        "Bạn có thật sự muốn xóa toàn bộ tin nhắn của cuộc hội thoại này? Thao tác này sẽ không được hoàn lại",
-      cancelBtnText: "Hủy",
-      okBtnText: "Đồng ý",
-      onPressOK:()=> this.deleteMessage()
-    
-    });
+  async confirmDelete() {
+    Alert.alert(
+      'Thông báo',
+      'Bạn có thật sự muốn xóa toàn bộ tin nhắn của cuộc trò chuyện này? Thao tác này sẽ không được hoàn tác',
+      [
+        {text: 'Đồng ý', onPress: () => this.deleteMessage()},
+        {text: 'Hủy', style: 'cancel'},
+      ],
+      { cancelable: false }
+    );
   }
 
   getFriend = () => {
@@ -221,7 +231,7 @@ export class ChatInfo extends React.Component {
             <ButtonMod
               styleText={{ color: colors.white }}
               Text="Xóa tin nhắn"
-              onPress={()=>this.confirmDelete()}
+              onPress={()=>{this.confirmDelete();}}
             ></ButtonMod>
             <ButtonMod
               styleText={{ color: colors.white }}

@@ -1,16 +1,21 @@
 import React from "react";
 import {
   Text,
-  
   View,
-  
   TouchableOpacity,
-  
-  ScrollView,SafeAreaView,
-  
+  ScrollView,
+  SafeAreaView,
+  Alert,
 } from "react-native";
 
-import { EvilIcons } from "@expo/vector-icons";
+import {
+  ChangeEmailAction,
+  ChangeNameAction,
+  ChangeBirthdayAction,
+  ChangePhoneAction,
+  ChangeGenderAction,
+  ChangeAvaAction,
+} from "../actions/index";
 // import styles from '../screens/components/profile/Styles';
 import {
   styles,
@@ -22,16 +27,8 @@ import {
   windowWidth,
 } from "../components/Basic/Basic";
 import firebase from "firebase";
-import {
-  ChangeEmailAction,
-  ChangeNameAction,
-  ChangeBirthdayAction,
-  ChangePhoneAction,
-  ChangeGenderAction,
-  ChangeAvaAction,
-} from "../actions/index";
+import { UserRef} from "../Fire";
 import { connect } from "react-redux";
-import { UserRef } from "../Fire";
 
 export class PersonalInFo extends React.Component {
   constructor(props) {
@@ -46,25 +43,47 @@ export class PersonalInFo extends React.Component {
   ChangeAva = () => {
     this.props.navigation.navigate("Avatar");
   };
-  ResetRedux=()=>{
-    this.props.ChangeNameAction (""); 
-    this.props.ChangeBirthdayAction ("");
-    this.props.ChangePhoneAction("");
-    this.props.ChangeGenderAction("");
-    this.props.ChangeAvaAction("");
-  }
+  ResetRedux = () => {
+    this.props.ChangeNameAction(" ");
+    this.props.ChangeBirthdayAction(" ");
+    this.props.ChangePhoneAction(" ");
+    this.props.ChangeGenderAction(" ");
+    this.props.ChangeAvaAction(" ");
+  };
   LogOut = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        // Sign-out successful.
-        this.ResetRedux();
-        this.props.navigation.replace("Login");
-      })
-      .catch((error) => {
-        // An error happened.
-      });
+    Alert.alert(
+      "Thông báo",
+      "Bạn có muốn đăng xuất",
+      [
+        {
+          text: "Đồng ý",
+          onPress: () => {
+            firebase
+              .auth()
+              .signOut()
+              .then(() => {
+                // Sign-out successfull
+                Alert.alert("Thông báo", "Đăng xuất thành công", [
+                  {
+                    text: "Đồng ý",
+                    style: "cancel",
+                    onPress: () => {
+                      this.ResetRedux();
+                      this.props.navigation.replace("Login");
+                    },
+                  },
+                ]);
+              })
+              .catch((error) => {
+                console.log(error);
+                // An error happened.
+              });
+          },
+        },
+        { text: "Hủy", style: "cancel" },
+      ],
+      { cancelable: false }
+    );
   };
 
   ChangeInfo = () => {
@@ -72,6 +91,7 @@ export class PersonalInFo extends React.Component {
   };
 
   componentDidMount() {
+    this.ResetRedux();
     var nameTmp = "";
     var birthdayTmp = "";
     var phoneTmp = "";
@@ -99,164 +119,170 @@ export class PersonalInFo extends React.Component {
   render() {
     return (
       <SafeAreaView style={[styles.containerLI]}>
-      <ScrollView>
-        <View style={styles.container}>
-          <View
-            style={{
-              backgroundColor: colors.lightpink,
-              width: "100%",
-              alignItems: "center",
-            }}
-          >
+        <ScrollView>
+          <View style={styles.container}>
             <View
-              style={{ width: "90%" }}
-              justifyContent="space-between"
-              flexDirection="row"
+              style={{
+                backgroundColor: colors.lightpink,
+                width: "100%",
+                alignItems: "center",
+              }}
             >
-              <Text style={styles.header}>Thông tin cá nhân</Text>
+              <View
+                style={{ width: "90%" }}
+                justifyContent="space-between"
+                flexDirection="row"
+              >
+                <Text style={styles.header}>Thông tin cá nhân</Text>
+              </View>
             </View>
-          </View>
-          <View
-            style={{
-              flexDirection: "column",
-              width: "100%",
-              paddingVertical: 8,
-            }}
-            justifyContent="space-between"
-            alignItems="center"
-            backgroundColor={colors.lightpink}
-          >
             <View
               style={{
                 flexDirection: "column",
-                padding: 8,
-                justifyContent: "flex-start",
-                backgroundColor: colors.white,
-                borderRadius: 70 / 5,
-                width: "90%",
+                width: "100%",
+                paddingVertical: 8,
               }}
+              justifyContent="space-between"
+              alignItems="center"
+              backgroundColor={colors.lightpink}
             >
-              <View alignItems="center">
-                <TouchableOpacity
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: 160,
-                    height: 160,
-                    borderRadius: 100,
-                  }}
-                  onPress={this.ChangeAva}
-                >
-                  <BasicImage
-                    //style={{ borderColor: "whitesmoke", borderWidth: 5 }}
-                    source={{ uri: this.props.uriAva?this.props.uriAva: "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"}}
-                    Icon={150}
-                    Round={100}
-                  ></BasicImage>
-                </TouchableOpacity>
-              </View>
               <View
                 style={{
-                  borderColor: colors.lightpink,
-                  borderWidth: 2,
-                  borderRadius:70/5,
                   flexDirection: "column",
-                  paddingVertical: 8,
-                  paddingHorizontal: 16,
-                  justifyContent: "space-around",
-                  shadowOffset:{ width:1, height:1},
-                  shadowOpacity: 0.2,
-                  borderStyle:"solid",
+                  padding: 8,
+                  justifyContent: "flex-start",
+                  backgroundColor: colors.white,
+                  borderRadius: 70 / 5,
+                  width: "90%",
                 }}
               >
-                <View
-                  style={{ paddingVertical: 8 }}
-                  justifyContent="space-between"
-                  flexDirection="row"
-                >
-                  <Text style={{ fontSize: 16, fontWeight: "800" }}>
-                    Email:
-                  </Text>
-                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                    {this.props.typedEmail}
-                  </Text>
+                <View alignItems="center">
+                  <TouchableOpacity
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 160,
+                      height: 160,
+                      borderRadius: 100,
+                    }}
+                    onPress={this.ChangeAva}
+                  >
+                    <BasicImage
+                      //style={{ borderColor: "whitesmoke", borderWidth: 5 }}
+                      source={{
+                        uri: this.props.uriAva
+                          ? this.props.uriAva
+                          : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8",
+                      }}
+                      Icon={150}
+                      Round={100}
+                    ></BasicImage>
+                  </TouchableOpacity>
                 </View>
                 <View
-                  style={{ paddingVertical: 8 }}
-                  justifyContent="space-between"
-                  flexDirection="row"
+                  style={{
+                    borderColor: colors.lightpink,
+                    borderWidth: 2,
+                    borderRadius: 70 / 5,
+                    flexDirection: "column",
+                    paddingVertical: 8,
+                    paddingHorizontal: 16,
+                    justifyContent: "space-around",
+                    shadowOffset: { width: 1, height: 1 },
+                    shadowOpacity: 0.2,
+                    borderStyle: "solid",
+                  }}
                 >
-                  <Text style={{ fontSize: 16, fontWeight: "800" }}>Tên:</Text>
-                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                    {this.props.typedName}
-                  </Text>
-                </View>
-                <View
-                  style={{ paddingVertical: 8 }}
-                  justifyContent="space-between"
-                  flexDirection="row"
-                >
-                  <Text style={{ fontSize: 16, fontWeight: "800" }}>
-                    Giới tính:
-                  </Text>
-                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                    {this.props.typedGender}
-                  </Text>
-                </View>
-                <View
-                  style={{ paddingVertical: 8 }}
-                  justifyContent="space-between"
-                  flexDirection="row"
-                >
-                  <Text style={{ fontSize: 16, fontWeight: "800" }}>
-                    Ngày sinh:
-                  </Text>
-                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                    {this.props.typedBirthday}
-                  </Text>
-                </View>
-                <View
-                  style={{ paddingVertical: 8 }}
-                  justifyContent="space-between"
-                  flexDirection="row"
-                >
-                  <Text style={{ fontSize: 16, fontWeight: "800" }}>
-                    Số điện thoại:
-                  </Text>
-                  <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                    {this.props.typedPhone}
-                  </Text>
+                  <View
+                    style={{ paddingVertical: 8 }}
+                    justifyContent="space-between"
+                    flexDirection="row"
+                  >
+                    <Text style={{ fontSize: 16, fontWeight: "800" }}>
+                      Email:
+                    </Text>
+                    <Text style={{ fontSize: 16, fontWeight: "600" }}>
+                      {this.props.typedEmail}
+                    </Text>
+                  </View>
+                  <View
+                    style={{ paddingVertical: 8 }}
+                    justifyContent="space-between"
+                    flexDirection="row"
+                  >
+                    <Text style={{ fontSize: 16, fontWeight: "800" }}>
+                      Tên:
+                    </Text>
+                    <Text style={{ fontSize: 16, fontWeight: "600" }}>
+                      {this.props.typedName}
+                    </Text>
+                  </View>
+                  <View
+                    style={{ paddingVertical: 8 }}
+                    justifyContent="space-between"
+                    flexDirection="row"
+                  >
+                    <Text style={{ fontSize: 16, fontWeight: "800" }}>
+                      Giới tính:
+                    </Text>
+                    <Text style={{ fontSize: 16, fontWeight: "600" }}>
+                      {this.props.typedGender}
+                    </Text>
+                  </View>
+                  <View
+                    style={{ paddingVertical: 8 }}
+                    justifyContent="space-between"
+                    flexDirection="row"
+                  >
+                    <Text style={{ fontSize: 16, fontWeight: "800" }}>
+                      Ngày sinh:
+                    </Text>
+                    <Text style={{ fontSize: 16, fontWeight: "600" }}>
+                      {this.props.typedBirthday}
+                    </Text>
+                  </View>
+                  <View
+                    style={{ paddingVertical: 8 }}
+                    justifyContent="space-between"
+                    flexDirection="row"
+                  >
+                    <Text style={{ fontSize: 16, fontWeight: "800" }}>
+                      Số điện thoại:
+                    </Text>
+                    <Text style={{ fontSize: 16, fontWeight: "600" }}>
+                      {this.props.typedPhone}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
+            <View
+              style={{
+                alignItems: "center",
+                height: "30%",
+                flexDirection: "column",
+                justifyContent: "space-around",
+                width: "100%",
+              }}
+            >
+              <ButtonMod
+                styleText={{ color: colors.white }}
+                Text="Chỉnh sửa thông tin cá nhân"
+                onPress={this.ChangeInfo}
+              ></ButtonMod>
+              <ButtonMod
+                styleText={{ color: colors.white }}
+                Text="Đổi mật khẩu"
+                onPress={this.ChangePass}
+              ></ButtonMod>
+              <ButtonMod
+                styleText={{ color: colors.white }}
+                styleContainer={{ backgroundColor: colors.Darkpink }}
+                Text="Đăng xuất"
+                onPress={this.LogOut}
+              ></ButtonMod>
+            </View>
           </View>
-          <View
-            style={{
-              alignItems: "center",
-              height: "30%",
-              flexDirection: "column",
-              justifyContent: "space-around",
-              width: "100%",
-            }}
-          >
-            <ButtonMod
-              styleText={{ color: colors.white }}
-              Text="Chỉnh sửa thông tin cá nhân"
-              onPress={this.ChangeInfo}
-            ></ButtonMod>
-            <ButtonMod
-              styleText={{ color: colors.white }}
-              Text="Đổi mật khẩu"
-              onPress={this.ChangePass}
-            ></ButtonMod>
-            <ButtonMod
-              styleText={{ color: colors.white }}
-              styleContainer={{ backgroundColor: colors.Darkpink }}
-              Text="Đăng xuất"
-              onPress={this.LogOut}
-            ></ButtonMod>
-          </View>
-        </View>
         </ScrollView>
       </SafeAreaView>
     );

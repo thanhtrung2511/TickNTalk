@@ -5,7 +5,7 @@ import {
   View,
   SafeAreaView,
   KeyboardAvoidingView,
-  ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import {
   styles,
@@ -14,10 +14,19 @@ import {
   sizeFactor,
   createOneButtonAlert,
 } from "../components/Basic/Basic";
+import {UserRef} from "../Fire";
 //import { GoogleSignin } from "react-native-google-signin";
 import firebase from "firebase";
 import Expo from 'expo';
-import { ChangeEmailAction, ChangeLoginStatus } from "../actions/index";
+
+import {
+  ChangeEmailAction,
+  ChangeNameAction,
+  ChangeBirthdayAction,
+  ChangePhoneAction,
+  ChangeGenderAction,
+  ChangeAvaAction,
+} from "../actions/index";
 import { connect } from "react-redux";
 
 export class SignInScreen extends React.Component {
@@ -42,6 +51,7 @@ export class SignInScreen extends React.Component {
         this.SignInContinue();
       })
       .catch((error) => {
+        console.error(error);
         createOneButtonAlert({
           Text: "Tên đăng nhập hoặc mật khẩu không đúng",
           TextAction: "Thử lại",
@@ -68,15 +78,38 @@ export class SignInScreen extends React.Component {
       return { error: true };
     }
   };
+  getRedux(){
+    var nameTmp = "";
+    var birthdayTmp = "";
+    var phoneTmp = "";
+    var genderTmp = "";
+    var tmpuri = "";
+    UserRef.orderByChild("Email")
+      .equalTo(this.props.typedEmail)
+      .on("value", (snap) => {
+        snap.forEach((element) => {
+          nameTmp = element.toJSON().Name;
+          this.props.ChangeNameAction(nameTmp);
+          genderTmp = element.toJSON().Gender;
+          this.props.ChangeGenderAction(genderTmp);
+          birthdayTmp = element.toJSON().Birthday;
+          this.props.ChangeBirthdayAction(birthdayTmp);
+          phoneTmp = element.toJSON().Phone;
+          this.props.ChangePhoneAction(phoneTmp);
+          //console.log(element.toJSON ().urlAva);
+          tmpuri = element.toJSON().urlAva;
+          this.props.ChangeAvaAction(tmpuri);
+        });
+      });
+  }
   SignInContinue = () => {
-    this.props.UpdateIsLogin(true);
+    this.getRedux();
     this.props.navigation.replace("Dashboard");
   };
   SignUp = () => {
     this.props.navigation.replace("SignUp");
   };
   componentDidMount = () => {
-    this.props.UpdateIsLogin(false);
   };
   render() {
     return (
@@ -106,8 +139,9 @@ export class SignInScreen extends React.Component {
                 }}
                 value={this.state.password}
               />
-
+<TouchableOpacity onPress={()=>{this.props.navigation.navigate('ResetPass')}}>
               <Text style={styles.FogetPassword}>Quên mật khẩu?</Text>
+              </TouchableOpacity>
             </View>
             <View style={{ marginTop: sizeFactor * 2.1 }}>
               <LoginBottom
@@ -126,21 +160,37 @@ export class SignInScreen extends React.Component {
     );
   }
 }
-const mapStateToProps = (state) => {
+function mapStateToProps(state) {
   return {
     typedEmail: state.emailReducer,
-    isLogin: state.isLogin,
   };
-};
+}
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return {
     Update: (typedEmail) => {
       dispatch(ChangeEmailAction(typedEmail));
     },
-    UpdateIsLogin: (login) => {
-      dispatch(ChangeLoginStatus(login));
+
+    ChangeNameAction: (typedName) => {
+      dispatch(ChangeNameAction(typedName));
+    },
+
+    ChangeBirthdayAction: (typedBirthday) => {
+      dispatch(ChangeBirthdayAction(typedBirthday));
+    },
+
+    ChangePhoneAction: (typedPhone) => {
+      dispatch(ChangePhoneAction(typedPhone));
+    },
+
+    ChangeGenderAction: (typedGender) => {
+      dispatch(ChangeGenderAction(typedGender));
+    },
+
+    ChangeAvaAction: (uriAva) => {
+      dispatch(ChangeAvaAction(uriAva));
     },
   };
-};
+}
 export default connect(mapStateToProps, mapDispatchToProps)(SignInScreen);

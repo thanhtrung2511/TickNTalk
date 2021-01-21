@@ -2,7 +2,7 @@ import React from "react";
 import {
   Text,
   TextInput,
-  View,
+  View,Alert,
   SafeAreaView,
   KeyboardAvoidingView
 } from "react-native";
@@ -19,7 +19,12 @@ class SignUpCont extends React.Component {
     super(props);
     this.unsubscriber = null;
     this.state = {
-      typedGender: "Nam",
+      typedGender: "",
+      listGender:[
+        {label: "Nam", value: "Nam"},
+        {label:"Nữ", value: "Nữ"},
+        {label:"Khác", value: "Khác"}
+      ],
       typedBirthday: "",
       typedPhone: "",
       typedname: "",
@@ -28,7 +33,9 @@ class SignUpCont extends React.Component {
   ResetFields = () => {
     this.setState({});
   };
-  UpdateInfo = () => {
+  UpdateInfo = async() => {
+    console.log(this.props.typedEmail);
+    
     var ref = UserRef.orderByChild("Email").equalTo(this.props.typedEmail);
     var NameTmp = this.state.typedname;
     var PhoneTmp = this.state.typedPhone;
@@ -44,7 +51,16 @@ class SignUpCont extends React.Component {
         });
       });
     });
-    this.props.navigation.replace("Dashboard");
+    Alert.alert(
+      'Thông báo',
+      'Cập nhật thông tin thành công',
+      [
+        
+        {text: 'Đồng ý', style: 'cancel',onPress:()=> this.props.navigation.replace("Dashboard")},
+      ],
+      { cancelable: false }
+    );
+   
   };
   IgnoreUpdate=()=>{
     this.props.navigation.replace("Dashboard");
@@ -69,7 +85,7 @@ class SignUpCont extends React.Component {
               <TextInput
                 header="Họ và tên"
                 style={styles.input}
-                value={this.props.typedname}
+                value={this.state.typedname}
                 onChangeText={(text) => this.setState({typedname: text})}
               />
             </View>
@@ -80,7 +96,7 @@ class SignUpCont extends React.Component {
                 style={styles.input}
                 placeholder="012345678"
                 keyboardType="phone-pad"
-                value={this.props.typedPhone}
+                value={this.state.typedPhone}
                 onChangeText={(text) => this.setState({typedPhone: text})}
               />
             </View>
@@ -89,7 +105,7 @@ class SignUpCont extends React.Component {
               <Text>Ngày sinh</Text>
               <View alignItems= "center" >
               <DatePicker
-                date={this.props.typedBirthday}
+                date={this.state.typedBirthday}
                 mode="date"
                 format="DD-MM-YYYY"
                 cancelBtnText="Cancel"
@@ -119,17 +135,14 @@ class SignUpCont extends React.Component {
             <View>
               <Text>Giới tính</Text>
               <DropDownPicker
-                items={[
-                  { label: "Nam", value: "Nam", hidden: true },
-                  { label: "Nữ", value: "Nữ" },
-                ]}
+                items={this.state.listGender}
                 defaultValue={
-                  this.state.typedGender === "" ? "Nam" : this.state.typedGender
+                  this.state.typedGender ? "Nam" : this.state.typedGender
                 }
                 containerStyle={styles.input}
                 style={{ backgroundColor: "#fafafa" }}
                 itemStyle={{
-                  justifyContent: "flex-start",
+                  justifyContent: "center",
                 }}
                 dropDownStyle={{ backgroundColor: "#fafafa" }}
                 onChangeItem={(typedGender) =>
@@ -138,7 +151,7 @@ class SignUpCont extends React.Component {
               />
             </View>
           </View>
-          <View style={{ marginTop:64, height:"20%",justifyContent:'space-around',flexDirection:"column",alignItems:"center" }}>
+          <View style={{ marginTop:104, height:"20%",justifyContent:'space-around',flexDirection:"column",alignItems:"center" }}>
             <ButtonMod
               
               onPress={this.UpdateInfo}
