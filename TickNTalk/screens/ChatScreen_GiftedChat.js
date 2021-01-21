@@ -32,7 +32,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
 import { connect } from "react-redux";
 import { UserRef, MessageRef } from "../Fire";
-import { CreateNullRoom, GetFriendEmail } from "../Utilities/ChatRoomUtils";
+import { CreateNullRoom, GetFriendEmail,sendPushNotification } from "../Utilities/ChatRoomUtils";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 
@@ -45,6 +45,7 @@ export class ChatScreen_GiftedChat extends React.Component {
     currentMessage: "",
     currentVideo: "",
     text: "",
+    tokenList:"",
     isTyping: false,
   };
 
@@ -204,14 +205,15 @@ export class ChatScreen_GiftedChat extends React.Component {
   getFriend = () => {
     var nameTmp = "";
     var avaTmp = "";
+    var token="";
     UserRef.orderByChild("Email")
       .equalTo(GetFriendEmail(this.props.curRoom, this.props.loggedInEmail))
       .on("value", (snap) => {
         snap.forEach((element) => {
           nameTmp = element.toJSON().Name;
-
           avaTmp = element.toJSON().urlAva;
-          this.setState({ friend: { name: nameTmp, ava: avaTmp } });
+          token=element.toJSON().Token;
+          this.setState({ friend: { name: nameTmp, ava: avaTmp },tokenList:token});
         });
       });
   };
@@ -276,7 +278,9 @@ export class ChatScreen_GiftedChat extends React.Component {
     });
 
     const msgs = this.state.messages;
+    const pushContent={ message:newMessage[0].text,data:this.props.curRoom,sender:this.props.curName}
     // this.setState({ messages: GiftedChat.append(msgs, newMessage) }); // CuteTN Note: this is BUGGY :)
+    sendPushNotification(this.state.tokenList,pushContent);
     GiftedChat.append(msgs, newMessage);
   }
 

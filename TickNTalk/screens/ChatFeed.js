@@ -32,8 +32,20 @@ import {
   CountNumberOfMembers,
   CreateNullRoom,
   LoadLatestMessagesIntoRooms,
+  registerForPushNotificationsAsync,
 } from "../Utilities/ChatRoomUtils";
 
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+var notificationListener = {};
+var responseListener = {};
 export class ChatFeed extends React.Component {
   state = {
     toSearchText: "",
@@ -52,13 +64,55 @@ export class ChatFeed extends React.Component {
     addNewFriend: false,
     headerText: "Tin nhắn",
     iconName: "person-add",
+    expoPushToken: "",
+    notification: false,
   };
 
+  addTokenToDatabase = (token) => {
+    var ref = UserRef.orderByChild("Email").equalTo(this.props.loggedInEmail);
+    ref.once("value").then(function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        childSnapshot.ref.update({
+          Token: token,
+        });
+      });
+    });
+  };
   componentDidMount = () => {
+    registerForPushNotificationsAsync().then((token) =>{
+      console.log(token);
+      this.setState({ expoPushToken: token });
+      this.addTokenToDatabase(token);
+     }
+    );
+    //Đăng ký nhận notification ngay cả khi người dùng không dùng máy
+    //Diem manh push notification so vơi pull
+    notificationListener = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        //console.log(notification);
+        this.props.UpdateRoomID(notification.request.content.data.data);
+        this.props.navigation.navigate("ChatScr");
+        this.setState({ notification: notification });
+      }
+    );
+
+    //Đăng ký sự sự kiện phản hồi khi người dùng tap vào notification
+    responseListener = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        //console.log(response);
+        this.props.UpdateRoomID(response.notification.request.content.data.data);
+        this.props.navigation.navigate("ChatScr");
+      }
+    );
+
     this.SubscribeDb();
     // this.FilterSearchedRoom();
     this.MyRefresh();
     // this.onChangeSearchText(this.state.toSearchText);
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener);
+      Notifications.removeNotificationSubscription(responseListener);
+    };
   };
   ChatScreenNav = (id) => {
     this.props.UpdateRoomID(id);
@@ -76,6 +130,7 @@ export class ChatFeed extends React.Component {
   };
 
   SubscribeDb() {
+    this.addTokenToDatabase();
     UserRef.on("value", (snapshot) => {
       let users = [];
 

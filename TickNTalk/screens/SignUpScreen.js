@@ -65,6 +65,7 @@ export class SignUpScreen extends React.Component {
       Gender: "",
       Birthday: "",
       urlAva: "",
+      Token:"",
     });
     this.SignUpCont();
   };
