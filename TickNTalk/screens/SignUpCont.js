@@ -6,13 +6,13 @@ import {
   SafeAreaView,
   KeyboardAvoidingView
 } from "react-native";
-
+import {Picker} from "@react-native-community/picker"
 
 import { connect } from "react-redux";
 import { UserRef } from "../Fire";
 import DatePicker from "react-native-datepicker";
 import { styles, ButtonIcon, ButtonMod,colors } from "../components/Basic/Basic";
-import DropDownPicker from "react-native-dropdown-picker";
+//import DropDownPicker from "react-native-dropdown-picker";
 
 class SignUpCont extends React.Component {
   constructor(props) {
@@ -134,21 +134,18 @@ class SignUpCont extends React.Component {
             </View>
             <View>
               <Text>Giới tính</Text>
-              <DropDownPicker
-                items={this.state.listGender}
-                defaultValue={
-                  this.state.typedGender ? "Nam" : this.state.typedGender
+              <Picker
+                style={styles.input}
+                itemStyle={[styles.input,{marginTop:0}]}
+                selectedValue={this.state.typedGender}
+                onValueChange={(itemValue, itemIndex) =>
+                  this.setState({typedGender:itemValue})
                 }
-                containerStyle={styles.input}
-                style={{ backgroundColor: "#fafafa" }}
-                itemStyle={{
-                  justifyContent: "center",
-                }}
-                dropDownStyle={{ backgroundColor: "#fafafa" }}
-                onChangeItem={(typedGender) =>
-                  this.setState({typedGender:typedGender})
-                }
-              />
+              >
+                <Picker.Item label="Nam" value="Nam" />
+                <Picker.Item label="Nữ" value="Nữ" />
+                <Picker.Item label="Khác" value="Khác" />
+              </Picker>
             </View>
           </View>
           <View style={{ marginTop:104, height:"20%",justifyContent:'space-around',flexDirection:"column",alignItems:"center" }}>

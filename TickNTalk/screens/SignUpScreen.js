@@ -55,7 +55,6 @@ export class SignUpScreen extends React.Component {
       SignUpColor: "red",
       //typedBirthday:'09/01/1997',
     });
-    this.props.Update("");
   };
 
   AddUserToDatabase = () => {
