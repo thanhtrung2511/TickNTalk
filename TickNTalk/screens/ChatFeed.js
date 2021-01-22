@@ -95,7 +95,6 @@ export class ChatFeed extends React.Component {
         this.setState({ notification: notification });
       }
     );
-
     //Đăng ký sự sự kiện phản hồi khi người dùng tap vào notification
     responseListener = Notifications.addNotificationResponseReceivedListener(
       (response) => {
@@ -130,7 +129,7 @@ export class ChatFeed extends React.Component {
   };
 
   SubscribeDb() {
-    this.addTokenToDatabase();
+
     UserRef.on("value", (snapshot) => {
       let users = [];
 
