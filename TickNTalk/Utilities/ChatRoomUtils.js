@@ -25,6 +25,17 @@ export function CheckRoomContainUser(room, email) {
 
     return flagFound;
 };
+export function CheckRoomContainUserFirebase(room, email) {
+  let flagFound = false;
+  Object.values(room.Members).forEach((e) => {
+    if (e.toUpperCase() === email.toUpperCase()) {
+      flagFound = true;
+      return;
+    }
+  });
+
+  return flagFound;
+};
 
 export function CountNumberOfMembers(room) {
     return Object.values(room.Data.Members).length;

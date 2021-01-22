@@ -43,7 +43,18 @@ export class PersonalInFo extends React.Component {
   ChangeAva = () => {
     this.props.navigation.navigate("Avatar");
   };
+  addTokenToDatabase = (token) => {
+    var ref = UserRef.orderByChild("Email").equalTo(this.props.typedEmail);
+    ref.once("value").then(function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        childSnapshot.ref.update({
+          Token: token,
+        });
+      });
+    });
+  };
   ResetRedux = () => {
+    this.addTokenToDatabase('logout');
     this.props.ChangeNameAction(" ");
     this.props.ChangeBirthdayAction(" ");
     this.props.ChangePhoneAction(" ");

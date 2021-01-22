@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Text,
-  TextInput,
+
   View,
   FlatList,
   KeyboardAvoidingView,
@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { EvilIcons } from "@expo/vector-icons";
+
 import {
   styles,
   MessageCard,
@@ -28,13 +28,16 @@ import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
 import {
   GetFriendEmail,
   GetUserByEmail,
-  CheckRoomContainUser,
+  CheckRoomContainUser,CheckRoomContainUserFirebase,
   CountNumberOfMembers,
   CreateNullRoom,
   LoadLatestMessagesIntoRooms,
+  MatchSearchRoomScore,
+  MatchSearchStringScore,
+  MatchSearchUserScore,
   registerForPushNotificationsAsync,
 } from "../Utilities/ChatRoomUtils";
-
+console.disableYellowBox = true;
 import * as Notifications from "expo-notifications";
 
 Notifications.setNotificationHandler({
@@ -122,7 +125,8 @@ export class ChatFeed extends React.Component {
     if (
       previousState.listMessages !== this.state.listMessages ||
       previousState.listRooms !== this.state.listRooms ||
-      previousState.listUsers !== this.state.listUsers
+      previousState.listUsers !== this.state.listUsers ||
+      previousState.toSearchText !== this.state.toSearchText
     ) {
       this.MyRefresh();
     }
@@ -144,9 +148,12 @@ export class ChatFeed extends React.Component {
     });
 
     RoomRef.on("value", (snapshot) => {
+     
       let rooms = [];
 
       snapshot.forEach((child) => {
+        console.log(child);
+        if (CheckRoomContainUserFirebase(child.toJSON(), this.props.loggedInEmail)) {
         const Data = child.toJSON();
         let room = {
           RoomID: child.key,
@@ -154,7 +161,8 @@ export class ChatFeed extends React.Component {
         };
 
         rooms.push(room);
-      });
+     
+      }});
 
       this.setState({ listRooms: rooms });
       // this.MyRefresh();
@@ -185,10 +193,14 @@ export class ChatFeed extends React.Component {
     const tempMsgs = this.state.listMessages;
     LoadLatestMessagesIntoRooms(tempRooms, tempMsgs);
 
-    this.SortChatRoomsByTime(tempRooms).then((result) => {
-      this.ArrangeChatRooms();
-      this.FilterSearchedRoom();
-    });
+    this.SortChatRoomsByTime(tempRooms).then(
+      (result) =>
+      {
+        // Object.values(tempRooms).forEach((room) => console.log(room.LatestMessage));
+        this.ArrangeChatRooms();
+        // this.FilterSearchedRoom(this.state.toSearchText);
+      }
+    );
   }
 
   /// CuteTN Note: a huge violation of SRP
@@ -222,25 +234,18 @@ export class ChatFeed extends React.Component {
     this.setState({ listFriends: fr });
   }
 
-  async SortChatRoomsByTime(listRooms) {
+  async SortChatRoomsByTime(listRooms)
+  {
     await listRooms.sort((a, b) => {
-      if (
-        a &&
-        b &&
-        a.LatestMessage &&
-        b.LatestMessage &&
-        a.LatestMessage.Data &&
-        b.LatestMessage.Data &&
-        a.LatestMessage.Data.createdAt &&
-        b.LatestMessage.Data.createdAt
-      )
+      if(a && b &&
+        a.LatestMessage && b.LatestMessage &&
+        a.LatestMessage.Data && b.LatestMessage.Data && 
+        a.LatestMessage.Data.createdAt && b.LatestMessage.Data.createdAt)
         return a.LatestMessage.Data.createdAt < b.LatestMessage.Data.createdAt;
-      else return true;
-    });
-
-    // this.state.listRooms = listRooms;
-    // this.setState({listRooms : listRooms});
-    // listRooms = tempRooms;
+      else
+        return false;
+    }
+    )
   }
 
   // Remove from stranger list
@@ -252,104 +257,190 @@ export class ChatFeed extends React.Component {
     );
   }
 
-  RenderAllRoomsByTime() {}
+  RenderRoomMessageCard(room, isFriendRoom){
+    let title = room.Data.RoomName;
+    let roomId = room.RoomID;
 
-  /*
-    FetchListRooms()
-    {
-      RoomRef.on(
-        'value',
-        (snapshot) => {
-          var li = [];     
-          var fr = [];
+    let SystemAva =
+      "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
+    let latestMsgText = "";
+    if (room.LatestMessage)
+      latestMsgText = room.LatestMessage.Data.text;
 
-          snapshot.forEach( (child) => {
-            li.push({
-              RoomName: child.toJSON().RoomName,
-              CreatedDate: child.toJSON().CreatedDate,
-              Members: child.toJSON().Members,
-            });
-          })
-          
-          this.setState({listRooms: li});
-        }
-      )
-    }
-
-    FetchListUsers()
-    {
-      UserRef.on(
-        (snapshot) => {
-          var li = [];     
-
-          snapshot.forEach( (child) => {
-            li.push({
-              Email: child.toJSON().Email,
-              Phone: child.toJSON().Phone,
-              fullName: child.toJSON().fullName,
-            });
-          })
-          
-          li.sort((x,y) => (x.fullName.toUpperCase() > y.fullName.toUpperCase())); 
-
-          this.setState({listUsers: li});
-        }
-      )
-    }
-
-    isMatchedRoom(room, toSearchText)
-    {
-      // if this room does not contain the logged in user
-      if(Object.values(room.Members).find(x => x === this.props.loggedInEmail) === undefined)
-        return false;
-
-      // check by roomname first
-      if(room.RoomName.toUpperCase().includes(toSearchText.toUpperCase()) === true)
-        return true;
-
-      var result = false;
-
-      // check if the room has the searched username or email
-      Object.values(room.Members).forEach((email) => {
-        if(email != this.props.loggedInEmail)
-        {
-          // foreach user ref, find the ones that matched the email or username
-          if(email.toUpperCase().includes(toSearchText.toUpperCase()))
-            result = true;
-
-          // CuteTN todo: check user name later maybe
-        }
-      });
+    // if title is nothing, then get friend's name
+    if (isFriendRoom && !title) {
+      const friendEmail = GetFriendEmail(
+        room,
+        this.props.loggedInEmail
+      );
+      const friend = GetUserByEmail(
+        this.state.listUsers,
+        friendEmail
+      );
       
-      return result;
+      var userAva;
+      if (friend) userAva = friend.urlAva;
+      if (!friend) title = "Người dùng TickNTalk";
+      else title = friend.Name;
     }
-*/
 
-  FilterSearchedRoom(toSearchText = "") {
-    this.setState({
-      filteredFriends: this.state.listFriends,
-      filteredGroups: this.state.listGroups,
-      filteredStranger: this.state.listStrangers,
-    });
+    return (
+      <Text>
+        <MessageCard
+          ImageSource={userAva ? userAva : SystemAva}
+          Name={title}
+          LastestChat={latestMsgText}
+          isRead="true"
+          onPress={() => {
+            this.ChatScreenNav(room);
+          }}
+        ></MessageCard>
+      </Text>
+    );
+  }
+
+  RenderAllMyRoomsByTime()
+  {
+    return (
+      <View>
+        <Text
+          style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
+        >
+        
+        </Text>
+        <FlatList
+          style={styles.ChatBox}
+          alignItems="center"
+          data={this.state.listRooms}
+          renderItem={({ item, index }) => {
+            return this.RenderRoomMessageCard(item, true);
+          }}
+        ></FlatList>
+      </View>
+    );
+  }
+
+  RenderAllMyRoomsBySearchedText(){
+    return (
+      <View>
+        <Text
+          style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
+        >
+          BẠN BÈ
+        </Text>
+        <FlatList
+          style={styles.ChatBox}
+          alignItems="center"
+          data={this.state.filteredFriends}
+          renderItem={({ item, index }) => {
+            return this.RenderRoomMessageCard(item, true);
+          }}
+        ></FlatList>
+
+        {
+          ///////////////////////////////////////////////////////////////////////////////
+        }
+
+        <Text
+          style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
+        >
+          NHÓM
+        </Text>
+        <FlatList
+          style={styles.ChatBox}
+          alignItems="center"
+          data={this.state.filteredGroups}
+          renderItem={({ item, index }) => {
+            return this.RenderRoomMessageCard(item, false);
+          }}
+        ></FlatList>
+      </View>
+    );
+  }
+
+  FilterSearchedRoom(toSearchText) {
+    let fr = this.state.listFriends.map((friend) => {
+      let tempFr = JSON.parse((JSON.stringify(friend)));
+      tempFr.MatchScore = MatchSearchRoomScore(toSearchText, friend, this.state.listUsers);
+      return tempFr;
+    }).filter((friend) => friend.MatchScore !== 0);
+
+    fr.sort((f1, f2) => f1.MatchScore < f2.MatchScore);
+    this.setState({ filteredFriends : fr });
+
+    let gr = this.state.listGroups.map((group) => {
+      let tempGr = JSON.parse((JSON.stringify(group)));
+      tempGr.MatchScore = MatchSearchRoomScore(toSearchText, group, this.state.listUsers);
+      return tempGr;
+    }).filter((group) => group.MatchScore !== 0);
+
+    gr.sort((g1, g2) => g1.MatchScore < g2.MatchScore);
+    this.setState({ filteredGroups : gr });
+
+    let str = this.state.listStrangers.map((stranger) => {
+      let tempStr = JSON.parse((JSON.stringify(stranger)));
+      tempStr.MatchScore = MatchSearchUserScore(toSearchText, stranger)
+      return tempStr;
+    }).filter((stranger) => stranger.MatchScore !== 0);
+
+    str.sort((s1, s2) => s1.MatchScore < s2.MatchScore);
+    this.setState({ filteredStranger : str });
   }
 
   onChangeSearchText(toSearchText) {
-    // // this.state.filteredRooms =  this.state.listRooms.filter(this.isMatchedRoom);
-    // let li = [];
-
-    // this.state.listRooms.forEach((room) => {
-    //   let matched = this.isMatchedRoom(room, toSearchText);
-
-    //   if(matched)
-    //   {
-    //     li.push(room);
-    //   }
-    // });
-
-    // li.sort((x,y) => (x.RoomName.toUpperCase() > y.RoomName.toUpperCase()));
-
-    // this.setState({filteredRooms: li});
     this.FilterSearchedRoom(toSearchText);
+  }
+
+  RenderMyRooms(toSearchText = "")
+  {
+    if(toSearchText === "") {
+      return this.RenderAllMyRoomsByTime();
+    }
+    else {
+      return this.RenderAllMyRoomsBySearchedText();
+    }
+  }
+  //comment for new merge
+  RenderFindNewFriend(toSearchText = "")
+  {
+    return (
+      <View>
+        <Text
+          style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
+        >
+          TÌM BẠN MỚI
+        </Text>
+        <FlatList
+          style={styles.ChatBox}
+          alignItems="center"
+          data={this.state.filteredStranger}
+          renderItem={({ item, index }) => {
+            let title = item.Name;
+
+            if (!title) {
+              title = "Người dùng TickNTalk";
+            }
+
+            const members = [this.props.loggedInEmail, item.Email];
+            const nullRoom = CreateNullRoom(members);
+
+            return (
+              <Text>
+                <MessageCard
+                  ImageSource="https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
+                  Name={title}
+                  LastestChat="Nhắn tin để kết bạn!"
+                  isRead="true"
+                  onPress={() => {
+                    this.ChatScreenNav(nullRoom);
+                  }}
+                ></MessageCard>
+              </Text>
+            );
+          }}
+        ></FlatList>
+      </View>
+    )
   }
 
   render() {
@@ -374,16 +465,11 @@ export class ChatFeed extends React.Component {
                 onPress={() => {
                   this.setState({ addNewFriend: !this.state.addNewFriend });
                   if (this.state.addNewFriend) {
-                    this.setState({
-                      headerText: "Tin nhắn",
-                      iconName: "person-add",
-                    });
-                  } else {
-                    this.setState({
-                      headerText: "Tìm bạn mới",
-                      iconName: "backspace",
-                    });
+                    this.setState({headerText:"Tin nhắn",iconName:"person-add"})
                   }
+                  else {
+                    this.setState({headerText: "Tìm bạn mới",iconName:"backspace"})
+                  };
                 }}
                 size={30}
                 color="whitesmoke"
@@ -420,139 +506,14 @@ export class ChatFeed extends React.Component {
                 inputStyle={{}}
                 placeholder="Tìm kiếm bạn bè.."
                 onChangeText={(Text) => {
-                  this.setState({ toSearchText: Text });
+                  this.setState({toSearchText : Text});
                   this.onChangeSearchText(Text);
                 }}
                 value={this.state.toSearchText}
               />
-              {!this.state.addNewFriend ? (
-                <View>
-                  <Text
-                    style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
-                  >
-                    BẠN BÈ
-                  </Text>
-                  <FlatList
-                    style={styles.ChatBox}
-                    alignItems="center"
-                    data={this.state.filteredFriends}
-                    renderItem={({ item, index }) => {
-                      let title = item.Data.RoomName;
-                      let roomId = item.RoomID;
-
-                      let SystemAva =
-                        "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
-                      let latestMsgText = "";
-                      if (item.LatestMessage)
-                        latestMsgText = item.LatestMessage.Data.text;
-
-                      // if title is nothing, then get friend's name
-                      if (!title) {
-                        const friendEmail = GetFriendEmail(
-                          item,
-                          this.props.loggedInEmail
-                        );
-                        const friend = GetUserByEmail(
-                          this.state.listUsers,
-                          friendEmail
-                        );
-                        var userAva;
-                        if (friend) userAva = friend.urlAva;
-                        if (!friend) title = "Người dùng TickNTalk";
-                        else title = friend.Name;
-                      }
-
-                      return (
-                        <Text>
-                          <MessageCard
-                            ImageSource={userAva ? userAva : SystemAva}
-                            Name={title}
-                            LastestChat={latestMsgText}
-                            isRead="true"
-                            onPress={() => {
-                              this.ChatScreenNav(item);
-                            }}
-                          ></MessageCard>
-                        </Text>
-                      );
-                    }}
-                  ></FlatList>
-
-                  {
-                    ///////////////////////////////////////////////////////////////////////////////
-                  }
-
-                  <Text
-                    style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
-                  >
-                    NHÓM
-                  </Text>
-                  <FlatList
-                    style={styles.ChatBox}
-                    alignItems="center"
-                    data={this.state.filteredGroups}
-                    renderItem={({ item, index }) => {
-                      const title = item.Data.RoomName;
-                      const roomId = item.RoomID;
-
-                      return (
-                        <Text>
-                          <MessageCard
-                            ImageSource="https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
-                            Name={title}
-                            LastestChat="chibi so ciu"
-                            isRead="true"
-                            onPress={() => {
-                              this.ChatScreenNav(item);
-                            }}
-                          ></MessageCard>
-                        </Text>
-                      );
-                    }}
-                  ></FlatList>
-                </View>
-              ) : (
-                <View>
-                  <Text
-                    style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
-                  >
-                    TÌM BẠN MỚI
-                  </Text>
-                  <FlatList
-                    style={styles.ChatBox}
-                    alignItems="center"
-                    data={this.state.filteredStranger}
-                    renderItem={({ item, index }) => {
-                      let title = item.Name;
-
-                      if (!title) {
-                        title = "Người dùng TickNTalk";
-                      }
-                      let ava = item.urlAva;
-                      if (!ava)
-                        ava =
-                          "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
-
-                      const members = [this.props.loggedInEmail, item.Email];
-                      const nullRoom = CreateNullRoom(members);
-
-                      return (
-                        <Text>
-                          <MessageCard
-                            ImageSource={ava}
-                            Name={title}
-                            LastestChat="Nhắn tin để kết bạn!"
-                            isRead="true"
-                            onPress={() => {
-                              this.ChatScreenNav(nullRoom);
-                            }}
-                          ></MessageCard>
-                        </Text>
-                      );
-                    }}
-                  ></FlatList>
-                </View>
-              )}
+              {this.state.addNewFriend ? 
+                this.RenderFindNewFriend() : this.RenderMyRooms(this.state.toSearchText) 
+              }
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
