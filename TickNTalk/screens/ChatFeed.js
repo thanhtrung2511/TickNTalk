@@ -152,7 +152,7 @@ export class ChatFeed extends React.Component {
       let rooms = [];
 
       snapshot.forEach((child) => {
-        console.log(child);
+        //console.log(child);
         if (CheckRoomContainUserFirebase(child.toJSON(), this.props.loggedInEmail)) {
         const Data = child.toJSON();
         let room = {

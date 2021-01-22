@@ -42,6 +42,7 @@ export const colors = {
   fushia: "#FF00FF",
   cyan: "lightblue",
   Darkpink: "#f06292",
+  Lime:"#BFFF00",
   // red: "#ff3b30",
   // orange: "#ff9500",
   // yellow: "#ffcc00",
@@ -333,9 +334,9 @@ export const styles = StyleSheet.create({
 });
 export const MessageCard = (props) => {
   return (
-    <TouchableOpacity style={styles.MessageCard} onPress={props.onPress}>
+    <TouchableOpacity style={[styles.MessageCard,props.containerStyle]} onPress={props.onPress}>
       <BasicImage
-        Icon={50}
+        Icon={60}
         source={{ uri: props.ImageSource }}
         Round={100}
       ></BasicImage>

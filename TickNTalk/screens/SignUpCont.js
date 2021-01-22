@@ -34,7 +34,7 @@ class SignUpCont extends React.Component {
     this.setState({});
   };
   UpdateInfo = async() => {
-    console.log(this.props.typedEmail);
+    //console.log(this.props.typedEmail);
     
     var ref = UserRef.orderByChild("Email").equalTo(this.props.typedEmail);
     var NameTmp = this.state.typedname;
