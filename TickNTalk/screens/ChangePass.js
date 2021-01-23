@@ -3,27 +3,15 @@ import {
   Text,
   TextInput,
   View,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  Alert,KeyboardAvoidingView,
+  KeyboardAvoidingView,SafeAreaView, Alert
 } from 'react-native';
-import {
-  SafeAreaView,
-  NavigationContainer,
-} from 'react-native-safe-area-context';
-import {EvilIcons} from '@expo/vector-icons';
+
+
 import firebase from 'firebase';
-import {UserRef} from '../Fire';
 import {connect} from 'react-redux';
 import {ButtonMod,styles,colors,createOneButtonAlert} from '../components/Basic/Basic'
 
 export class ChangePass extends React.Component {
-  static navigationOptions = {
-    header: null,
-  };
 
   constructor (props) {
     super (props);
@@ -65,13 +53,20 @@ export class ChangePass extends React.Component {
             user
               .updatePassword (this.state.newPassword)
               .then (() => {
-                createOneButtonAlert({ Text:'Đổi mật khẩu thành công',TextAction:"Tiếp tục",onPress:this.Continue()})
+                Alert.alert(
+                  'Thông báo',
+                  'Đổi mật khẩu thành công',
+                  [
+                    {text: 'Tiếp tục',onPress:()=>this.Continue(), style: 'cancel'},
+                  ],
+                  { cancelable: false }
+                );
               })
               .catch (error => {
                 createOneButtonAlert({ Text:'Mật khẩu phải hơn 6 ký tự',TextAction:"Thử lại"})
               });
           }
-          console.log (this.state.Repassword, this.state.currentPassword);
+          //console.log (this.state.Repassword, this.state.currentPassword);
         })
         .catch (error => {
           createOneButtonAlert({ Text:'Mật khẩu cũ không đúng',TextAction:"Thử lại"})

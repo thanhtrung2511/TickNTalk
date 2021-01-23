@@ -1,37 +1,172 @@
-import React, { Component } from "react";
+import React from "react";
 import {
-  Button,
   Text,
-  TextInput,
+  SafeAreaView,
   View,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,ScrollView,
+  FlatList,
+  ScrollView,
+  Alert,
   KeyboardAvoidingView,
 } from "react-native";
 import {
-  SafeAreaView,
-  NavigationContainer,
-} from "react-native-safe-area-context";
-import { EvilIcons } from "@expo/vector-icons";
-import { styles, ButtonIcon, colors } from "../components/Basic/Basic";
-import { SearchBar } from "react-native-elements";
+  styles,
+  ButtonIcon,
+  colors,
+  ButtonMod,
+  MessageCard,
+} from "../components/Basic/Basic";
+import { ChangeRoomIDAction } from "../actions";
+import { connect } from "react-redux";
+import { UserRef,RoomRef} from "../Fire";
+import { SearchBar, CheckBox } from "react-native-elements";
 
-export default class RoomChatManagements extends React.Component {
+export class RoomChatManagements extends React.Component {
   state = {
     username: "",
     password: "",
     repassword: "",
     Email: "",
+    onCreate: false,
+    canCreate: false,
+    listUsers: [],
   };
-  ChatScreenNav = () => {
-    this.props.navigation.navigate("Chat");
+  createRoomData() {
+    let getCheckedUser = [];
+    let tmpList = this.state.listUsers;
+
+    for (var i in tmpList) {
+      if (tmpList[i].Checked) {
+        getCheckedUser.push(tmpList[i].Data.Email);
+        
+      }
+    }
+    getCheckedUser.push(this.props.loggedInEmail);
+    //console.log(getCheckedUser);
+    let tempRoom = {};
+    tempRoom.Data = {
+      CreatedDate: Date.now(),
+      Members: getCheckedUser,
+      RoomName: "Nhóm của " + this.props.curName,
+    };
+    //console.log(tempRoom);
+    this.PushAndUseNewRoom(tempRoom);
+  }
+  ChatScreenNav = (id) => {
+    //console.log(id);
+    this.props.navigation.navigate("ChatScr");
   };
+
+  async PushAndUseNewRoom(newRoom) {
+    const newRoomDataRef = await RoomRef.push(newRoom.Data);
+
+    let tempRoom = {
+      RoomID: newRoomDataRef.key,
+      Data: newRoom.Data,
+    };
+
+    this.props.UpdateRoomID(tempRoom);
+    this.ChatScreenNav(this.props.curRoom);
+  }
+  getUserList() {
+    UserRef.on("value", (snapshot) => {
+      let users = [];
+      let checked = [];
+      snapshot.forEach((child) => {
+        if (this.props.loggedInEmail!==child.toJSON().Email)
+        users.push({ Data: child.toJSON(), Checked: false });
+        checked.push(false);
+      });
+
+      users.sort(
+        (x, y) => x.Data.Name.toUpperCase() > y.Data.Name.toUpperCase()
+      );
+
+      this.setState({ listUsers: users });
+      // this.MyRefresh();
+    });
+    this.renderAllUser();
+  }
+  renderAllUser() {
+    return (
+      <View>
+        <FlatList
+          style={styles.ChatBox}
+          contentContainerStyle={{ justifyContent: "space-between" }}
+          alignItems="center"
+          data={this.state.listUsers}
+          renderItem={({ item, index }) => {
+            return this.renderMessageCard(item);
+          }}
+        ></FlatList>
+      </View>
+    );
+  }
+  checkCanCreate() {
+    let tmpArr = this.state.listUsers;
+    let checkedCount = 0;
+    for (var i in tmpArr) {
+      if (tmpArr[i].Checked) {
+        checkedCount++;
+      }
+    }
+    this.setState({ canCreate: checkedCount >= 2 });
+  }
+  changeToggleValue(value, desc) {
+    let tmpArr = this.state.listUsers;
+    for (var i in tmpArr) {
+      if (tmpArr[i].Data.Email === value) {
+        tmpArr[i].Checked = desc;
+        break; //Stop this loop, we found it!
+      }
+    }
+    this.setState({ listUsers: tmpArr });
+  }
+  renderMessageCard(user) {
+    let userTmp = user.Data;
+    let toggle = user.Checked;
+    let SystemAva =
+      "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          marginBottom: 8,
+        }}
+      >
+        <CheckBox
+          iconRight
+          checkedIcon="check-circle"
+          uncheckedIcon="circle"
+          checked={toggle}
+          uncheckedColor={colors.lightpink}
+          checkedColor={colors.Darkpink}
+          onPress={() => {
+            toggle = !toggle;
+            this.changeToggleValue(userTmp.Email, toggle);
+            this.checkCanCreate();
+          }}
+        />
+        <MessageCard
+          containerStyle={{ width: "90%" }}
+          ImageSource={userTmp.urlAva ? userTmp.urlAva : SystemAva}
+          Name={userTmp.Name}
+          isRead="true"
+        ></MessageCard>
+      </View>
+    );
+  }
   render() {
     return (
       <SafeAreaView style={styles.containerLI}>
-        <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <KeyboardAvoidingView
+          style={[
+            styles.container,
+            !this.state.onCreate ? { justifyContent: "space-between" } : null,
+          ]}
+          behavior="padding"
+        >
           <View
             style={{
               backgroundColor: colors.lightpink,
@@ -43,16 +178,71 @@ export default class RoomChatManagements extends React.Component {
               style={{ width: "90%" }}
               justifyContent="space-between"
               flexDirection="row"
+              alignItems="center"
             >
-              <Text style={styles.header}>Nhóm</Text>
-              <ButtonIcon MaterialFamilyIconName="group-add" size={33} />
+              {this.state.onCreate ? (
+                <ButtonIcon
+                  MaterialFamilyIconName="cancel"
+                  color={colors.white}
+                  onPress={() =>
+                    Alert.alert(
+                      "Thông báo",
+                      "Bạn có muốn hủy tạo phòng không?",
+                      [
+                        { text: "Hủy", style: "cancel" },
+                        {
+                          text: "Đồng ý",
+                          onPress: () =>
+                            this.setState({
+                              onCreate: false,
+                              canCreate: false,
+                            }),
+                        },
+                      ],
+                      { cancelable: false }
+                    )
+                  }
+                  size={33}
+                />
+              ) : null}
+              <Text style={styles.header}>
+                {this.state.onCreate ? "Tạo nhóm mới" : "Nhóm"}{" "}
+              </Text>
+              {this.state.canCreate ? (
+                <ButtonIcon
+                  MaterialFamilyIconName="check-circle"
+                  color={colors.Darkpink}
+                  onPress={() =>
+                    Alert.alert(
+                      "Thông báo",
+                      "Bạn có muốn tạo phòng không?",
+                      [
+                        { text: "Hủy", style: "cancel" },
+                        {
+                          text: "Đồng ý",
+                          onPress: () => {
+                            this.setState({
+                              canCreate: false,
+                              onCreate: false,
+                            });
+                            this.createRoomData();
+                          },
+                        },
+                      ],
+                      { cancelable: false }
+                    )
+                  }
+                  size={33}
+                />
+              ) : null}
             </View>
           </View>
-          <View
-            style={{ flexDirection: "column" }}
-            justifyContent="space-between"
-          >
-            {/* <TextInput style={styles.input}
+          {this.state.onCreate ? (
+            <View
+              style={{ flexDirection: "column" }}
+              justifyContent="space-between"
+            >
+              {/* <TextInput style={styles.input}
                       placeholder="Tìm kiếm bạn bè.."
                       // clearButtonMode={Platform.OS === "ios" ? true:false}
                       onChangeText={Text=>{
@@ -60,33 +250,71 @@ export default class RoomChatManagements extends React.Component {
                       }}>
                 </TextInput> */}
 
-            <ScrollView style={{ maxHeight: "94%" }}>
-              <SearchBar
-                platform={Platform.OS}
-                placeholder="Tìm bạn bè..."
-                lightTheme="true"
-                containerStyle={{
-                  marginHorizontal: 8,
-                  backgroundColor: "transparent",
-                  width: "95%",
+              <ScrollView style={{ maxHeight: "94%" }}>
+                <SearchBar
+                  platform={Platform.OS}
+                  placeholder="Tìm bạn bè..."
+                  lightTheme="true"
+                  containerStyle={{
+                    marginHorizontal: 8,
+                    backgroundColor: "transparent",
+                    width: "95%",
+                  }}
+                  inputContainerStyle={{
+                    backgroundColor: "whitesmoke",
+                    borderRadius: 23,
+                  }}
+                  leftIconContainerStyle={{ marginLeft: 16 }}
+                  inputStyle={{}}
+                  placeholder="Tìm kiếm nhóm.."
+                  onChangeText={(Text) => {
+                    this.setState({ toSearchText: Text });
+                    this.onChangeSearchText(Text);
+                  }}
+                  value={this.state.toSearchText}
+                />
+                {this.renderAllUser()}
+              </ScrollView>
+            </View>
+          ) : (
+            <View
+              style={{ flexDirection: "column", height: 100 }}
+              alignItems="center"
+              justifyContent="space-around"
+            >
+              <Text>Tạo nhóm mới</Text>
+              <Text>Để có thêm nhiều điều thú vị</Text>
+              <ButtonMod
+                Text="Tạo nhóm mới"
+                onPress={() => {
+                  this.setState({ onCreate: true }), this.getUserList();
                 }}
-                inputContainerStyle={{
-                  backgroundColor: "whitesmoke",
-                  borderRadius: 23,
-                }}
-                leftIconContainerStyle={{ marginLeft: 16 }}
-                inputStyle={{}}
-                placeholder="Tìm kiếm nhóm.."
-                onChangeText={(Text) => {
-                  this.setState({ toSearchText: Text });
-                  this.onChangeSearchText(Text);
-                }}
-                value={this.state.toSearchText}
-              />
-            </ScrollView>
-          </View>
+              ></ButtonMod>
+            </View>
+          )}
+          <View></View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    loggedInEmail: state.emailReducer,
+    curRoomID: state.roomReducer,
+    curName: state.nameReducer,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    UpdateRoomID: (curRoomID) => {
+      dispatch(ChangeRoomIDAction(curRoomID));
+    },
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RoomChatManagements);

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React from "react";
 import {
   View,
   Platform,
@@ -8,25 +8,23 @@ import {
   Image,
   SafeAreaView,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 // import {Text} from '../Text';
 import "firebase/auth";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
-import { connect, Provider } from "react-redux";
-// import {FirebaseContext} from '../screens/FirebaseContext';
-import { UserContext } from "../screens/UserContext";
-import { colors, styles, ButtonMod,createTwoButtonAlert,createOneButtonAlert } from "../components/Basic/Basic";
+import { connect } from "react-redux";
 import {
-  ChangeEmailAction,
-  ChangeNameAction,
-  ChangeBirthdayAction,
-  ChangePhoneAction,
-  ChangeGenderAction,
-  ChangeAvaAction,
-} from "../actions/index";
+  colors,
+  styles,
+  ButtonMod,
+  createTwoButtonAlert,
+  createOneButtonAlert,
+} from "../components/Basic/Basic";
+import { ChangeAvaAction } from "../actions/index";
 import { UserRef, storage, uidR } from "../Fire";
 
 class UpdateAvaScreen extends React.Component {
@@ -62,7 +60,10 @@ class UpdateAvaScreen extends React.Component {
         this.props.ChangeAvaAction(result.uri); // not async
       }
     } catch (error) {
-      createOneButtonAlert({ Text: "Đã có lỗi xảy ra trong lúc chọn ảnh",TextAction:"Đồng ý"});
+      createOneButtonAlert({
+        Text: "Đã có lỗi xảy ra trong lúc chọn ảnh",
+        TextAction: "Đồng ý",
+      });
       //console.log("Error when picking image: " + error);
     }
   };
@@ -84,7 +85,7 @@ class UpdateAvaScreen extends React.Component {
 
   uploadProfilePhoto = async (uri) => {
     try {
-      console.log("a");
+      //console.log("a");
       const photo = await this.getBlob(uri);
 
       //const filename = uri.substring(uri.lastIndexOf('/') + 1);
@@ -104,7 +105,10 @@ class UpdateAvaScreen extends React.Component {
 
       return url;
     } catch (error) {
-      createOneButtonAlert({ Text: "Đã có lỗi xảy ra trong lúc cập nhật ảnh",TextAction:"Đồng ý"});
+      createOneButtonAlert({
+        Text: "Đã có lỗi xảy ra trong lúc cập nhật ảnh",
+        TextAction: "Đồng ý",
+      });
       //console.log("Error when uploading profile photo ", error.message);
     }
   };
@@ -119,7 +123,15 @@ class UpdateAvaScreen extends React.Component {
         });
       });
     });
-    createOneButtonAlert({ Text: "Cập nhật ảnh đại diện thành công",TextAction:"Đồng ý",onPress:this.props.navigation.goBack()});
+    Alert.alert(
+      'Thông báo',
+      'Cập nhật ảnh đại diện thành công',
+      [
+        
+        {text: "Đồng ý", style: 'cancel',onPress:()=> this.props.navigation.goBack(),},
+      ],
+      { cancelable: false }
+    );
   };
 
   getBlob = async (uri) => {
@@ -197,8 +209,16 @@ class UpdateAvaScreen extends React.Component {
             styleContainer={{ fontSize: 20, color: "green", marginTop: 50 }}
             // onPress={uploadProfilePhoto(this.state.profilePhoto)}
             onPress={() => {
-              createTwoButtonAlert({ Content: "Bạn có muốn thay đổi ảnh đại diện",cancelBtnText:"Hủy",
-              okBtnText:"Xác nhận",onPressOK:this.uploadProfilePhoto(this.props.uriAva)});
+              Alert.alert(
+                'Thông báo',
+                'Bạn có muốn cập nhật ảnh đại diện',
+                [
+                  {text: 'Đồng ý', onPress: () => this.uploadProfilePhoto(this.props.uriAva)},
+                  {text: 'Hủy', style: 'cancel'},
+                ],
+                { cancelable: false }
+              );
+              
             }}
             Text="Thay đổi ảnh"
           />
@@ -221,10 +241,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    ChangeEmailAction: (typedEmail) => {
-      dispatch(ChangeEmailAction(typedEmail));
-    },
-
     ChangeAvaAction: (uriAva) => {
       dispatch(ChangeAvaAction(uriAva));
     },

@@ -1,35 +1,30 @@
-import React, { Component, useState } from "react";
+import React from "react";
 import {
   Text,
   TextInput,
-  View,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  Button,KeyboardAvoidingView
-} from "react-native";
-import {
+  View,Alert,
   SafeAreaView,
-  NavigationContainer,
-} from "react-native-safe-area-context";
-import { EvilIcons } from "@expo/vector-icons";
-// import styles from '../screens/components/editprofile/Styles';
-import firebase from "firebase";
+  KeyboardAvoidingView
+} from "react-native";
+import {Picker} from "@react-native-community/picker"
 
-import { connect, Provider } from "react-redux";
+import { connect } from "react-redux";
 import { UserRef } from "../Fire";
 import DatePicker from "react-native-datepicker";
 import { styles, ButtonIcon, ButtonMod,colors } from "../components/Basic/Basic";
-import DropDownPicker from "react-native-dropdown-picker";
+//import DropDownPicker from "react-native-dropdown-picker";
 
 class SignUpCont extends React.Component {
   constructor(props) {
     super(props);
     this.unsubscriber = null;
     this.state = {
-      typedGender: "Nam",
+      typedGender: "",
+      listGender:[
+        {label: "Nam", value: "Nam"},
+        {label:"Nữ", value: "Nữ"},
+        {label:"Khác", value: "Khác"}
+      ],
       typedBirthday: "",
       typedPhone: "",
       typedname: "",
@@ -38,7 +33,9 @@ class SignUpCont extends React.Component {
   ResetFields = () => {
     this.setState({});
   };
-  UpdateInfo = () => {
+  UpdateInfo = async() => {
+    //console.log(this.props.typedEmail);
+    
     var ref = UserRef.orderByChild("Email").equalTo(this.props.typedEmail);
     var NameTmp = this.state.typedname;
     var PhoneTmp = this.state.typedPhone;
@@ -54,7 +51,16 @@ class SignUpCont extends React.Component {
         });
       });
     });
-    this.props.navigation.replace("Dashboard");
+    Alert.alert(
+      'Thông báo',
+      'Cập nhật thông tin thành công',
+      [
+        
+        {text: 'Đồng ý', style: 'cancel',onPress:()=> this.props.navigation.replace("Dashboard")},
+      ],
+      { cancelable: false }
+    );
+   
   };
   IgnoreUpdate=()=>{
     this.props.navigation.replace("Dashboard");
@@ -79,7 +85,7 @@ class SignUpCont extends React.Component {
               <TextInput
                 header="Họ và tên"
                 style={styles.input}
-                value={this.props.typedname}
+                value={this.state.typedname}
                 onChangeText={(text) => this.setState({typedname: text})}
               />
             </View>
@@ -90,7 +96,7 @@ class SignUpCont extends React.Component {
                 style={styles.input}
                 placeholder="012345678"
                 keyboardType="phone-pad"
-                value={this.props.typedPhone}
+                value={this.state.typedPhone}
                 onChangeText={(text) => this.setState({typedPhone: text})}
               />
             </View>
@@ -99,7 +105,7 @@ class SignUpCont extends React.Component {
               <Text>Ngày sinh</Text>
               <View alignItems= "center" >
               <DatePicker
-                date={this.props.typedBirthday}
+                date={this.state.typedBirthday}
                 mode="date"
                 format="DD-MM-YYYY"
                 cancelBtnText="Cancel"
@@ -128,27 +134,21 @@ class SignUpCont extends React.Component {
             </View>
             <View>
               <Text>Giới tính</Text>
-              <DropDownPicker
-                items={[
-                  { label: "Nam", value: "Nam", hidden: true },
-                  { label: "Nữ", value: "Nữ" },
-                ]}
-                defaultValue={
-                  this.state.typedGender === "" ? "Nam" : this.state.typedGender
+              <Picker
+                style={styles.input}
+                itemStyle={[styles.input,{marginTop:0}]}
+                selectedValue={this.state.typedGender}
+                onValueChange={(itemValue, itemIndex) =>
+                  this.setState({typedGender:itemValue})
                 }
-                containerStyle={styles.input}
-                style={{ backgroundColor: "#fafafa" }}
-                itemStyle={{
-                  justifyContent: "flex-start",
-                }}
-                dropDownStyle={{ backgroundColor: "#fafafa" }}
-                onChangeItem={(typedGender) =>
-                  this.setState({typedGender:typedGender})
-                }
-              />
+              >
+                <Picker.Item label="Nam" value="Nam" />
+                <Picker.Item label="Nữ" value="Nữ" />
+                <Picker.Item label="Khác" value="Khác" />
+              </Picker>
             </View>
           </View>
-          <View style={{ marginTop:64, height:"20%",justifyContent:'space-around',flexDirection:"column",alignItems:"center" }}>
+          <View style={{ marginTop:104, height:"20%",justifyContent:'space-around',flexDirection:"column",alignItems:"center" }}>
             <ButtonMod
               
               onPress={this.UpdateInfo}

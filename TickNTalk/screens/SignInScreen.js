@@ -5,19 +5,28 @@ import {
   View,
   SafeAreaView,
   KeyboardAvoidingView,
-  ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import {
-  Button,
   styles,
   BasicImage,
   LoginBottom,
   sizeFactor,
   createOneButtonAlert,
 } from "../components/Basic/Basic";
+import {UserRef} from "../Fire";
 //import { GoogleSignin } from "react-native-google-signin";
 import firebase from "firebase";
-import { ChangeEmailAction, ChangeLoginStatus } from "../actions/index";
+import Expo from 'expo';
+
+import {
+  ChangeEmailAction,
+  ChangeNameAction,
+  ChangeBirthdayAction,
+  ChangePhoneAction,
+  ChangeGenderAction,
+  ChangeAvaAction,
+} from "../actions/index";
 import { connect } from "react-redux";
 
 export class SignInScreen extends React.Component {
@@ -42,6 +51,7 @@ export class SignInScreen extends React.Component {
         this.SignInContinue();
       })
       .catch((error) => {
+        console.error(error);
         createOneButtonAlert({
           Text: "Tên đăng nhập hoặc mật khẩu không đúng",
           TextAction: "Thử lại",
@@ -49,33 +59,61 @@ export class SignInScreen extends React.Component {
       });
   };
   SignInWithGoogle = async () => {
-    // const { idToken } = await GoogleSignin.signIn();
-    // const googleCredential = await firebase.auth.GoogleAuthProvider.credential(
-    //   idToken
-    // );
-    // firebase.auth().signInWithCredential(googleCredential).then(()=>{
-    //   this.SignInContinue();
-    // })
-    // .catch(err => {
-    //   createOneButtonAlert({
-    //     Text: "Lỗi không đăng nhập được với Google",
-    //     TextAction: "Thử lại",
-    //   });
-    // })
+    try {
+      const result = await Expo.Google.logInAsync({
+        androidClientId:
+          "940541027502-t7ea2uq69ckasdjbh7e86ev4roac5ajq.apps.googleusercontent.com",
+        behavior: "web",
+        iosClientId:
+          "940541027502-aferp9bdbjs01ln667sn6jk163vddnh8.apps.googleusercontent.com",
+        scopes: ["profile", "email"],
+      });
+
+      if (result.type === "success") {
+        return result.accessToken;
+      } else {
+        return { cancelled: true };
+      }
+    } catch (e) {
+      return { error: true };
+    }
   };
+  getRedux(){
+    var nameTmp = "";
+    var birthdayTmp = "";
+    var phoneTmp = "";
+    var genderTmp = "";
+    var tmpuri = "";
+    UserRef.orderByChild("Email")
+      .equalTo(this.props.typedEmail)
+      .on("value", (snap) => {
+        snap.forEach((element) => {
+          nameTmp = element.toJSON().Name;
+          this.props.ChangeNameAction(nameTmp);
+          genderTmp = element.toJSON().Gender;
+          this.props.ChangeGenderAction(genderTmp);
+          birthdayTmp = element.toJSON().Birthday;
+          this.props.ChangeBirthdayAction(birthdayTmp);
+          phoneTmp = element.toJSON().Phone;
+          this.props.ChangePhoneAction(phoneTmp);
+          //console.log(element.toJSON ().urlAva);
+          tmpuri = element.toJSON().urlAva;
+          this.props.ChangeAvaAction(tmpuri);
+        });
+      });
+  }
   SignInContinue = () => {
-    this.props.UpdateIsLogin(true);
+    this.getRedux();
     this.props.navigation.replace("Dashboard");
   };
   SignUp = () => {
     this.props.navigation.replace("SignUp");
   };
   componentDidMount = () => {
-    this.props.UpdateIsLogin(false);
   };
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.containerLI}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           <View style={{ alignItems: "center" }}>
             <BasicImage Icon={200} source={require("../assets/Logo.png")} />
@@ -101,13 +139,14 @@ export class SignInScreen extends React.Component {
                 }}
                 value={this.state.password}
               />
-
+<TouchableOpacity onPress={()=>{this.props.navigation.navigate('ResetPass')}}>
               <Text style={styles.FogetPassword}>Quên mật khẩu?</Text>
+              </TouchableOpacity>
             </View>
             <View style={{ marginTop: sizeFactor * 2.1 }}>
               <LoginBottom
                 OnPressNormal={this.SignInWithEmailAndPassword}
-                OnPressGoogle={this.SignInWithGoogle}
+                OnPressGoogle={async ()=>{this.SignInWithGoogle();}}
                 TextNormal="Đăng nhập"
                 TextGoogle="Đăng nhập với Google"
                 TextStatic="Bạn chưa có tài khoản?"
@@ -121,21 +160,37 @@ export class SignInScreen extends React.Component {
     );
   }
 }
-const mapStateToProps = (state) => {
+function mapStateToProps(state) {
   return {
     typedEmail: state.emailReducer,
-    isLogin: state.isLogin,
   };
-};
+}
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return {
     Update: (typedEmail) => {
       dispatch(ChangeEmailAction(typedEmail));
     },
-    UpdateIsLogin: (login) => {
-      dispatch(ChangeLoginStatus(login));
+
+    ChangeNameAction: (typedName) => {
+      dispatch(ChangeNameAction(typedName));
+    },
+
+    ChangeBirthdayAction: (typedBirthday) => {
+      dispatch(ChangeBirthdayAction(typedBirthday));
+    },
+
+    ChangePhoneAction: (typedPhone) => {
+      dispatch(ChangePhoneAction(typedPhone));
+    },
+
+    ChangeGenderAction: (typedGender) => {
+      dispatch(ChangeGenderAction(typedGender));
+    },
+
+    ChangeAvaAction: (uriAva) => {
+      dispatch(ChangeAvaAction(uriAva));
     },
   };
-};
+}
 export default connect(mapStateToProps, mapDispatchToProps)(SignInScreen);

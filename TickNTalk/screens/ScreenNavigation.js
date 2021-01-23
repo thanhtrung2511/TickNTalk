@@ -4,7 +4,8 @@ import {createStackNavigator} from 'react-navigation-stack'
 import React from 'react'
 
 import LoginScreen from './LoginScreen'
-import ChatScreen from './ChatScreen'
+//import ChatScreen from './ChatScreen'
+import ResetPassword from './ResetPassword'
 import PersonalInfo from './PersonalInfo'
 import PersonalInfoEdit from './PersonalInfoEdit'
 import ChatFeed from './ChatFeed'
@@ -126,6 +127,7 @@ const AppNavigator = createStackNavigator(
     EditMyInfo: PersonalInfoEdit ,
     ChatScr:ChatScreen_GiftedChat,
     ChatInf: ChatInfo,
+    ResetPass:ResetPassword,
     Dashboard: TabNavigator,
     ChangePass: ChangePass,
     PersonalInfo: PersonalInfo,

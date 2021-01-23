@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Text,
-  TextInput,
+
   View,
   FlatList,
   KeyboardAvoidingView,
@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { EvilIcons } from "@expo/vector-icons";
+
 import {
   styles,
   MessageCard,
@@ -22,24 +22,33 @@ import firebase from "firebase";
 import { SearchBar } from "react-native-elements";
 import { UserRef, RoomRef, MessageRef } from "../Fire";
 
-import { Card } from "react-native-paper";
 import { connect } from "react-redux";
 import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
 
 import {
   GetFriendEmail,
   GetUserByEmail,
-  CheckRoomContainUser,
+  CheckRoomContainUser,CheckRoomContainUserFirebase,
   CountNumberOfMembers,
   CreateNullRoom,
   LoadLatestMessagesIntoRooms,
   MatchSearchRoomScore,
   MatchSearchStringScore,
   MatchSearchUserScore,
+  registerForPushNotificationsAsync,
 } from "../Utilities/ChatRoomUtils";
-
 console.disableYellowBox = true;
+import * as Notifications from "expo-notifications";
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+var notificationListener = {};
+var responseListener = {};
 export class ChatFeed extends React.Component {
   state = {
     toSearchText: "",
@@ -56,14 +65,56 @@ export class ChatFeed extends React.Component {
     filteredStranger: [],
 
     addNewFriend: false,
-    headerText:"Tin nhắn",
-    iconName:"person-add",
+    headerText: "Tin nhắn",
+    iconName: "person-add",
+    expoPushToken: "",
+    notification: false,
   };
 
+  addTokenToDatabase = (token) => {
+    var ref = UserRef.orderByChild("Email").equalTo(this.props.loggedInEmail);
+    ref.once("value").then(function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        childSnapshot.ref.update({
+          Token: token,
+        });
+      });
+    });
+  };
   componentDidMount = () => {
+    registerForPushNotificationsAsync().then((token) =>{
+      //console.log(token);
+      this.setState({ expoPushToken: token });
+      this.addTokenToDatabase(token);
+     }
+    );
+    //Đăng ký nhận notification ngay cả khi người dùng không dùng máy
+    //Diem manh push notification so vơi pull
+    notificationListener = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        //console.log(notification);
+        this.props.UpdateRoomID(notification.request.content.data.data);
+        this.props.navigation.navigate("ChatScr");
+        this.setState({ notification: notification });
+      }
+    );
+    //Đăng ký sự sự kiện phản hồi khi người dùng tap vào notification
+    responseListener = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        //console.log(response);
+        this.props.UpdateRoomID(response.notification.request.content.data.data);
+        this.props.navigation.navigate("ChatScr");
+      }
+    );
+
     this.SubscribeDb();
+    // this.FilterSearchedRoom();
     this.MyRefresh();
     // this.onChangeSearchText(this.state.toSearchText);
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener);
+      Notifications.removeNotificationSubscription(responseListener);
+    };
   };
   ChatScreenNav = (id) => {
     this.props.UpdateRoomID(id);
@@ -82,6 +133,7 @@ export class ChatFeed extends React.Component {
   };
 
   SubscribeDb() {
+
     UserRef.on("value", (snapshot) => {
       let users = [];
 
@@ -96,9 +148,12 @@ export class ChatFeed extends React.Component {
     });
 
     RoomRef.on("value", (snapshot) => {
+     
       let rooms = [];
 
       snapshot.forEach((child) => {
+        //console.log(child);
+        if (CheckRoomContainUserFirebase(child.toJSON(), this.props.loggedInEmail)) {
         const Data = child.toJSON();
         let room = {
           RoomID: child.key,
@@ -106,7 +161,8 @@ export class ChatFeed extends React.Component {
         };
 
         rooms.push(room);
-      });
+     
+      }});
 
       this.setState({ listRooms: rooms });
       // this.MyRefresh();
@@ -135,8 +191,9 @@ export class ChatFeed extends React.Component {
   MyRefresh() {
     let tempRooms = this.state.listRooms;
     const tempMsgs = this.state.listMessages;
-    LoadLatestMessagesIntoRooms(tempRooms, tempMsgs);
-
+    
+    LoadLatestMessagesIntoRooms(tempRooms, tempMsgs,false);
+    //console.log(tempRooms);
     this.SortChatRoomsByTime(tempRooms).then(
       (result) =>
       {

@@ -351,9 +351,10 @@ MigrationBackup/
 Metro.config.js
 yarn.lock
 # Expo
-.expo/
+.expo
 .vscode
 .gradle
+.DS_Store
 __generated__
 web-build
-.DS_Store
+
