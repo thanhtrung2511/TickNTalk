@@ -86,7 +86,7 @@ export class PersonalInFo extends React.Component {
                 ]);
               })
               .catch((error) => {
-                console.log(error);
+                //console.log(error);
                 // An error happened.
               });
           },

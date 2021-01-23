@@ -32,7 +32,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
 import { connect } from "react-redux";
 import { UserRef, MessageRef } from "../Fire";
-import { CreateNullRoom, GetFriendEmail,sendPushNotification } from "../Utilities/ChatRoomUtils";
+import { CreateNullRoom, GetFriendEmail,sendPushNotification,GetRoomriendEmail } from "../Utilities/ChatRoomUtils";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 
@@ -187,6 +187,7 @@ export class ChatScreen_GiftedChat extends React.Component {
   componentWillMount() {
     this.FetchMessages();
     this.getFriend();
+    //console.log(GetRoomriendEmail(this.props.curRoom,this.props.loggedInEmail));
     // Fire.get(message =>
     //   this.setState(previous  =>  ({
     //     messages: GiftedChat.append(previous.messages,message)

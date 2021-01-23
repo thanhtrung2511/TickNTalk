@@ -83,7 +83,7 @@ export class ChatFeed extends React.Component {
   };
   componentDidMount = () => {
     registerForPushNotificationsAsync().then((token) =>{
-      console.log(token);
+      //console.log(token);
       this.setState({ expoPushToken: token });
       this.addTokenToDatabase(token);
      }
@@ -191,8 +191,9 @@ export class ChatFeed extends React.Component {
   MyRefresh() {
     let tempRooms = this.state.listRooms;
     const tempMsgs = this.state.listMessages;
-    LoadLatestMessagesIntoRooms(tempRooms, tempMsgs);
-
+    
+    LoadLatestMessagesIntoRooms(tempRooms, tempMsgs,false);
+    //console.log(tempRooms);
     this.SortChatRoomsByTime(tempRooms).then(
       (result) =>
       {
