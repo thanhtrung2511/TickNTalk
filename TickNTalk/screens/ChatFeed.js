@@ -240,6 +240,12 @@ export class ChatFeed extends React.Component {
             Data,
           };
 
+          if(this.props.curRoomID)
+            if(room.RoomID == this.props.curRoomID.RoomID)
+            {
+              this.props.curRoomID.Data = room.Data;
+            }
+
           rooms.push(room);
         }
       });

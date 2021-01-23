@@ -244,10 +244,11 @@ export function AddAndSaveDbSeenMemberToRoom(room, email) {
 
   if(room && room.Data && room.RoomID){
       RoomRef.child(room.RoomID).update({"SeenMembers" : room.Data.SeenMembers});
+      // RoomRef.child(room.RoomID).child("SeenMembers")
   }
 }
 
-export function ResetDbSeenMembersOfRoom(room) {
+export async function ResetDbSeenMembersOfRoom(room) {
   if(!room)
     return;
   if(!room.Data)
@@ -258,6 +259,6 @@ export function ResetDbSeenMembersOfRoom(room) {
   room.Data.SeenMembers = undefined;
   
   if(room.RoomID) {
-    RoomRef.child(room.RoomID).child("SeenMembers").remove();
+    await RoomRef.child(room.RoomID).child("SeenMembers").remove();
   }
 }

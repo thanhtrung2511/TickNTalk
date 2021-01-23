@@ -279,32 +279,32 @@ export class ChatScreen_GiftedChat extends React.Component {
     if (this.state.currentMessage)
       newMessage[0].image = this.state.currentMessage;
 
-    newMessage[0].createdAt = Date.parse(newMessage[0].createdAt); // CuteTN Note: somehow, Firebase cannot understand Giftedchat data :)
-    MessageRef.push({
-      SenderEmail: this.props.loggedInEmail,
-      RoomID: this.props.curRoom.RoomID,
-      Data: newMessage[0],
+    ResetDbSeenMembersOfRoom(this.props.curRoom).then(value => {
+      newMessage[0].createdAt = Date.parse(newMessage[0].createdAt); // CuteTN Note: somehow, Firebase cannot understand Giftedchat data :)
+      MessageRef.push({
+        SenderEmail: this.props.loggedInEmail,
+        RoomID: this.props.curRoom.RoomID,
+        Data: newMessage[0],
+      });
+
+      const msgs = this.state.messages;
+      var pushContent = {
+        message: newMessage[0].text,
+        data: this.props.curRoom,
+        sender: this.props.curName,
+      };
+      if (CountNumberOfMembers(this.props.curRoom) > 2)
+        pushContent.sender +=" tới " + this.props.roomData.name;
+      //console.log(this.props.roomData);
+      // this.setState({ messages: GiftedChat.append(msgs, newMessage) }); // CuteTN Note: this is BUGGY :)
+      var tokenList = [];
+      tokenList=this.props.friendList;
+      //console.log(this.props.friendList);
+      for (var i in tokenList) {
+        sendPushNotification(tokenList[i].token, pushContent);
+      }
+      GiftedChat.append(msgs, newMessage);
     });
-
-    ResetDbSeenMembersOfRoom(this.props.curRoom);
-
-    const msgs = this.state.messages;
-    var pushContent = {
-      message: newMessage[0].text,
-      data: this.props.curRoom,
-      sender: this.props.curName,
-    };
-    if (CountNumberOfMembers(this.props.curRoom) > 2)
-      pushContent.sender +=" tới " + this.props.roomData.name;
-    //console.log(this.props.roomData);
-    // this.setState({ messages: GiftedChat.append(msgs, newMessage) }); // CuteTN Note: this is BUGGY :)
-    var tokenList = [];
-    tokenList=this.props.friendList;
-    //console.log(this.props.friendList);
-    for (var i in tokenList) {
-      sendPushNotification(tokenList[i].token, pushContent);
-    }
-    GiftedChat.append(msgs, newMessage);
   }
 
   // helper method that is sends a message
