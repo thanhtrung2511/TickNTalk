@@ -122,7 +122,9 @@ export class ChatFeed extends React.Component {
     var avaTmp = "";
     var token = "";
     var emailTmp = "";
-    var result = { ava: "", name: "", token: "", email: "" };
+    var birthdayTmp = "";
+    var genderTmp = "";
+    var result = { ava: "", name: "", token: "", email: "",birthday:"",gender:"" };
     UserRef.orderByChild("Email")
       .equalTo(email)
       .on("value", (snap) => {
@@ -131,12 +133,16 @@ export class ChatFeed extends React.Component {
           avaTmp = element.toJSON().urlAva;
           token = element.toJSON().Token;
           emailTmp = element.toJSON().Email;
+          birthdayTmp = element.toJSON().Birthday;
+          genderTmp = element.toJSON().Gender;
         });
       });
     result.ava = avaTmp;
     result.name = nameTmp;
     result.email = emailTmp;
     result.token = token;
+    result.birthday= birthdayTmp;
+    result.gender= genderTmp;
     // console.log('result',result)
     return result;
   };
@@ -155,7 +161,7 @@ export class ChatFeed extends React.Component {
 
     //   listFriendInfoRoom.push(tmpUser);
     // }
-    console.log("list", listFriendInfoRoom);
+   // console.log("list", listFriendInfoRoom);
     this.props.ChangeMemberAction(listFriendInfoRoom);
   }
   componentDidMount = () => {

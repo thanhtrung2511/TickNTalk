@@ -42,7 +42,7 @@ export const colors = {
   fushia: "#FF00FF",
   cyan: "lightblue",
   Darkpink: "#f06292",
-  Lime:"#BFFF00",
+  Lime: "#BFFF00",
   // red: "#ff3b30",
   // orange: "#ff9500",
   // yellow: "#ffcc00",
@@ -334,9 +334,14 @@ export const styles = StyleSheet.create({
 });
 export const MessageCard = (props) => {
   return (
-    <TouchableOpacity style={[styles.MessageCard,props.containerStyle]} onPress={props.onPress}>
+    <TouchableOpacity
+      style={[styles.MessageCard, props.containerStyle]}
+      onPress={props.onPress}
+      enabled={props.touchable}
+    >
       <BasicImage
         Icon={60}
+        Icon={props.ImageSize}
         source={{ uri: props.ImageSource }}
         Round={100}
       ></BasicImage>
@@ -360,7 +365,7 @@ export const MessageCard = (props) => {
         <Text
           style={{
             width: sizeFactor * 19,
-            fontWeight: props.isRead? "normal" : "bold",
+            fontWeight: props.isRead ? "normal" : "bold",
           }}
           numberOfLines={1}
           ellipsizeMode={"tail"}
@@ -442,6 +447,96 @@ export const ChatMessage_Orther = (props) => {
     </View>
   );
 };
+
+export const RenderRoomInfoCard = (props) => {
+  return (
+      // <View
+      //   style={{
+      //     borderColor: colors.lightpink,
+      //     borderWidth: 2,
+      //     borderRadius: 70 / 5,
+      //     flexDirection: "column",
+      //     paddingVertical: 8,
+      //     paddingHorizontal: 16,
+      //     justifyContent: "space-around",
+      //     shadowOffset: { width: 1, height: 1 },
+      //     shadowOpacity: 0.2,
+      //     borderStyle: "solid",
+      //   }}
+      // >
+         <MessageCard
+         ImageSize={40}
+         touchable={false}
+          ImageSource={props.urlAva ? props.urlAva : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"}
+          Name={props.Name}
+          isRead="true"
+        ></MessageCard>
+     // </View>
+  );
+};
+export const RenderInfoCard = (props) => {
+  return (
+    <View>
+      <View style={{alignItems:"center"}} >
+        <BasicImage
+          //style={{ borderColor: "whitesmoke", borderWidth: 5 }}
+          source={{
+            uri: props.friend.ava
+              ? props.friend.ava
+              : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8",
+          }}
+          Icon={150}
+          Round={100}
+        ></BasicImage>
+      </View>
+      <View
+        style={{
+          borderColor: colors.lightpink,
+          borderWidth: 2,
+          borderRadius: 70 / 5,
+          flexDirection: "column",
+          paddingVertical: 8,
+          paddingHorizontal: 16,
+          justifyContent: "space-around",
+          shadowOffset: { width: 1, height: 1 },
+          shadowOpacity: 0.2,
+          borderStyle: "solid",
+        }}
+      >
+        <View
+          style={{ paddingVertical: 8 }}
+          justifyContent="space-between"
+          flexDirection="row"
+        >
+          <Text style={{ fontSize: 16, fontWeight: "800" }}>Họ tên:</Text>
+          <Text style={{ fontSize: 16, fontWeight: "600" }}>
+            {props.friend.name}
+          </Text>
+        </View>
+        <View
+          style={{ paddingVertical: 8 }}
+          justifyContent="space-between"
+          flexDirection="row"
+        >
+          <Text style={{ fontSize: 16, fontWeight: "800" }}>Giới tính:</Text>
+          <Text style={{ fontSize: 16, fontWeight: "600" }}>
+            {props.friend.gender}
+          </Text>
+        </View>
+        <View
+          style={{ paddingVertical: 8 }}
+          justifyContent="space-between"
+          flexDirection="row"
+        >
+          <Text style={{ fontSize: 16, fontWeight: "800" }}>Ngày sinh:</Text>
+          <Text style={{ fontSize: 16, fontWeight: "600" }}>
+            {props.friend.birthday}
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+};
 export const ChatMessage_Mine = (props) => {
   return (
     <View style={{ alignItems: "flex-end", marginTop: 16 }}>
@@ -477,7 +572,7 @@ export const ChatHeader = (props) => {
         onPress={props.goToInfo}
       >
         <BasicImage
-          Icon={35}
+          Icon={40}
           Round={100}
           source={{ uri: props.ImageSource }}
         ></BasicImage>
@@ -570,7 +665,7 @@ export const createOneButtonAlert = (props) => {
 export const createTwoButtonAlert = async (props) => {
   Alert.alert("Thông báo", props.Content, [
     {
-      style:"cancel",
+      style: "cancel",
       text: props.cancelBtnText,
       onPress: () => props.onPressCancel,
       style: "cancel",

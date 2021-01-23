@@ -79,10 +79,6 @@ class UpdateAvaScreen extends React.Component {
     this.pickImage();
   };
 
-  logInWithGoogle = async () => {
-    await firebase.logInWithGoogle();
-  };
-
   uploadProfilePhoto = async (uri) => {
     try {
       //console.log("a");
