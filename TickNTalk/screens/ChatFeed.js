@@ -101,7 +101,7 @@ export class ChatFeed extends React.Component {
       RoomToken.name = room.Data.RoomName;
     } else {
       var friendArr = this.props.memberList;
-     // console.log('friend',friendArr);
+      // console.log('friend',friendArr);
       for (var i in friendArr) {
         if (
           friendArr[i].email.toUpperCase() ===
@@ -122,7 +122,7 @@ export class ChatFeed extends React.Component {
     var avaTmp = "";
     var token = "";
     var emailTmp = "";
-    var result = {ava:"",name:"",token:"",email:""};
+    var result = { ava: "", name: "", token: "", email: "" };
     UserRef.orderByChild("Email")
       .equalTo(email)
       .on("value", (snap) => {
@@ -133,17 +133,17 @@ export class ChatFeed extends React.Component {
           emailTmp = element.toJSON().Email;
         });
       });
-    result.ava=avaTmp;
-    result.name=nameTmp;
-    result.email=emailTmp;
-    result.token=token;
-   // console.log('result',result)
+    result.ava = avaTmp;
+    result.name = nameTmp;
+    result.email = emailTmp;
+    result.token = token;
+    // console.log('result',result)
     return result;
   };
   async SubscribeFriendForChatScr(room) {
     // var listFriendEmailRoom=GetRoomFriendEmail(this.props.curRoomID,this.props.loggedInEmail);
     var listFriendInfoRoom = [];
-   // console.log("room",room);
+    // console.log("room",room);
     Object.values(room.Data.Members).forEach((e) => {
       if (e.toUpperCase() !== this.props.loggedInEmail.toUpperCase()) {
         var tmpUser = this.getFriendForChatScr(e);
@@ -152,14 +152,11 @@ export class ChatFeed extends React.Component {
     });
     // for(var i in listFriendEmailRoom){
     //   var tmpUser=this.getFriendForChatScr(listFriendEmailRoom[i]);
-     
-     
+
     //   listFriendInfoRoom.push(tmpUser);
     // }
-    console.log("list",listFriendInfoRoom);
+    console.log("list", listFriendInfoRoom);
     this.props.ChangeMemberAction(listFriendInfoRoom);
-    
-  
   }
   componentDidMount = () => {
     registerForPushNotificationsAsync().then((token) => {
@@ -173,7 +170,7 @@ export class ChatFeed extends React.Component {
       (notification) => {
         //console.log(notification);
         this.props.UpdateRoomID(notification.request.content.data.data);
-        
+
         this.setState({ notification: notification });
       }
     );
@@ -184,7 +181,6 @@ export class ChatFeed extends React.Component {
         this.props.UpdateRoomID(
           response.notification.request.content.data.data
         );
-        
       }
     );
 
@@ -346,18 +342,19 @@ export class ChatFeed extends React.Component {
     let title = room.Data.RoomName;
     let roomId = room.RoomID;
     let isRead = CheckRoomSeenByUser(room, this.props.loggedInEmail);
-    let countMember=CountNumberOfMembers(room);
+    let countMember = CountNumberOfMembers(room);
     let latestMsgText = "";
-    let userName="";
-   
+    let userName = "";
+
     let SystemAva =
       "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
-   
-    if (room.LatestMessage)
-    { if (countMember>2) {
-      userName =  room.LatestMessage.Data.user.name+": ";
-    } latestMsgText =userName+room.LatestMessage.Data.text;
-  } 
+
+    if (room.LatestMessage) {
+      if (countMember > 2) {
+        userName = room.LatestMessage.Data.user.name + ": ";
+      }
+      latestMsgText = userName + room.LatestMessage.Data.text;
+    }
 
     // if title is nothing, then get friend's name
     if (isFriendRoom && !title) {
@@ -371,16 +368,16 @@ export class ChatFeed extends React.Component {
     }
 
     return (
-        <MessageCard
-          ImageSource={userAva ? userAva : SystemAva}
-          Name={title}
-          LastestChat={latestMsgText}
-          //isRead={false}
-          isRead={isRead}
-          onPress={() => {
-            this.ChatScreenNav(room);
-          }}
-        ></MessageCard>
+      <MessageCard
+        ImageSource={userAva ? userAva : SystemAva}
+        Name={title}
+        LastestChat={latestMsgText}
+        //isRead={false}
+        isRead={isRead}
+        onPress={() => {
+          this.ChatScreenNav(room);
+        }}
+      ></MessageCard>
     );
   }
 
