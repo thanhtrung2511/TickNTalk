@@ -1,6 +1,7 @@
 import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
 import * as Notifications from "expo-notifications";
+import { RoomRef } from "../Fire";
 
 export function GetFriendEmail(friendRoom, loggedInEmail) {
   let result = friendRoom.Data.Members[0];
@@ -37,9 +38,12 @@ export function CheckRoomContainUser(room, email) {
 
   return flagFound;
 }
-export function CheckRoomContainUserFirebase(room, email) {
+
+
+
+export function CheckRoomContainUserFirebase(roomData, email) {
   let flagFound = false;
-  Object.values(room.Members).forEach((e) => {
+  Object.values(roomData.Members).forEach((e) => {
     if (e.toUpperCase() === email.toUpperCase()) {
       flagFound = true;
       return;
@@ -54,6 +58,7 @@ export function CountNumberOfMembers(room) {
 }
 
 export function CreateNullRoom(members) {
+  // console.log(members)
   const result = {
     RoomID: null,
     Data: {
@@ -192,4 +197,68 @@ export function MatchSearchRoomScore(targetString, testRoom, listUsers) {
     bestMatchMember,
     MatchSearchStringScore(targetString, testRoom.Data.RoomName)
   );
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function CheckRoomSeenByUser(room, email) {
+  let flagFound = false;
+
+  if(!room.Data || !room.Data.SeenMembers)
+    return false;
+
+  Object.values(room.Data.SeenMembers).forEach((e) => {
+    if (e.toUpperCase() === email.toUpperCase()) {
+      flagFound = true;
+      return;
+    }
+  });
+
+  return flagFound;
+}
+
+export function AddSeenMemberToRoom(room, email) {
+  if(!room)
+    return;
+  if(!room.Data)
+    return;
+  if(!room.RoomID)
+    return;
+  
+  if(!CheckRoomSeenByUser(room, email)){
+    if(room.Data.SeenMembers)
+    {
+      room.Data.SeenMembers = Object.values(room.Data.SeenMembers);
+      room.Data.SeenMembers.push(email);
+    }
+    else
+      room.Data.SeenMembers = [email];
+  }
+}
+
+export function AddAndSaveDbSeenMemberToRoom(room, email) {
+  if(!room.RoomID)
+    return
+
+  AddSeenMemberToRoom(room, email);
+
+  if(room && room.Data && room.RoomID){
+      RoomRef.child(room.RoomID).update({"SeenMembers" : room.Data.SeenMembers});
+  }
+}
+
+export function ResetDbSeenMembersOfRoom(room) {
+  if(!room)
+    return;
+  if(!room.Data)
+    return;
+  if(!room.Data.SeenMembers)
+    return;
+
+  room.Data.SeenMembers = undefined;
+  
+  if(room.RoomID) {
+    RoomRef.child(room.RoomID).child("SeenMembers").remove();
+  }
 }

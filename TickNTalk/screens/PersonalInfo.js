@@ -102,7 +102,7 @@ export class PersonalInFo extends React.Component {
   };
 
   componentDidMount() {
-    this.ResetRedux();
+    // this.ResetRedux();
     var nameTmp = "";
     var birthdayTmp = "";
     var phoneTmp = "";

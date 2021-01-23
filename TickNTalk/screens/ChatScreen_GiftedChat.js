@@ -32,7 +32,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
 import { connect } from "react-redux";
 import { UserRef, MessageRef } from "../Fire";
-import { CreateNullRoom, GetFriendEmail,sendPushNotification,GetRoomriendEmail } from "../Utilities/ChatRoomUtils";
+import { CreateNullRoom, GetFriendEmail,sendPushNotification,GetRoomriendEmail, ResetDbSeenMembersOfRoom, AddAndSaveDbSeenMemberToRoom } from "../Utilities/ChatRoomUtils";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 
@@ -203,6 +203,10 @@ export class ChatScreen_GiftedChat extends React.Component {
     // );
   }
 
+  componentDidUpdate(){
+    AddAndSaveDbSeenMemberToRoom(this.props.curRoom, this.props.loggedInEmail);
+  }
+
   getFriend = () => {
     var nameTmp = "";
     var avaTmp = "";
@@ -260,9 +264,13 @@ export class ChatScreen_GiftedChat extends React.Component {
 
     this.props.UpdateRoomID(tempRoom);
   }
+
+
   ChatInfoNav = () => {
     this.props.navigation.navigate("ChatInf");
   };
+
+
   SendMessage(newMessage = []) {
     if (newMessage[0] === undefined) return;
 
@@ -271,12 +279,15 @@ export class ChatScreen_GiftedChat extends React.Component {
     if (this.state.currentVideo) newMessage[0].video = this.state.currentVideo;
     if (this.state.currentMessage)
       newMessage[0].image = this.state.currentMessage;
+
     newMessage[0].createdAt = Date.parse(newMessage[0].createdAt); // CuteTN Note: somehow, Firebase cannot understand Giftedchat data :)
     MessageRef.push({
       SenderEmail: this.props.loggedInEmail,
       RoomID: this.props.curRoom.RoomID,
       Data: newMessage[0],
     });
+
+    ResetDbSeenMembersOfRoom(this.props.curRoom);
 
     const msgs = this.state.messages;
     const pushContent={ message:newMessage[0].text,data:this.props.curRoom,sender:this.props.curName}

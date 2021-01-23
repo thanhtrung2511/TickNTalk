@@ -350,7 +350,7 @@ export const MessageCard = (props) => {
       >
         <Text
           style={{
-            fontWeight: "800",
+            fontWeight: "bold",
             fontSize: sizeFactor,
             color: colors.black,
           }}
@@ -360,7 +360,7 @@ export const MessageCard = (props) => {
         <Text
           style={{
             width: sizeFactor * 19,
-            fontWeight: props.isRead == "true" ? "100" : "600",
+            fontWeight: props.isRead? "normal" : "bold",
           }}
           numberOfLines={1}
           ellipsizeMode={"tail"}

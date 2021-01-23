@@ -36,9 +36,14 @@ import {
   MatchSearchStringScore,
   MatchSearchUserScore,
   registerForPushNotificationsAsync,
+  CheckRoomSeenByUser,
+  AddSeenMemberToRoom,
+  AddAndSaveDbSeenMemberToRoom,
 } from "../Utilities/ChatRoomUtils";
 console.disableYellowBox = true;
 import * as Notifications from "expo-notifications";
+
+// this.props.navigation.state.routeName
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -83,7 +88,7 @@ export class ChatFeed extends React.Component {
   };
   componentDidMount = () => {
     registerForPushNotificationsAsync().then((token) =>{
-      //console.log(token);
+      // console.log(token);
       this.setState({ expoPushToken: token });
       this.addTokenToDatabase(token);
      }
@@ -116,8 +121,8 @@ export class ChatFeed extends React.Component {
       Notifications.removeNotificationSubscription(responseListener);
     };
   };
-  ChatScreenNav = (id) => {
-    this.props.UpdateRoomID(id);
+  ChatScreenNav = (room) => {
+    this.props.UpdateRoomID(room);
     this.props.navigation.navigate("ChatScr");
   };
 
@@ -261,6 +266,7 @@ export class ChatFeed extends React.Component {
   RenderRoomMessageCard(room, isFriendRoom){
     let title = room.Data.RoomName;
     let roomId = room.RoomID;
+    let isRead = CheckRoomSeenByUser(room, this.props.loggedInEmail);
 
     let SystemAva =
       "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
@@ -291,7 +297,8 @@ export class ChatFeed extends React.Component {
           ImageSource={userAva ? userAva : SystemAva}
           Name={title}
           LastestChat={latestMsgText}
-          isRead="true"
+          //isRead={false}
+          isRead={isRead}
           onPress={() => {
             this.ChatScreenNav(room);
           }}
@@ -491,7 +498,7 @@ export class ChatFeed extends React.Component {
 
             <ScrollView style={{ maxHeight: "94%" }}>
               <SearchBar
-                platform={Platform.OS}
+                platform="ios"
                 placeholder="Tìm bạn bè..."
                 lightTheme="true"
                 containerStyle={{
