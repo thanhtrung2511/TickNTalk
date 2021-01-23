@@ -17,7 +17,7 @@ import {
   AccessoryBar,
 } from "react-native-gifted-chat";
 import { Video } from "expo-av";
-import Fire, { RoomRef, storage, uidR } from "../Fire";
+import Fire, { UserRef, RoomRef, MessageRef, storage, uidR } from "../Fire";
 import {
   styles,
   ChatHeader,
@@ -29,23 +29,30 @@ import {
   createOneButtonAlert,
 } from "../components/Basic/Basic";
 import { Ionicons } from "@expo/vector-icons";
-import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
+import {
+  ChangeRoomIDAction,
+  ChangeEmailAction,
+  ChangeMemberAction,
+  ChangeRoomDataAction,
+} from "../actions/index";
 import { connect } from "react-redux";
-import { UserRef, MessageRef } from "../Fire";
-import { CreateNullRoom, GetFriendEmail,sendPushNotification,GetRoomriendEmail } from "../Utilities/ChatRoomUtils";
+import {
+  CreateNullRoom,
+  GetFriendEmail,
+  sendPushNotification,
+  GetRoomFriendEmail,
+  CountNumberOfMembers,
+} from "../Utilities/ChatRoomUtils";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
+import { RECORDING_OPTION_IOS_BIT_RATE_STRATEGY_VARIABLE } from "expo-av/build/Audio";
 
 export class ChatScreen_GiftedChat extends React.Component {
   state = {
     messages: [],
-    room: "",
-    member: [],
-    friend: { name: "", ava: "" },
     currentMessage: "",
     currentVideo: "",
     text: "",
-    tokenList:"",
     isTyping: false,
   };
 
@@ -186,16 +193,6 @@ export class ChatScreen_GiftedChat extends React.Component {
 
   componentWillMount() {
     this.FetchMessages();
-    this.getFriend();
-    //console.log(GetRoomriendEmail(this.props.curRoom,this.props.loggedInEmail));
-    // Fire.get(message =>
-    //   this.setState(previous  =>  ({
-    //     messages: GiftedChat.append(previous.messages,message)
-    //   }))
-    // );
-  }
-  componentDidMount() {
-    this.setState({isTyping: false,});
     // Fire.get(message =>
     //   this.setState(previous  =>  ({
     //     messages: GiftedChat.append(previous.messages,message)
@@ -203,21 +200,6 @@ export class ChatScreen_GiftedChat extends React.Component {
     // );
   }
 
-  getFriend = () => {
-    var nameTmp = "";
-    var avaTmp = "";
-    var token="";
-    UserRef.orderByChild("Email")
-      .equalTo(GetFriendEmail(this.props.curRoom, this.props.loggedInEmail))
-      .on("value", (snap) => {
-        snap.forEach((element) => {
-          nameTmp = element.toJSON().Name;
-          avaTmp = element.toJSON().urlAva;
-          token=element.toJSON().Token;
-          this.setState({ friend: { name: nameTmp, ava: avaTmp },tokenList:token});
-        });
-      });
-  };
   FetchMessages() {
     MessageRef.on("value", (snapshot) => {
       // temp list of strangers
@@ -279,9 +261,21 @@ export class ChatScreen_GiftedChat extends React.Component {
     });
 
     const msgs = this.state.messages;
-    const pushContent={ message:newMessage[0].text,data:this.props.curRoom,sender:this.props.curName}
+    var pushContent = {
+      message: newMessage[0].text,
+      data: this.props.curRoom,
+      sender: this.props.curName,
+    };
+    if (CountNumberOfMembers(this.props.curRoom) > 2)
+      pushContent.sender +=" tới " + this.props.roomData.name;
+    //console.log(this.props.roomData);
     // this.setState({ messages: GiftedChat.append(msgs, newMessage) }); // CuteTN Note: this is BUGGY :)
-    sendPushNotification(this.state.tokenList,pushContent);
+    var tokenList = [];
+    tokenList=this.props.friendList;
+    //console.log(this.props.friendList);
+    for (var i in tokenList) {
+      sendPushNotification(tokenList[i].token, pushContent);
+    }
     GiftedChat.append(msgs, newMessage);
   }
 
@@ -348,8 +342,8 @@ export class ChatScreen_GiftedChat extends React.Component {
   setIsTyping = () => {
     this.setState({
       isTyping: !this.state.isTyping,
-    })
-  }
+    });
+  };
   renderInputToolbar(props) {
     return (
       <InputToolbar
@@ -415,7 +409,7 @@ export class ChatScreen_GiftedChat extends React.Component {
         source={{ uri: props.currentMessage.video }}
         style={{ width: 200, height: 300 }}
       />
-     );
+    );
   }
 
   render() {
@@ -430,11 +424,14 @@ export class ChatScreen_GiftedChat extends React.Component {
           avatar: this.props.curAva,
           name: this.props.curName,
         }}
-        onInputTextChanged={(text) => {this.setState({ text: text });this.setIsTyping();}}
+        onInputTextChanged={(text) => {
+          this.setState({ text: text });
+          this.setIsTyping();
+        }}
         text={this.state.text}
         //showUserAvatar
-        showAvatarForEveryMessage
-        //renderUsernameOnMessage
+        //showAvatarForEveryMessage
+        renderUsernameOnMessage
         alwaysShowSend={
           this.state.text
             ? true
@@ -470,11 +467,11 @@ export class ChatScreen_GiftedChat extends React.Component {
           >
             <ChatHeader
               ImageSource={
-                this.state.friend.ava !== ""
-                  ? this.state.friend.ava
+                this.props.roomData.ava
+                  ? this.props.roomData.ava
                   : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
               }
-              Name={this.state.friend.name}
+              Name={this.props.roomData.name}
               goBack={this.goBack}
               goToInfo={this.ChatInfoNav}
             />
@@ -487,11 +484,11 @@ export class ChatScreen_GiftedChat extends React.Component {
       <SafeAreaView style={styles.containerLI}>
         <ChatHeader
           ImageSource={
-            this.state.friend.ava !== ""
-              ? this.state.friend.ava
+            this.props.roomData.ava
+              ? this.props.roomData.ava
               : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
           }
-          Name={this.state.friend.name}
+          Name={this.props.roomData.name}
           goBack={this.goBack}
           goToInfo={this.ChatInfoNav}
         />
@@ -507,6 +504,8 @@ const mapStateToProps = (state) => {
     curRoom: state.roomReducer,
     curAva: state.avaReducer,
     curName: state.nameReducer,
+    friendList: state.memberReducer,
+    roomData: state.roomDataReducer,
   };
 };
 
@@ -517,6 +516,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     UpdateRoomID: (curRoom) => {
       dispatch(ChangeRoomIDAction(curRoom));
+    },
+    ChangeMemberAction: (curMem) => {
+      dispatch(ChangeMemberAction(curMem));
+    },
+    ChangeRoomDataAction: (curRoomData) => {
+      dispatch(ChangeRoomDataAction(curRoomData));
     },
   };
 };

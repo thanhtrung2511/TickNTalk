@@ -9,15 +9,15 @@ export function GetFriendEmail(friendRoom, loggedInEmail) {
 
   return result;
 }
-export function GetRoomriendEmail(groupRoom, loggedInEmail) {
-  let result = groupRoom.Data.Members;
+export function GetRoomFriendEmail(groupRoom, loggedInEmail) {
   let listUserRoomNotIncludeCurrent = [];
-  for (var i in result) {
-    if (result[i].toUpperCase() === loggedInEmail.toUpperCase()) continue;
-    listUserRoomNotIncludeCurrent.push(result[i]);
-  }
-
-  return listUserRoomNotIncludeCurrent;
+  Object.values(groupRoom.Data.Members).forEach((e) => {
+    {
+    if (e.toUpperCase() !== loggedInEmail.toUpperCase())
+      listUserRoomNotIncludeCurrent.push(e);
+    }
+  });
+  // return listUserRoomNotIncludeCurrent;
 }
 /// return undefined if not found
 export function GetUserByEmail(listUsers, email) {
@@ -83,12 +83,12 @@ export async function LoadLatestMessagesIntoRooms(listRooms, listMessages) {
           }
         } else room.LatestMessage = msg;
         if (numberCount > 2) {
-          console.log(msg.Data.user.name);
+          //console.log(msg.Data.user.name);
           let tmpMessage =
             (msg.Data.user.name +
             ": " +
             msg.Data.text).toString();
-          console.log(tmpMessage);
+          //console.log(tmpMessage);
           
           room.LatestMessage.Data.text = tmpMessage;
         }

@@ -38,6 +38,12 @@ export function ChangeRoomIDAction(roomID){
         roomID:roomID
     }
 }
+export function ChangeRoomDataAction(roomData){
+    return {
+        type:"CHANGE_ROOM_DATA_ACTION",
+        roomData:roomData
+    }
+}
 export function ChangeLoginStatus(isLogin){
     return {
         type:"CHANGE_LOGINSTT_ACTION",
@@ -45,7 +51,12 @@ export function ChangeLoginStatus(isLogin){
     }
 }
 
-
+export function ChangeMemberAction(member){
+    return {
+        type:"CHANGE_MEMBER_ACTION",
+        member:member
+    }
+}
 export function ChangeAvaAction(urlAva){
     return {
         type:"CHANGE_AVA_ACTION",

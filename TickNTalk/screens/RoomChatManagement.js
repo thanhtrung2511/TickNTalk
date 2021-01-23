@@ -47,6 +47,7 @@ export class RoomChatManagements extends React.Component {
       CreatedDate: Date.now(),
       Members: getCheckedUser,
       RoomName: "Nhóm của " + this.props.curName,
+      RoomAva:"",
     };
     //console.log(tempRoom);
     this.PushAndUseNewRoom(tempRoom);

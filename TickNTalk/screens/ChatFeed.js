@@ -1,14 +1,12 @@
 import React from "react";
 import {
   Text,
-
   View,
   FlatList,
   KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 
 import {
   styles,
@@ -23,14 +21,21 @@ import { SearchBar } from "react-native-elements";
 import { UserRef, RoomRef, MessageRef } from "../Fire";
 
 import { connect } from "react-redux";
-import { ChangeRoomIDAction, ChangeEmailAction } from "../actions/index";
+import {
+  ChangeRoomIDAction,
+  ChangeEmailAction,
+  ChangeMemberAction,
+  ChangeRoomDataAction,
+} from "../actions/index";
 
 import {
   GetFriendEmail,
   GetUserByEmail,
-  CheckRoomContainUser,CheckRoomContainUserFirebase,
+  CheckRoomContainUser,
+  CheckRoomContainUserFirebase,
   CountNumberOfMembers,
   CreateNullRoom,
+  GetRoomFriendEmail,
   LoadLatestMessagesIntoRooms,
   MatchSearchRoomScore,
   MatchSearchStringScore,
@@ -81,13 +86,82 @@ export class ChatFeed extends React.Component {
       });
     });
   };
+  async SubscribeForChatScr(room) {
+    await this.SubscribeFriendForChatScr(room);
+    // console.log(room.Data);
+    var countMember = CountNumberOfMembers(room);
+    var RoomToken = { ava: "", name: "" };
+    if (countMember > 2) {
+      RoomToken.ava = room.Data.RoomAva;
+      RoomToken.name = room.Data.RoomName;
+    } else {
+      var friendArr = this.props.memberList;
+     // console.log('friend',friendArr);
+      for (var i in friendArr) {
+        if (
+          friendArr[i].email.toUpperCase() ===
+          this.props.loggedInEmail.toUpperCase()
+        )
+          continue;
+        RoomToken.ava = friendArr[i].ava;
+        RoomToken.name = friendArr[i].name;
+      }
+    }
+    //console.log(this.props.nextRoomData);
+    //console.log(RoomToken);
+    this.props.ChangeRoomDataAction(RoomToken);
+    //console.log(this.props.nextRoomData);
+  }
+  getFriendForChatScr = (email) => {
+    var nameTmp = "";
+    var avaTmp = "";
+    var token = "";
+    var emailTmp = "";
+    var result = {ava:"",name:"",token:"",email:""};
+    UserRef.orderByChild("Email")
+      .equalTo(email)
+      .on("value", (snap) => {
+        snap.forEach((element) => {
+          nameTmp = element.toJSON().Name;
+          avaTmp = element.toJSON().urlAva;
+          token = element.toJSON().Token;
+          emailTmp = element.toJSON().Email;
+        });
+      });
+    result.ava=avaTmp;
+    result.name=nameTmp;
+    result.email=emailTmp;
+    result.token=token;
+   // console.log('result',result)
+    return result;
+  };
+  async SubscribeFriendForChatScr(room) {
+    // var listFriendEmailRoom=GetRoomFriendEmail(this.props.curRoomID,this.props.loggedInEmail);
+    var listFriendInfoRoom = [];
+   // console.log("room",room);
+    Object.values(room.Data.Members).forEach((e) => {
+      if (e.toUpperCase() !== this.props.loggedInEmail.toUpperCase()) {
+        var tmpUser = this.getFriendForChatScr(e);
+        listFriendInfoRoom.push(tmpUser);
+      }
+    });
+    // for(var i in listFriendEmailRoom){
+    //   var tmpUser=this.getFriendForChatScr(listFriendEmailRoom[i]);
+     
+     
+    //   listFriendInfoRoom.push(tmpUser);
+    // }
+    console.log("list",listFriendInfoRoom);
+    this.props.ChangeMemberAction(listFriendInfoRoom);
+    
+  
+  }
   componentDidMount = () => {
-    registerForPushNotificationsAsync().then((token) =>{
+    registerForPushNotificationsAsync().then((token) => {
       //console.log(token);
       this.setState({ expoPushToken: token });
       this.addTokenToDatabase(token);
-     }
-    );
+    });
     //Đăng ký nhận notification ngay cả khi người dùng không dùng máy
     //Diem manh push notification so vơi pull
     notificationListener = Notifications.addNotificationReceivedListener(
@@ -102,7 +176,9 @@ export class ChatFeed extends React.Component {
     responseListener = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         //console.log(response);
-        this.props.UpdateRoomID(response.notification.request.content.data.data);
+        this.props.UpdateRoomID(
+          response.notification.request.content.data.data
+        );
         this.props.navigation.navigate("ChatScr");
       }
     );
@@ -117,7 +193,10 @@ export class ChatFeed extends React.Component {
     };
   };
   ChatScreenNav = (id) => {
+    //console.log(id);
     this.props.UpdateRoomID(id);
+    //console.log(this.props.curRoomID);
+    this.SubscribeForChatScr(id);
     this.props.navigation.navigate("ChatScr");
   };
 
@@ -133,7 +212,6 @@ export class ChatFeed extends React.Component {
   };
 
   SubscribeDb() {
-
     UserRef.on("value", (snapshot) => {
       let users = [];
 
@@ -148,21 +226,22 @@ export class ChatFeed extends React.Component {
     });
 
     RoomRef.on("value", (snapshot) => {
-     
       let rooms = [];
 
       snapshot.forEach((child) => {
         //console.log(child);
-        if (CheckRoomContainUserFirebase(child.toJSON(), this.props.loggedInEmail)) {
-        const Data = child.toJSON();
-        let room = {
-          RoomID: child.key,
-          Data,
-        };
+        if (
+          CheckRoomContainUserFirebase(child.toJSON(), this.props.loggedInEmail)
+        ) {
+          const Data = child.toJSON();
+          let room = {
+            RoomID: child.key,
+            Data,
+          };
 
-        rooms.push(room);
-     
-      }});
+          rooms.push(room);
+        }
+      });
 
       this.setState({ listRooms: rooms });
       // this.MyRefresh();
@@ -191,17 +270,14 @@ export class ChatFeed extends React.Component {
   MyRefresh() {
     let tempRooms = this.state.listRooms;
     const tempMsgs = this.state.listMessages;
-    
-    LoadLatestMessagesIntoRooms(tempRooms, tempMsgs,false);
+
+    LoadLatestMessagesIntoRooms(tempRooms, tempMsgs, false);
     //console.log(tempRooms);
-    this.SortChatRoomsByTime(tempRooms).then(
-      (result) =>
-      {
-        // Object.values(tempRooms).forEach((room) => console.log(room.LatestMessage));
-        this.ArrangeChatRooms();
-        // this.FilterSearchedRoom(this.state.toSearchText);
-      }
-    );
+    this.SortChatRoomsByTime(tempRooms).then((result) => {
+      // Object.values(tempRooms).forEach((room) => console.log(room.LatestMessage));
+      this.ArrangeChatRooms();
+      // this.FilterSearchedRoom(this.state.toSearchText);
+    });
   }
 
   /// CuteTN Note: a huge violation of SRP
@@ -235,18 +311,21 @@ export class ChatFeed extends React.Component {
     this.setState({ listFriends: fr });
   }
 
-  async SortChatRoomsByTime(listRooms)
-  {
+  async SortChatRoomsByTime(listRooms) {
     await listRooms.sort((a, b) => {
-      if(a && b &&
-        a.LatestMessage && b.LatestMessage &&
-        a.LatestMessage.Data && b.LatestMessage.Data && 
-        a.LatestMessage.Data.createdAt && b.LatestMessage.Data.createdAt)
+      if (
+        a &&
+        b &&
+        a.LatestMessage &&
+        b.LatestMessage &&
+        a.LatestMessage.Data &&
+        b.LatestMessage.Data &&
+        a.LatestMessage.Data.createdAt &&
+        b.LatestMessage.Data.createdAt
+      )
         return a.LatestMessage.Data.createdAt < b.LatestMessage.Data.createdAt;
-      else
-        return false;
-    }
-    )
+      else return false;
+    });
   }
 
   // Remove from stranger list
@@ -258,27 +337,20 @@ export class ChatFeed extends React.Component {
     );
   }
 
-  RenderRoomMessageCard(room, isFriendRoom){
+  RenderRoomMessageCard(room, isFriendRoom) {
     let title = room.Data.RoomName;
     let roomId = room.RoomID;
 
     let SystemAva =
       "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
     let latestMsgText = "";
-    if (room.LatestMessage)
-      latestMsgText = room.LatestMessage.Data.text;
+    if (room.LatestMessage) latestMsgText = room.LatestMessage.Data.text;
 
     // if title is nothing, then get friend's name
     if (isFriendRoom && !title) {
-      const friendEmail = GetFriendEmail(
-        room,
-        this.props.loggedInEmail
-      );
-      const friend = GetUserByEmail(
-        this.state.listUsers,
-        friendEmail
-      );
-      
+      const friendEmail = GetFriendEmail(room, this.props.loggedInEmail);
+      const friend = GetUserByEmail(this.state.listUsers, friendEmail);
+
       var userAva;
       if (friend) userAva = friend.urlAva;
       if (!friend) title = "Người dùng TickNTalk";
@@ -286,29 +358,21 @@ export class ChatFeed extends React.Component {
     }
 
     return (
-      <Text>
-        <MessageCard
-          ImageSource={userAva ? userAva : SystemAva}
-          Name={title}
-          LastestChat={latestMsgText}
-          isRead="true"
-          onPress={() => {
-            this.ChatScreenNav(room);
-          }}
-        ></MessageCard>
-      </Text>
+      <MessageCard
+        ImageSource={userAva ? userAva : SystemAva}
+        Name={title}
+        LastestChat={latestMsgText}
+        isRead="true"
+        onPress={() => {
+          this.ChatScreenNav(room);
+        }}
+      ></MessageCard>
     );
   }
 
-  RenderAllMyRoomsByTime()
-  {
+  RenderAllMyRoomsByTime() {
     return (
       <View>
-        <Text
-          style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
-        >
-        
-        </Text>
         <FlatList
           style={styles.ChatBox}
           alignItems="center"
@@ -321,12 +385,10 @@ export class ChatFeed extends React.Component {
     );
   }
 
-  RenderAllMyRoomsBySearchedText(){
+  RenderAllMyRoomsBySearchedText() {
     return (
       <View>
-        <Text
-          style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
-        >
+        <Text style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}>
           BẠN BÈ
         </Text>
         <FlatList
@@ -342,9 +404,7 @@ export class ChatFeed extends React.Component {
           ///////////////////////////////////////////////////////////////////////////////
         }
 
-        <Text
-          style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
-        >
+        <Text style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}>
           NHÓM
         </Text>
         <FlatList
@@ -360,55 +420,64 @@ export class ChatFeed extends React.Component {
   }
 
   FilterSearchedRoom(toSearchText) {
-    let fr = this.state.listFriends.map((friend) => {
-      let tempFr = JSON.parse((JSON.stringify(friend)));
-      tempFr.MatchScore = MatchSearchRoomScore(toSearchText, friend, this.state.listUsers);
-      return tempFr;
-    }).filter((friend) => friend.MatchScore !== 0);
+    let fr = this.state.listFriends
+      .map((friend) => {
+        let tempFr = JSON.parse(JSON.stringify(friend));
+        tempFr.MatchScore = MatchSearchRoomScore(
+          toSearchText,
+          friend,
+          this.state.listUsers
+        );
+        return tempFr;
+      })
+      .filter((friend) => friend.MatchScore !== 0);
 
     fr.sort((f1, f2) => f1.MatchScore < f2.MatchScore);
-    this.setState({ filteredFriends : fr });
+    this.setState({ filteredFriends: fr });
 
-    let gr = this.state.listGroups.map((group) => {
-      let tempGr = JSON.parse((JSON.stringify(group)));
-      tempGr.MatchScore = MatchSearchRoomScore(toSearchText, group, this.state.listUsers);
-      return tempGr;
-    }).filter((group) => group.MatchScore !== 0);
+    let gr = this.state.listGroups
+      .map((group) => {
+        let tempGr = JSON.parse(JSON.stringify(group));
+        tempGr.MatchScore = MatchSearchRoomScore(
+          toSearchText,
+          group,
+          this.state.listUsers
+        );
+        return tempGr;
+      })
+      .filter((group) => group.MatchScore !== 0);
 
     gr.sort((g1, g2) => g1.MatchScore < g2.MatchScore);
-    this.setState({ filteredGroups : gr });
+    this.setState({ filteredGroups: gr });
 
-    let str = this.state.listStrangers.map((stranger) => {
-      let tempStr = JSON.parse((JSON.stringify(stranger)));
-      tempStr.MatchScore = MatchSearchUserScore(toSearchText, stranger)
-      return tempStr;
-    }).filter((stranger) => stranger.MatchScore !== 0);
+    let str = this.state.listStrangers
+      .map((stranger) => {
+        let tempStr = JSON.parse(JSON.stringify(stranger));
+        tempStr.MatchScore = MatchSearchUserScore(toSearchText, stranger);
+        return tempStr;
+      })
+      .filter((stranger) => stranger.MatchScore !== 0);
 
     str.sort((s1, s2) => s1.MatchScore < s2.MatchScore);
-    this.setState({ filteredStranger : str });
+    this.setState({ filteredStranger: str });
   }
 
   onChangeSearchText(toSearchText) {
     this.FilterSearchedRoom(toSearchText);
   }
 
-  RenderMyRooms(toSearchText = "")
-  {
-    if(toSearchText === "") {
+  RenderMyRooms(toSearchText = "") {
+    if (toSearchText === "") {
       return this.RenderAllMyRoomsByTime();
-    }
-    else {
+    } else {
       return this.RenderAllMyRoomsBySearchedText();
     }
   }
   //comment for new merge
-  RenderFindNewFriend(toSearchText = "")
-  {
+  RenderFindNewFriend(toSearchText = "") {
     return (
       <View>
-        <Text
-          style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}
-        >
+        <Text style={{ marginLeft: 24, fontWeight: "800", color: "grey" }}>
           TÌM BẠN MỚI
         </Text>
         <FlatList
@@ -441,7 +510,7 @@ export class ChatFeed extends React.Component {
           }}
         ></FlatList>
       </View>
-    )
+    );
   }
 
   render() {
@@ -466,11 +535,16 @@ export class ChatFeed extends React.Component {
                 onPress={() => {
                   this.setState({ addNewFriend: !this.state.addNewFriend });
                   if (this.state.addNewFriend) {
-                    this.setState({headerText:"Tin nhắn",iconName:"person-add"})
+                    this.setState({
+                      headerText: "Tin nhắn",
+                      iconName: "person-add",
+                    });
+                  } else {
+                    this.setState({
+                      headerText: "Tìm bạn mới",
+                      iconName: "backspace",
+                    });
                   }
-                  else {
-                    this.setState({headerText: "Tìm bạn mới",iconName:"backspace"})
-                  };
                 }}
                 size={30}
                 color="whitesmoke"
@@ -507,14 +581,14 @@ export class ChatFeed extends React.Component {
                 inputStyle={{}}
                 placeholder="Tìm kiếm bạn bè.."
                 onChangeText={(Text) => {
-                  this.setState({toSearchText : Text});
+                  this.setState({ toSearchText: Text });
                   this.onChangeSearchText(Text);
                 }}
                 value={this.state.toSearchText}
               />
-              {this.state.addNewFriend ? 
-                this.RenderFindNewFriend() : this.RenderMyRooms(this.state.toSearchText) 
-              }
+              {this.state.addNewFriend
+                ? this.RenderFindNewFriend()
+                : this.RenderMyRooms(this.state.toSearchText)}
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
@@ -526,7 +600,9 @@ export class ChatFeed extends React.Component {
 const mapStateToProps = (state) => {
   return {
     loggedInEmail: state.emailReducer,
+    memberList: state.memberReducer,
     curRoomID: state.roomReducer,
+    nextRoomData: state.roomDataReducer,
   };
 };
 
@@ -537,6 +613,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     UpdateRoomID: (curRoomID) => {
       dispatch(ChangeRoomIDAction(curRoomID));
+    },
+    ChangeMemberAction: (curMem) => {
+      dispatch(ChangeMemberAction(curMem));
+    },
+    ChangeRoomDataAction: (curRoomData) => {
+      dispatch(ChangeRoomDataAction(curRoomData));
     },
   };
 };
