@@ -344,7 +344,7 @@ export class ChatFeed extends React.Component {
       return this.RenderAllMyRoomsBySearchedText();
     }
   }
-
+  //comment for new merge
   RenderFindNewFriend(toSearchText = "")
   {
     return (
