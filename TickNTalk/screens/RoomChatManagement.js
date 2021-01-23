@@ -19,6 +19,7 @@ import { ChangeRoomIDAction } from "../actions";
 import { connect } from "react-redux";
 import { UserRef,RoomRef} from "../Fire";
 import { SearchBar, CheckBox } from "react-native-elements";
+import { MatchSearchUserScore } from "../Utilities/ChatRoomUtils";
 
 export class RoomChatManagements extends React.Component {
   state = {
@@ -28,8 +29,54 @@ export class RoomChatManagements extends React.Component {
     Email: "",
     onCreate: false,
     canCreate: false,
+
+    toSearchText: "",
     listUsers: [],
+    filteredUsers: [],
+
   };
+
+  componentDidUpdate = (previousProp, previousState) => {
+    if(previousState.listUsers !== this.state.listUsers ||
+      previousState.toSearchText !== this.state.toSearchText 
+    )
+    {
+      this.FilterSearchedUsers(this.state.toSearchText);
+    }
+  }
+
+
+  onChangeSearchText(toSearchText) {
+    this.FilterSearchedUsers(toSearchText);
+  }  
+
+  // CuteTN
+  FilterSearchedUsers(toSearchText) {
+    let users = this.state.listUsers
+      .map((user) => {
+        // let tempUser = JSON.parse(JSON.stringify(user));
+        let tempUser = user;
+        tempUser.MatchScore = MatchSearchUserScore(
+          toSearchText,
+          user.Data,
+        );
+        return tempUser;
+      })
+      .filter((user) =>
+        (!toSearchText) ||
+        user.MatchScore !== 0 ||
+        user.Checked
+      );
+
+    users.sort((u1, u2) => {
+      if(u1.Checked === u2.Checked)
+        return u1.MatchScore < u2.MatchScore
+      else
+        return u1.Checked === false;
+    });
+    this.setState({ filteredUsers: users });
+  }
+
   createRoomData() {
     let getCheckedUser = [];
     let tmpList = this.state.listUsers;
@@ -52,10 +99,13 @@ export class RoomChatManagements extends React.Component {
     //console.log(tempRoom);
     this.PushAndUseNewRoom(tempRoom);
   }
+
+
   ChatScreenNav = (id) => {
     //console.log(id);
     this.props.navigation.navigate("ChatScr");
   };
+
 
   async PushAndUseNewRoom(newRoom) {
     const newRoomDataRef = await RoomRef.push(newRoom.Data);
@@ -68,6 +118,8 @@ export class RoomChatManagements extends React.Component {
     this.props.UpdateRoomID(tempRoom);
     this.ChatScreenNav(this.props.curRoom);
   }
+
+
   getUserList() {
     UserRef.on("value", (snapshot) => {
       let users = [];
@@ -85,16 +137,18 @@ export class RoomChatManagements extends React.Component {
       this.setState({ listUsers: users });
       // this.MyRefresh();
     });
-    this.renderAllUser();
+    // this.renderAllUser();
   }
-  renderAllUser() {
+
+
+  renderFilteredUsers() {
     return (
       <View>
         <FlatList
           style={styles.ChatBox}
           contentContainerStyle={{ justifyContent: "space-between" }}
           alignItems="center"
-          data={this.state.listUsers}
+          data={this.state.filteredUsers}
           renderItem={({ item, index }) => {
             return this.renderMessageCard(item);
           }}
@@ -102,6 +156,8 @@ export class RoomChatManagements extends React.Component {
       </View>
     );
   }
+
+
   checkCanCreate() {
     let tmpArr = this.state.listUsers;
     let checkedCount = 0;
@@ -112,6 +168,8 @@ export class RoomChatManagements extends React.Component {
     }
     this.setState({ canCreate: checkedCount >= 2 });
   }
+
+
   changeToggleValue(value, desc) {
     let tmpArr = this.state.listUsers;
     for (var i in tmpArr) {
@@ -121,7 +179,12 @@ export class RoomChatManagements extends React.Component {
       }
     }
     this.setState({ listUsers: tmpArr });
+
+    // CuteTN: auto reorder user to the top after ticking...
+    this.FilterSearchedUsers(this.state.toSearchText);
   }
+
+
   renderMessageCard(user) {
     let userTmp = user.Data;
     let toggle = user.Checked;
@@ -158,6 +221,8 @@ export class RoomChatManagements extends React.Component {
       </View>
     );
   }
+
+
   render() {
     return (
       <SafeAreaView style={styles.containerLI}>
@@ -274,7 +339,7 @@ export class RoomChatManagements extends React.Component {
                   }}
                   value={this.state.toSearchText}
                 />
-                {this.renderAllUser()}
+                {this.renderFilteredUsers()}
               </ScrollView>
             </View>
           ) : (
