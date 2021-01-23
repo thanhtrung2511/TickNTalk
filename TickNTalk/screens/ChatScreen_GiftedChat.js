@@ -42,7 +42,9 @@ import {
   sendPushNotification,
   GetRoomFriendEmail,
   CountNumberOfMembers,
+   ResetDbSeenMembersOfRoom, AddAndSaveDbSeenMemberToRoom
 } from "../Utilities/ChatRoomUtils";
+
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import { RECORDING_OPTION_IOS_BIT_RATE_STRATEGY_VARIABLE } from "expo-av/build/Audio";
@@ -200,6 +202,25 @@ export class ChatScreen_GiftedChat extends React.Component {
     // );
   }
 
+  componentDidUpdate(){
+    AddAndSaveDbSeenMemberToRoom(this.props.curRoom, this.props.loggedInEmail);
+  }
+
+  getFriend = () => {
+    var nameTmp = "";
+    var avaTmp = "";
+    var token="";
+    UserRef.orderByChild("Email")
+      .equalTo(GetFriendEmail(this.props.curRoom, this.props.loggedInEmail))
+      .on("value", (snap) => {
+        snap.forEach((element) => {
+          nameTmp = element.toJSON().Name;
+          avaTmp = element.toJSON().urlAva;
+          token=element.toJSON().Token;
+          this.setState({ friend: { name: nameTmp, ava: avaTmp },tokenList:token});
+        });
+      });
+  };
   FetchMessages() {
     MessageRef.on("value", (snapshot) => {
       // temp list of strangers
@@ -242,9 +263,13 @@ export class ChatScreen_GiftedChat extends React.Component {
 
     this.props.UpdateRoomID(tempRoom);
   }
+
+
   ChatInfoNav = () => {
     this.props.navigation.navigate("ChatInf");
   };
+
+
   SendMessage(newMessage = []) {
     if (newMessage[0] === undefined) return;
 
@@ -253,12 +278,15 @@ export class ChatScreen_GiftedChat extends React.Component {
     if (this.state.currentVideo) newMessage[0].video = this.state.currentVideo;
     if (this.state.currentMessage)
       newMessage[0].image = this.state.currentMessage;
+
     newMessage[0].createdAt = Date.parse(newMessage[0].createdAt); // CuteTN Note: somehow, Firebase cannot understand Giftedchat data :)
     MessageRef.push({
       SenderEmail: this.props.loggedInEmail,
       RoomID: this.props.curRoom.RoomID,
       Data: newMessage[0],
     });
+
+    ResetDbSeenMembersOfRoom(this.props.curRoom);
 
     const msgs = this.state.messages;
     var pushContent = {

@@ -253,7 +253,7 @@ export class RoomChatManagements extends React.Component {
 
               <ScrollView style={{ maxHeight: "94%" }}>
                 <SearchBar
-                  platform={Platform.OS}
+                  platform="ios"
                   placeholder="Tìm bạn bè..."
                   lightTheme="true"
                   containerStyle={{

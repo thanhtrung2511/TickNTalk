@@ -41,9 +41,14 @@ import {
   MatchSearchStringScore,
   MatchSearchUserScore,
   registerForPushNotificationsAsync,
+  CheckRoomSeenByUser,
+  AddSeenMemberToRoom,
+  AddAndSaveDbSeenMemberToRoom,
 } from "../Utilities/ChatRoomUtils";
 console.disableYellowBox = true;
 import * as Notifications from "expo-notifications";
+
+// this.props.navigation.state.routeName
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -168,7 +173,7 @@ export class ChatFeed extends React.Component {
       (notification) => {
         //console.log(notification);
         this.props.UpdateRoomID(notification.request.content.data.data);
-        this.props.navigation.navigate("ChatScr");
+        
         this.setState({ notification: notification });
       }
     );
@@ -179,7 +184,7 @@ export class ChatFeed extends React.Component {
         this.props.UpdateRoomID(
           response.notification.request.content.data.data
         );
-        this.props.navigation.navigate("ChatScr");
+        
       }
     );
 
@@ -340,11 +345,19 @@ export class ChatFeed extends React.Component {
   RenderRoomMessageCard(room, isFriendRoom) {
     let title = room.Data.RoomName;
     let roomId = room.RoomID;
-
+    let isRead = CheckRoomSeenByUser(room, this.props.loggedInEmail);
+    let countMember=CountNumberOfMembers(room);
+    let latestMsgText = "";
+    let userName="";
+   
     let SystemAva =
       "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8";
-    let latestMsgText = "";
-    if (room.LatestMessage) latestMsgText = room.LatestMessage.Data.text;
+   
+    if (room.LatestMessage)
+    { if (countMember>2) {
+      userName =  room.LatestMessage.Data.user.name+": ";
+    } latestMsgText =userName+room.LatestMessage.Data.text;
+  } 
 
     // if title is nothing, then get friend's name
     if (isFriendRoom && !title) {
@@ -358,15 +371,16 @@ export class ChatFeed extends React.Component {
     }
 
     return (
-      <MessageCard
-        ImageSource={userAva ? userAva : SystemAva}
-        Name={title}
-        LastestChat={latestMsgText}
-        isRead="true"
-        onPress={() => {
-          this.ChatScreenNav(room);
-        }}
-      ></MessageCard>
+        <MessageCard
+          ImageSource={userAva ? userAva : SystemAva}
+          Name={title}
+          LastestChat={latestMsgText}
+          //isRead={false}
+          isRead={isRead}
+          onPress={() => {
+            this.ChatScreenNav(room);
+          }}
+        ></MessageCard>
     );
   }
 
@@ -565,7 +579,7 @@ export class ChatFeed extends React.Component {
 
             <ScrollView style={{ maxHeight: "94%" }}>
               <SearchBar
-                platform={Platform.OS}
+                platform="ios"
                 placeholder="Tìm bạn bè..."
                 lightTheme="true"
                 containerStyle={{
