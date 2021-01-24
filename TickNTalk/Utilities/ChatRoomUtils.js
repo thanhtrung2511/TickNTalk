@@ -12,6 +12,7 @@ export function GetFriendEmail(friendRoom, loggedInEmail) {
 
   return result;
 }
+//commit
 export function GetRoomFriendEmail(groupRoom, loggedInEmail) {
   let listUserRoomNotIncludeCurrent = [];
   if ((!groupRoom )||!loggedInEmail)
