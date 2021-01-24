@@ -97,7 +97,7 @@ export class RoomChatManagements extends React.Component {
       RoomAva:"",
     };
     //console.log(tempRoom);
-    this.PushAndUseNewRoom(tempRoom);
+   this.PushAndUseNewRoom(tempRoom);
   }
 
 
@@ -109,14 +109,14 @@ export class RoomChatManagements extends React.Component {
 
   async PushAndUseNewRoom(newRoom) {
     const newRoomDataRef = await RoomRef.push(newRoom.Data);
-
+    console.log(newRoomDataRef);
     let tempRoom = {
       RoomID: newRoomDataRef.key,
       Data: newRoom.Data,
     };
 
-    this.props.UpdateRoomID(tempRoom);
-    this.ChatScreenNav(this.props.curRoom);
+    await this.props.UpdateRoomID(tempRoom);
+    this.ChatScreenNav(tempRoom);
   }
 
 
@@ -213,10 +213,13 @@ export class RoomChatManagements extends React.Component {
           }}
         />
         <MessageCard
-          containerStyle={{ width: "90%" }}
+          containerStyle={{ width: "80%" }}
+          LastestChat={toggle?"Đã chọn vào nhóm":"Thêm vào nhóm"}
+
           ImageSource={userTmp.urlAva ? userTmp.urlAva : SystemAva}
           Name={userTmp.Name}
           isRead="true"
+          ImageSize={50}
         ></MessageCard>
       </View>
     );
@@ -231,7 +234,7 @@ export class RoomChatManagements extends React.Component {
             styles.container,
             !this.state.onCreate ? { justifyContent: "space-between" } : null,
           ]}
-          behavior="padding"
+          behavior="auto"
         >
           <View
             style={{

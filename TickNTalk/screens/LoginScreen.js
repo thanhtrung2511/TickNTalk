@@ -81,7 +81,7 @@ export class LoginScreen extends React.Component {
       >
         <View style={{ alignItems: "center" }}>
           <View style={{ marginTop: 32, alignItems: "center" }}>
-            <BasicImage Icon={200} source={require("../assets/Logo.png")} />
+            <BasicImage Icon={200} source={require("../assets/images/Logo.png")} />
             <Text style={styles.headerLI}>TICKnTALK</Text>
           </View>
           <View style={{ alignItems: "center", paddingTop: 64 }}>

@@ -5,6 +5,8 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   Platform,
+  Linking,
+  Alert,
 } from "react-native";
 import {
   GiftedChat,
@@ -42,7 +44,8 @@ import {
   sendPushNotification,
   GetRoomFriendEmail,
   CountNumberOfMembers,
-   ResetDbSeenMembersOfRoom, AddAndSaveDbSeenMemberToRoom
+  ResetDbSeenMembersOfRoom,
+  AddAndSaveDbSeenMemberToRoom,
 } from "../Utilities/ChatRoomUtils";
 
 import * as Permissions from "expo-permissions";
@@ -56,6 +59,7 @@ export class ChatScreen_GiftedChat extends React.Component {
     currentVideo: "",
     text: "",
     isTyping: false,
+    isPairRoom: false,
   };
 
   getPermissions = async () => {
@@ -195,6 +199,8 @@ export class ChatScreen_GiftedChat extends React.Component {
 
   componentWillMount() {
     this.FetchMessages();
+    var check = CountNumberOfMembers(this.props.curRoom) === 2;
+    this.setState({ isPairRoom: check });
     // Fire.get(message =>
     //   this.setState(previous  =>  ({
     //     messages: GiftedChat.append(previous.messages,message)
@@ -202,22 +208,25 @@ export class ChatScreen_GiftedChat extends React.Component {
     // );
   }
 
-  componentDidUpdate(){
+  componentDidUpdate() {
     AddAndSaveDbSeenMemberToRoom(this.props.curRoom, this.props.loggedInEmail);
   }
 
   getFriend = () => {
     var nameTmp = "";
     var avaTmp = "";
-    var token="";
+    var token = "";
     UserRef.orderByChild("Email")
       .equalTo(GetFriendEmail(this.props.curRoom, this.props.loggedInEmail))
       .on("value", (snap) => {
         snap.forEach((element) => {
           nameTmp = element.toJSON().Name;
           avaTmp = element.toJSON().urlAva;
-          token=element.toJSON().Token;
-          this.setState({ friend: { name: nameTmp, ava: avaTmp },tokenList:token});
+          token = element.toJSON().Token;
+          this.setState({
+            friend: { name: nameTmp, ava: avaTmp },
+            tokenList: token,
+          });
         });
       });
   };
@@ -264,11 +273,9 @@ export class ChatScreen_GiftedChat extends React.Component {
     this.props.UpdateRoomID(tempRoom);
   }
 
-
   ChatInfoNav = () => {
     this.props.navigation.navigate("ChatInf");
   };
-
 
   SendMessage(newMessage = []) {
     if (newMessage[0] === undefined) return;
@@ -396,6 +403,31 @@ export class ChatScreen_GiftedChat extends React.Component {
       />
     );
   }
+  CallAction(number, isFriend) {
+    if (isFriend) {
+      var phoneNumber;
+      if (Platform.OS === "android") {
+        phoneNumber = `tel:${number}`;
+      } else {
+        phoneNumber = `telprompt:${number}`;
+      }
+      Linking.canOpenURL(phoneNumber)
+        .then((supported) => {
+          if (!supported) {
+            Alert.alert("Thông báo", "Số điện thoại này không tồn tại", [
+              { text: "Đồng ý", style: "cancel" },
+            ]);
+          } else {
+            return Linking.openURL(phoneNumber);
+          }
+        })
+        .catch((err) => console.log(err));
+    } else {
+      Alert.alert("Thông báo", "Chức năng này chưa được hỗ trợ", [
+        { text: "Đồng ý", style: "cancel" },
+      ]);
+    }
+  }
   renderActions(props) {
     return (
       <View style={styles.customActionsContainer}>
@@ -486,7 +518,7 @@ export class ChatScreen_GiftedChat extends React.Component {
     if (Platform.OS === "android") {
       return (
         <SafeAreaView
-          style={([styles.containerLI], { paddingTop: 25, height: "99.5%" })}
+          style={[styles.containerLI,{paddingTop:0,height:"auto"}]}
         >
           <KeyboardAvoidingView
             style={[styles.containerLI, { height: "100%" }]}
@@ -502,6 +534,12 @@ export class ChatScreen_GiftedChat extends React.Component {
               Name={this.props.roomData.name}
               goBack={this.goBack}
               goToInfo={this.ChatInfoNav}
+              Call={() =>
+                this.CallAction(
+                  this.props.friendList[0].phone,
+                  this.state.isPairRoom
+                )
+              }
             />
             <View style={styles.ChatContainer}>{chatBody}</View>
           </KeyboardAvoidingView>
@@ -519,6 +557,12 @@ export class ChatScreen_GiftedChat extends React.Component {
           Name={this.props.roomData.name}
           goBack={this.goBack}
           goToInfo={this.ChatInfoNav}
+          Call={() =>
+            this.CallAction(
+              this.props.friendList[0].phone,
+              this.state.isPairRoom
+            )
+          }
         />
         <View style={styles.ChatContainer}>{chatBody}</View>
       </SafeAreaView>
