@@ -71,7 +71,7 @@ export async function MarkUserAsUnread(room, email) {
 
 export function CheckRoomContainUserFirebase(roomData, email) {
   let flagFound = false;
-  if (!roomData||!email||!roomData.Members||!roomData.SeenMembers)
+  if ((!roomData)||(!email)||(!roomData.Members))
     return false;
 
   Object.values(roomData.Members).forEach((e) => {

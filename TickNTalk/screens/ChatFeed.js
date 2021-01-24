@@ -269,6 +269,7 @@ export class ChatFeed extends React.Component {
 
           rooms.push(room);
         }
+        
       });
 
       this.setState({ listRooms: rooms });
