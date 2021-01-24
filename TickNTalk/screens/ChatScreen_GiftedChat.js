@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   Platform,
   Linking,
-  Alert,
+  Alert,FlatList,
 } from "react-native";
 import {
   GiftedChat,
@@ -27,7 +27,7 @@ import {
   sizeFactor,
   windowWidth,
   windowHeight,
-  ButtonIcon,
+  ButtonIcon,BasicImage,
   createOneButtonAlert,
 } from "../components/Basic/Basic";
 import { Ionicons } from "@expo/vector-icons";
@@ -45,7 +45,7 @@ import {
   GetRoomFriendEmail,
   CountNumberOfMembers,
   ResetDbSeenMembersOfRoom,
-  AddAndSaveDbSeenMemberToRoom,
+  AddAndSaveDbSeenMemberToRoom,getFriendAvaChatScr,
 } from "../Utilities/ChatRoomUtils";
 
 import * as Permissions from "expo-permissions";
@@ -60,6 +60,7 @@ export class ChatScreen_GiftedChat extends React.Component {
     text: "",
     isTyping: false,
     isPairRoom: false,
+    listAvaSeen:[],
   };
 
   getPermissions = async () => {
@@ -253,6 +254,16 @@ export class ChatScreen_GiftedChat extends React.Component {
 
       this.setState({ messages: msgs });
     });
+    let listAva=[];
+    //console.log(this.props.curRoom.Data.SeenMembers);
+    Object.values(this.props.curRoom.Data.SeenMembers).forEach((e) => {
+      if (e.toUpperCase() !== this.props.loggedInEmail.toUpperCase()) {
+       // console.log(e);
+        listAva.push(getFriendAvaChatScr(e));
+      }
+    });
+   // console.log(listAva);
+    this.setState({ listAvaSeen: listAva });
   }
 
   CreateNewRoom(members) {
@@ -469,7 +480,26 @@ export class ChatScreen_GiftedChat extends React.Component {
       />
     );
   }
+  renderFooter(listAvaSeen){
+    return(
+      <FlatList
+      style={{
+        width: "auto",
+        borderRadius: 15,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-end",height:32,
+        marginRight:8,
+        }
+      }
+      data={listAvaSeen}
+      renderItem={({ item, index }) => {
+        return(
+      <BasicImage Icon={20} source={{ uri:item.ava}} Round={100} ></BasicImage>)}}>
 
+    </FlatList>
+    )
+  }
   render() {
     const chatBody = (
       <GiftedChat
@@ -500,7 +530,7 @@ export class ChatScreen_GiftedChat extends React.Component {
             : false
         }
         //isTyping={this.state.isTyping}
-        //renderFooter
+        renderFooter={()=>this.renderFooter(this.state.listAvaSeen)}
         renderComposer={this.renderComposer}
         renderInputToolbar={this.renderInputToolbar}
         renderSend={this.renderSend}

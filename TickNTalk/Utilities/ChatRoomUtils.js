@@ -4,6 +4,8 @@ import * as Notifications from "expo-notifications";
 import { RoomRef,UserRef } from "../Fire";
 
 export function GetFriendEmail(friendRoom, loggedInEmail) {
+  if ((!friendRoom )||!loggedInEmail)
+  return;
   let result = friendRoom.Data.Members[0];
   if (result.toUpperCase() === loggedInEmail.toUpperCase())
     result = friendRoom.Data.Members[1];
@@ -12,6 +14,8 @@ export function GetFriendEmail(friendRoom, loggedInEmail) {
 }
 export function GetRoomFriendEmail(groupRoom, loggedInEmail) {
   let listUserRoomNotIncludeCurrent = [];
+  if ((!groupRoom )||!loggedInEmail)
+  return;
   Object.values(groupRoom.Data.Members).forEach((e) => {
     {
     if (e.toUpperCase() !== loggedInEmail.toUpperCase())
@@ -22,12 +26,16 @@ export function GetRoomFriendEmail(groupRoom, loggedInEmail) {
 }
 /// return undefined if not found
 export function GetUserByEmail(listUsers, email) {
+  if ((!listUsers )||!email)
+  return false;
   return listUsers.find(
     (user) => user.Email.toUpperCase() === email.toUpperCase()
   );
 }
 
 export function CheckRoomContainUser(room, email) {
+  if ((!room )||!email)
+  return false;
   let flagFound = false;
   Object.values(room.Data.Members).forEach((e) => {
     if (e.toUpperCase() === email.toUpperCase()) {
@@ -85,6 +93,7 @@ export function CheckRoomContainUserFirebase(roomData, email) {
 }
 
 export function CountNumberOfMembers(room) {
+  if (!room ) return 0;
   return Object.values(room.Data.Members).length;
 }
 
@@ -106,6 +115,8 @@ export function CreateNullRoom(members) {
 export async function LoadLatestMessagesIntoRooms(listRooms, listMessages) {
   //console.log("con chó "+ numberCount);
   //console.log(listRooms.Data.Members);
+  if ((!listRooms )||!listMessages)
+  return;
   Object.values(listRooms).forEach((room) => {
     Object.values(listMessages).forEach((msg) => {
       if (msg.RoomID === room.RoomID) {
@@ -207,6 +218,25 @@ export function getFriendForChatScr(email){
   // console.log('result',result)
   return result;
 };
+export function getFriendAvaChatScr(email){
+  var avaTmp = "";
+  var result = {
+    ava: "",
+  };
+  if (email)
+  {
+  UserRef.orderByChild("Email")
+    .equalTo(email)
+    .on("value", (snap) => {
+      snap.forEach((element) => {
+        avaTmp = element.toJSON().urlAva;
+      });
+    });
+  result.ava = avaTmp;
+  }
+  // console.log('result',result)
+  return result;
+};
 export async function sendPushNotification(expoPushToken, dataParse) {
   const message = {
     to: expoPushToken,
@@ -230,7 +260,7 @@ export async function sendPushNotification(expoPushToken, dataParse) {
 export function MatchSearchStringScore(targetString, testString) {
   let cntCharTarget = 0;
 
-  if (!testString || !targetString) return 0;
+  if ((!testString) || (!targetString)) return 0;
 
   for (let cntCharTest = 0; cntCharTest < testString.length; cntCharTest++) {
     if (
@@ -247,7 +277,7 @@ export function MatchSearchStringScore(targetString, testString) {
 }
 
 export function MatchSearchUserScore(targetString, testUser) {
-  if (!testUser || !targetString) return 0;
+  if ((!testUser) || (!targetString)) return 0;
 
   return Math.max(
     MatchSearchStringScore(targetString, testUser.Email),
@@ -257,7 +287,7 @@ export function MatchSearchUserScore(targetString, testUser) {
 }
 
 export function MatchSearchRoomScore(targetString, testRoom, listUsers) {
-  if (!testRoom || !targetString) return 0;
+  if ((!testRoom) || (!targetString)) return 0;
 
   const bestMatchMember = Object.values(testRoom.Data.Members)
     .map((email) => {
@@ -278,7 +308,7 @@ export function MatchSearchRoomScore(targetString, testRoom, listUsers) {
 export function CheckRoomSeenByUser(room, email) {
   let flagFound = false;
 
-  if(!room.Data || !room.Data.SeenMembers)
+  if((!room.Data )|| (!room.Data.SeenMembers))
     return false;
 
   Object.values(room.Data.SeenMembers).forEach((e) => {
