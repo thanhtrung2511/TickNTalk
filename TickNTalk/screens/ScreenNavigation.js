@@ -132,6 +132,7 @@ const AppNavigator = createStackNavigator(
     ChangePass: ChangePass,
     PersonalInfo: PersonalInfo,
     Avatar: UpdateAvaScreen,
+    RoomManager:RoomChatManagement,
     SignUpCont: SignUpCont
   },
   

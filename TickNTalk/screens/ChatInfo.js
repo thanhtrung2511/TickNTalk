@@ -24,8 +24,8 @@ import {
   RenderInfoCard,
   RenderRoomInfoCard,
 } from "../components/Basic/Basic";
-import { ChangeRoomIDAction } from "../actions/index";
-import { CountNumberOfMembers } from "../Utilities/ChatRoomUtils";
+import { ChangeRoomIDAction,ChangeMemberAction,ChangeMemberStateAction } from "../actions/index";
+import { CountNumberOfMembers ,getFriendForChatScr,RemoveUserFromRoom} from "../Utilities/ChatRoomUtils";
 import firebase from "firebase";
 import { connect } from "react-redux";
 import { UserRef, MessageRef, RoomRef, storage } from "../Fire";
@@ -43,6 +43,7 @@ export class ChatInfo extends React.Component {
       onEdit: false,
       androidName: "",
       androidAva: "",
+      listMemberRoom:[],
     };
   }
 
@@ -50,40 +51,40 @@ export class ChatInfo extends React.Component {
     this.props.navigation.navigate("Avatar");
   };
   deleteMessage = async () => {
-    await MessageRef.on("value", (snapshot) => {
-      // temp list of strangers
-      let msgs = [];
-
-      snapshot.forEach((child) => {
-        let msg = {
-          Id: child.key,
-          SenderEmail: child.toJSON().SenderEmail,
-          RoomID: child.toJSON().RoomID,
-          Data: child.toJSON().Data,
-        };
-
-        if (msg.Data)
-          if (msg.RoomID === this.props.curRoom.RoomID) {
-            firebase
-              .database()
-              .ref("message")
-              .child("" + msg.Id)
-              .remove();
-          }
-      });
-    });
+    // var result,index;
+    // await RoomRef.on("value", (snapshot) => {
+    //   snapshot.forEach((child) => {
+    //     let room = {
+    //       Id: child.key,
+    //       Data:child.toJSON(),
+    //     };
+    //     if (room.Data)
+    //       if (room.Id === this.props.curRoom.RoomID) {
+    //         for (var i in room.Data.Members)
+    //         if (room.Data.Members[i].toUpperCase()===this.props.loggedInEmail.toUpperCase())
+    //         {
+    //         result=room;
+    //         index=i;
+    //         }
+    //       }
+    //   });
+    // });
+    // await RoomRef
+    //         .child(""+result.Id).child("Members").child(""+index)
+    //         .remove();
+    RemoveUserFromRoom(this.props.curRoom, this.props.loggedInEmail);
     Alert.alert(
       "Thông báo",
-      "Đã xóa toàn bộ tin nhắn",
+      "Đã rời khỏi nhóm",
       [{ text: "OK", style: "cancel" }],
       { cancelable: false }
     );
-    this.props.navigation.goBack();
+    this.props.navigation.replace("Login");
   };
   async confirmDelete() {
     Alert.alert(
       "Thông báo",
-      "Bạn có thật sự muốn xóa toàn bộ tin nhắn của cuộc trò chuyện này? Thao tác này sẽ không được hoàn tác",
+      "Bạn có thật sự muốn chặn cuộc trò chuyện này? Thao tác này sẽ không được hoàn tác",
       [
         { text: "Đồng ý", onPress: () => this.deleteMessage() },
         { text: "Hủy", style: "cancel" },
@@ -93,14 +94,14 @@ export class ChatInfo extends React.Component {
   }
   loadGroupMembers(listMem) {
     return (
-      <ScrollView>
-        <Text style={{ fontWeight: "800", color: "grey",marginTop:32 }}>
+      <ScrollView style={{ maxHeight: "30%"}} scrollEnabled>
+        <Text style={{ fontWeight: "bold", color: "grey" }}>
           DANH SÁCH THÀNH VIÊN
         </Text>
         <FlatList
           data={listMem}
           renderItem={({ item, index }) => {
-            return <RenderRoomInfoCard urlAva={item.ava} Name={item.name} />;
+            return !item.isVirtual? <RenderRoomInfoCard urlAva={item.ava} Name={item.name} />:null;
           }}
         ></FlatList>
       </ScrollView>
@@ -221,14 +222,14 @@ export class ChatInfo extends React.Component {
       previousState.androidName !== this.state.androidName ||
       previousState.androidName !== this.state.androidName 
     ) {
-      this.forceUpdate();
+      if (!this.state.onEdit) {
+        //("edit", this.state.androidAva);
+           this.updateRoomName(this.props.curRoom, this.state.androidName);
+         }
     }
   };
   componentDidUpdate(previousProp,previousState){
-    if (!this.state.onEdit) {
-     //("edit", this.state.androidAva);
-        this.updateRoomName(this.props.curRoom, this.state.androidName);
-      }
+    
   }
   async onEdit(room) {
     //console.log("xxxxxxxxxxxxxxxxxxx",room);
@@ -272,16 +273,43 @@ export class ChatInfo extends React.Component {
       );
     }
   }
+  changeMemberState(){
+    this.props.ChangeMemberState(true);
+    this.props.navigation.replace("RoomManager");
+  }
   componentDidMount() {
     var countMember = CountNumberOfMembers(this.props.curRoom);
     this.setState({
       isPairRoom: countMember == 2,
       androidName: this.props.curRoom.Data.RoomName,
       androidAva: this.props.curRoom.Data.RoomAva,
+      listMemberRoom:this.props.listMember,
     });
+    var checkVirtual=false;
+    for(var i in this.props.listMember)
+    {
+      if (this.props.listMember[i].isVirtual)
+      {
+        checkVirtual = true;
+        break;
+      }
+    }
+    if (countMember!==2&&!checkVirtual)
+    {
+    var list=this.props.listMember;
+    var thisuser = getFriendForChatScr(this.props.loggedInEmail);
+    var virtual1=getFriendForChatScr();
+    virtual1.isVirtual=true;
+    var virtual2=getFriendForChatScr();
+    virtual2.isVirtual=true;
+    list.push(virtual1);
+    list.push(virtual2);
+    list.push(thisuser);
+    this.props.ChangeMember(list);
+    }
   }
   goBack = () => {
-    this.props.navigation.goBack();
+    this.props.navigation.replace("ChatScr");
   };
   render() {
     return (
@@ -422,16 +450,19 @@ export class ChatInfo extends React.Component {
           >
             <ButtonMod
               styleText={{ color: colors.white }}
-              Text="Xóa tin nhắn"
+              Text={this.state.isPairRoom?"Hủy kết bạn":"Rời khỏi nhóm"}
               onPress={() => {
                 this.confirmDelete();
               }}
             ></ButtonMod>
-            <ButtonMod
+            {this.state.isPairRoom?null:<ButtonMod
               styleText={{ color: colors.white }}
               styleContainer={{ backgroundColor: colors.Darkpink }}
-              Text="Chặn người này"
-            ></ButtonMod>
+              Text="Chỉnh sửa danh sách thành viên"
+              onPress={()=>{
+                this.changeMemberState();
+              }}
+            />}
           </View>
         </View>
       </SafeAreaView>
@@ -452,6 +483,12 @@ function mapDispatchToProps(dispatch) {
     ChangeRoomAction: (curRoom) => {
       dispatch(ChangeRoomIDAction(curRoom));
     },
+    ChangeMember:(member) => {
+      dispatch(ChangeMemberAction(member));
+    },
+    ChangeMemberState:(member)=>{
+      dispatch(ChangeMemberStateAction(member));
+    }
   };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(ChatInfo);

@@ -63,3 +63,9 @@ export function ChangeAvaAction(urlAva){
         UrlAva:urlAva
     }
 }
+export function ChangeMemberStateAction(state){
+    return {
+        type:"CHANGE_MEMBER_STATE_ACTION",
+        state:state
+    }
+}

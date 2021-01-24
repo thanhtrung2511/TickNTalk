@@ -194,7 +194,7 @@ export class ChatScreen_GiftedChat extends React.Component {
   };
 
   goBack = () => {
-    this.props.navigation.goBack();
+    this.props.navigation.replace("Dashboard");
   };
 
   componentWillMount() {
@@ -308,6 +308,7 @@ export class ChatScreen_GiftedChat extends React.Component {
       tokenList=this.props.friendList;
       //console.log(this.props.friendList);
       for (var i in tokenList) {
+        if (tokenList[i].email.toUpperCase()!== this.props.loggedInEmail.toUpperCase())
         sendPushNotification(tokenList[i].token, pushContent);
       }
       GiftedChat.append(msgs, newMessage);
@@ -446,9 +447,6 @@ export class ChatScreen_GiftedChat extends React.Component {
       </View>
     );
   }
-  renderChatEmpty(props) {
-    return <View />;
-  }
 
   renderMessageImage(props) {
     return (
@@ -501,14 +499,13 @@ export class ChatScreen_GiftedChat extends React.Component {
             ? true
             : false
         }
-        isTyping={this.state.isTyping}
+        //isTyping={this.state.isTyping}
         //renderFooter
         renderComposer={this.renderComposer}
         renderInputToolbar={this.renderInputToolbar}
         renderSend={this.renderSend}
         renderLoading={this.renderLoading}
         renderActions={this.renderActions}
-        renderChatEmpty={this.renderChatEmpty}
         renderMessageVideo={this.renderMessageVideo}
         renderMessageImage={this.renderMessageImage}
         onPressVideo={this.VideoSend}

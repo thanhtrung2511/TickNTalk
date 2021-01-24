@@ -15,9 +15,9 @@ import {
   ButtonMod,
   MessageCard,
 } from "../components/Basic/Basic";
-import { ChangeRoomIDAction } from "../actions";
+import { ChangeRoomIDAction, ChangeMemberStateAction } from "../actions";
 import { connect } from "react-redux";
-import { UserRef,RoomRef} from "../Fire";
+import { UserRef, RoomRef } from "../Fire";
 import { SearchBar, CheckBox } from "react-native-elements";
 import { MatchSearchUserScore } from "../Utilities/ChatRoomUtils";
 
@@ -29,26 +29,42 @@ export class RoomChatManagements extends React.Component {
     Email: "",
     onCreate: false,
     canCreate: false,
-
     toSearchText: "",
     listUsers: [],
     filteredUsers: [],
-
   };
 
+  componentDidMount() {
+    this.setState({
+      onCreate: this.props.curState,
+      canCreate: this.props.curState,
+    });
+    //console.log(this.props.memberList);
+    if (this.props.curState) this.getUserList(this.props.memberList);
+  }
+  UpdateMember() {}
+  Done() {
+    this.props.ChangeMemberState(false);
+    this.props.navigation.replace("ChatInf");
+  }
   componentDidUpdate = (previousProp, previousState) => {
-    if(previousState.listUsers !== this.state.listUsers ||
-      previousState.toSearchText !== this.state.toSearchText 
-    )
-    {
+    if (
+      previousState.listUsers !== this.state.listUsers ||
+      previousState.toSearchText !== this.state.toSearchText
+    ) {
       this.FilterSearchedUsers(this.state.toSearchText);
     }
-  }
-
+  };
 
   onChangeSearchText(toSearchText) {
     this.FilterSearchedUsers(toSearchText);
-  }  
+  }
+
+  GetSelectedMembersEmail(){
+    return this.state.listUsers.filter(user => user.Checked).map(user => user.Data.Email);
+  }
+
+  
 
   // CuteTN
   FilterSearchedUsers(toSearchText) {
@@ -56,35 +72,29 @@ export class RoomChatManagements extends React.Component {
       .map((user) => {
         // let tempUser = JSON.parse(JSON.stringify(user));
         let tempUser = user;
-        tempUser.MatchScore = MatchSearchUserScore(
-          toSearchText,
-          user.Data,
-        );
+        tempUser.MatchScore = MatchSearchUserScore(toSearchText, user.Data);
         return tempUser;
       })
-      .filter((user) =>
-        (!toSearchText) ||
-        user.MatchScore !== 0 ||
-        user.Checked
-      );
+      .filter((user) => !toSearchText || user.MatchScore !== 0 || user.Checked);
 
     users.sort((u1, u2) => {
-      if(u1.Checked === u2.Checked)
-        return u1.MatchScore < u2.MatchScore
-      else
-        return u1.Checked === false;
+      if (u1.Checked === u2.Checked) return u1.MatchScore < u2.MatchScore;
+      else return u1.Checked === false;
     });
     this.setState({ filteredUsers: users });
   }
 
   createRoomData() {
+    this.setState({
+      canCreate: false,
+      onCreate: false,
+    });
     let getCheckedUser = [];
     let tmpList = this.state.listUsers;
 
     for (var i in tmpList) {
       if (tmpList[i].Checked) {
         getCheckedUser.push(tmpList[i].Data.Email);
-        
       }
     }
     getCheckedUser.push(this.props.loggedInEmail);
@@ -93,53 +103,82 @@ export class RoomChatManagements extends React.Component {
     tempRoom.Data = {
       CreatedDate: Date.now(),
       Members: getCheckedUser,
-      RoomName: "Nhóm của " + this.props.curName,
-      RoomAva:"",
+      RoomName: this.props.curState?this.props.curRoomID.Data.RoomName: "Nhóm của " + this.props.curName,
+      RoomAva: this.props.curState?this.props.curRoomID.Data.RoomAva:"",
     };
     //console.log(tempRoom);
-   this.PushAndUseNewRoom(tempRoom);
+    this.PushAndUseNewRoom(tempRoom);
   }
-
 
   ChatScreenNav = (id) => {
     //console.log(id);
     this.props.navigation.navigate("ChatScr");
   };
 
-
+  UpdateRoomMember(){
+   
+      // 
+      console.log(this.props.curRoomID);
+      let members=this.GetSelectedMembersEmail();
+      members.push(this.props.loggedInEmail);
+      // RoomRef.child(this.props.curRoomID.RoomID).once("value").then(function (snapshot) {
+      //   snapshot.forEach(function (childSnapshot) {
+      //     childSnapshot.update({
+      //       Members:members ,
+      //     });
+      //   });
+      // }).then(result => { this.Done(); });
+      RoomRef.child(this.props.curRoomID.RoomID).update({ "Members" : members}).then(result => {this.Done()});
+  }
   async PushAndUseNewRoom(newRoom) {
-    const newRoomDataRef = await RoomRef.push(newRoom.Data);
-    console.log(newRoomDataRef);
-    let tempRoom = {
-      RoomID: newRoomDataRef.key,
-      Data: newRoom.Data,
-    };
+    
+      const newRoomDataRef = await RoomRef.push(newRoom.Data);
+      //console.log(newRoomDataRef);
+      let tempRoom = {
+        RoomID: newRoomDataRef.key,
+        Data: newRoom.Data,
+      };
 
-    await this.props.UpdateRoomID(tempRoom);
-    this.ChatScreenNav(tempRoom);
+      await this.props.UpdateRoomID(tempRoom);
+      this.ChatScreenNav(tempRoom);
+    
   }
 
-
-  getUserList() {
+  getUserList(memberList) {
+    let userList = [];
     UserRef.on("value", (snapshot) => {
       let users = [];
       let checked = [];
       snapshot.forEach((child) => {
-        if (this.props.loggedInEmail!==child.toJSON().Email)
-        users.push({ Data: child.toJSON(), Checked: false });
+        if (
+          this.props.loggedInEmail.toUpperCase() !==
+          child.toJSON().Email.toUpperCase()
+        )
+          users.push({ Data: child.toJSON(), Checked: false });
         checked.push(false);
       });
 
       users.sort(
         (x, y) => x.Data.Name.toUpperCase() > y.Data.Name.toUpperCase()
       );
-
-      this.setState({ listUsers: users });
+      userList = users;
       // this.MyRefresh();
     });
+    if (this.props.curState) {
+      var tmpList = memberList;
+     // console.log(tmpList);
+      var tmpArr = userList;
+      for (var i in tmpArr)
+        for (var j in tmpList)
+          if (
+            tmpArr[i].Data.Email.toUpperCase() ===
+            tmpList[j].email.toUpperCase()
+          )
+            tmpArr[i].Checked = true;
+    }
+    this.setState({ listUsers: tmpArr });
     // this.renderAllUser();
   }
-
 
   renderFilteredUsers() {
     return (
@@ -157,7 +196,6 @@ export class RoomChatManagements extends React.Component {
     );
   }
 
-
   checkCanCreate() {
     let tmpArr = this.state.listUsers;
     let checkedCount = 0;
@@ -168,7 +206,6 @@ export class RoomChatManagements extends React.Component {
     }
     this.setState({ canCreate: checkedCount >= 2 });
   }
-
 
   changeToggleValue(value, desc) {
     let tmpArr = this.state.listUsers;
@@ -183,7 +220,6 @@ export class RoomChatManagements extends React.Component {
     // CuteTN: auto reorder user to the top after ticking...
     this.FilterSearchedUsers(this.state.toSearchText);
   }
-
 
   renderMessageCard(user) {
     let userTmp = user.Data;
@@ -214,8 +250,7 @@ export class RoomChatManagements extends React.Component {
         />
         <MessageCard
           containerStyle={{ width: "80%" }}
-          LastestChat={toggle?"Đã chọn vào nhóm":"Thêm vào nhóm"}
-
+          LastestChat={toggle ? "Đã chọn vào nhóm" : "Thêm vào nhóm"}
           ImageSource={userTmp.urlAva ? userTmp.urlAva : SystemAva}
           Name={userTmp.Name}
           isRead="true"
@@ -224,7 +259,6 @@ export class RoomChatManagements extends React.Component {
       </View>
     );
   }
-
 
   render() {
     return (
@@ -256,16 +290,20 @@ export class RoomChatManagements extends React.Component {
                   onPress={() =>
                     Alert.alert(
                       "Thông báo",
-                      "Bạn có muốn hủy tạo phòng không?",
+                      "Bạn có muốn hủy không?",
                       [
                         { text: "Hủy", style: "cancel" },
                         {
                           text: "Đồng ý",
-                          onPress: () =>
+                          onPress: () => {
                             this.setState({
                               onCreate: false,
                               canCreate: false,
-                            }),
+                            });
+                            if (this.props.curState) {
+                              this.Done();
+                            }
+                          },
                         },
                       ],
                       { cancelable: false }
@@ -275,7 +313,11 @@ export class RoomChatManagements extends React.Component {
                 />
               ) : null}
               <Text style={styles.header}>
-                {this.state.onCreate ? "Tạo nhóm mới" : "Nhóm"}{" "}
+                {!this.props.curState
+                  ? this.state.onCreate
+                    ? "Tạo nhóm mới"
+                    : "Nhóm"
+                  : "Cập nhật nhóm"}
               </Text>
               {this.state.canCreate ? (
                 <ButtonIcon
@@ -284,17 +326,14 @@ export class RoomChatManagements extends React.Component {
                   onPress={() =>
                     Alert.alert(
                       "Thông báo",
-                      "Bạn có muốn tạo phòng không?",
+                      "Bạn có muốn cập nhật nhóm không?",
                       [
                         { text: "Hủy", style: "cancel" },
                         {
                           text: "Đồng ý",
                           onPress: () => {
-                            this.setState({
-                              canCreate: false,
-                              onCreate: false,
-                            });
-                            this.createRoomData();
+                            
+                            (!this.props.curState)?this.createRoomData():this.UpdateRoomMember()
                           },
                         },
                       ],
@@ -372,7 +411,9 @@ const mapStateToProps = (state) => {
   return {
     loggedInEmail: state.emailReducer,
     curRoomID: state.roomReducer,
+    memberList: state.memberReducer,
     curName: state.nameReducer,
+    curState: state.memberStateReducer,
   };
 };
 
@@ -380,6 +421,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     UpdateRoomID: (curRoomID) => {
       dispatch(ChangeRoomIDAction(curRoomID));
+    },
+    ChangeMemberState: (member) => {
+      dispatch(ChangeMemberStateAction(member));
     },
   };
 };

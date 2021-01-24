@@ -5,6 +5,7 @@ import {
   FlatList,
   KeyboardAvoidingView,
   ScrollView,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -14,7 +15,8 @@ import {
   windowHeight,
   sizeFactor,
   colors,
-  ButtonIcon,androidPaddingSafe,
+  ButtonIcon,
+  androidPaddingSafe,
 } from "../components/Basic/Basic";
 import firebase from "firebase";
 import { SearchBar } from "react-native-elements";
@@ -25,6 +27,7 @@ import {
   ChangeRoomIDAction,
   ChangeEmailAction,
   ChangeMemberAction,
+  ChangeMemberStateAction,
   ChangeRoomDataAction,
 } from "../actions/index";
 
@@ -44,6 +47,7 @@ import {
   CheckRoomSeenByUser,
   AddSeenMemberToRoom,
   AddAndSaveDbSeenMemberToRoom,
+  MarkUserAsUnread,
 } from "../Utilities/ChatRoomUtils";
 console.disableYellowBox = true;
 import * as Notifications from "expo-notifications";
@@ -132,7 +136,7 @@ export class ChatFeed extends React.Component {
       email: "",
       birthday: "",
       gender: "",
-      phone:"",
+      phone: "",
     };
     UserRef.orderByChild("Email")
       .equalTo(email)
@@ -153,7 +157,7 @@ export class ChatFeed extends React.Component {
     result.token = token;
     result.birthday = birthdayTmp;
     result.gender = genderTmp;
-    result.phone= phoneTmp;
+    result.phone = phoneTmp;
     // console.log('result',result)
     return result;
   };
@@ -176,6 +180,7 @@ export class ChatFeed extends React.Component {
     this.props.ChangeMemberAction(listFriendInfoRoom);
   }
   componentDidMount = () => {
+    this.props.ChangeMemberStateAction(false);
     registerForPushNotificationsAsync().then((token) => {
       //console.log(token);
       this.setState({ expoPushToken: token });
@@ -215,7 +220,7 @@ export class ChatFeed extends React.Component {
     this.props.UpdateRoomID(id);
     //console.log(this.props.curRoomID);
     this.SubscribeForChatScr(id);
-    this.props.navigation.navigate("ChatScr");
+    this.props.navigation.replace("ChatScr");
   };
 
   componentDidUpdate = (previousProp, previousState) => {
@@ -257,9 +262,8 @@ export class ChatFeed extends React.Component {
             Data,
           };
 
-          if(this.props.curRoomID)
-            if(room.RoomID == this.props.curRoomID.RoomID)
-            {
+          if (this.props.curRoomID)
+            if (room.RoomID == this.props.curRoomID.RoomID) {
               this.props.curRoomID.Data = room.Data;
             }
 
@@ -291,6 +295,19 @@ export class ChatFeed extends React.Component {
     });
   }
 
+  onMessageCardLongPress(room, isRead) {
+    if (isRead) {
+      Alert.alert("Thông báo", "Bạn có muốn đánh dấu chưa đọc", [
+        { text: "Hủy", style: "cancel" },
+        {
+          text: "Đồng ý",
+          onPress: () => {
+            MarkUserAsUnread(room, this.props.loggedInEmail);
+          },
+        },
+      ]);
+    }
+  }
   MyRefresh() {
     let tempRooms = this.state.listRooms;
     const tempMsgs = this.state.listMessages;
@@ -394,6 +411,7 @@ export class ChatFeed extends React.Component {
 
     return (
       <MessageCard
+        onLongPress={() => this.onMessageCardLongPress(room, isRead)}
         ImageSource={userAva ? userAva : SystemAva}
         Name={title}
         ImageSize={60}
@@ -559,7 +577,7 @@ export class ChatFeed extends React.Component {
         <KeyboardAvoidingView style={styles.container} behavior="auto">
           <View
             style={{
-              marginTop:-androidPaddingSafe-4.3,
+              marginTop: -androidPaddingSafe - 4.3,
               backgroundColor: colors.lightpink,
               width: "100%",
               alignItems: "center",
@@ -661,6 +679,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     ChangeRoomDataAction: (curRoomData) => {
       dispatch(ChangeRoomDataAction(curRoomData));
+    },
+    ChangeMemberStateAction: (member) => {
+      dispatch(ChangeMemberStateAction(member));
     },
   };
 };

@@ -56,7 +56,7 @@ class SignUpCont extends React.Component {
       'Cập nhật thông tin thành công',
       [
         
-        {text: this.props.typedEmail, style: 'cancel',onPress:()=> this.props.navigation.replace("Dashboard")},
+        {text: "Đồng ý", style: 'cancel',onPress:()=> this.props.navigation.replace("Dashboard")},
       ],
       { cancelable: false }
     );

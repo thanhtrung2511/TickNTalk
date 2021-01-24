@@ -340,6 +340,7 @@ export const MessageCard = (props) => {
       style={[styles.MessageCard, props.containerStyle]}
       onPress={props.onPress}
       enabled={props.touchable}
+      onLongPress={props.onLongPress}
     >
       <BasicImage
         Icon={60}
@@ -467,6 +468,7 @@ export const RenderRoomInfoCard = (props) => {
       //   }}
       // >
          <MessageCard
+         containerStyle={{width:"69%"}}
          ImageSize={40}
          touchable={false}
           ImageSource={props.urlAva ? props.urlAva : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"}

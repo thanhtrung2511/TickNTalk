@@ -9,6 +9,7 @@ import genderReducer from "./genderReducer";
 import avaReducer from "./avaReducer";
 import memberReducer from "./memberReducer";
 import roomDataReducer from "./roomDataReducer";
+import memberStateReducer from "./memberStateReducer"
 //import { firebaseReducer } from 'react-redux-firebase'
 
 const allReducers = combineReducers({
@@ -22,6 +23,7 @@ const allReducers = combineReducers({
   avaReducer,
   memberReducer,
   roomDataReducer,
+  memberStateReducer,
   //firebase: firebaseReducer
 });
 export default allReducers;

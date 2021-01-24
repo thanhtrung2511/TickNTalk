@@ -1,7 +1,7 @@
 import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
 import * as Notifications from "expo-notifications";
-import { RoomRef } from "../Fire";
+import { RoomRef,UserRef } from "../Fire";
 
 export function GetFriendEmail(friendRoom, loggedInEmail) {
   let result = friendRoom.Data.Members[0];
@@ -38,11 +38,42 @@ export function CheckRoomContainUser(room, email) {
 
   return flagFound;
 }
+export async function RemoveUserFromRoom(room, email) {
+  if(!room)
+    return;
+  if(!room.Data)
+    return;
+  if(!room.Data.Members)
+    return;
 
+  let tempMembers = Object.values(room.Data.Members).filter(e => e.toUpperCase() !== email.toUpperCase());
+
+  if(room && room.Data && room.RoomID){
+    await RoomRef.child(room.RoomID).update({"Members" : tempMembers});
+  }
+}
+
+export async function MarkUserAsUnread(room, email) {
+  if(!room)
+    return;
+  if(!room.Data)
+    return;
+  if(!room.Data.SeenMembers)
+    return;
+
+  let tempMembers = Object.values(room.Data.SeenMembers).filter(e => e.toUpperCase() !== email.toUpperCase());
+
+  if(room && room.Data && room.RoomID){
+    await RoomRef.child(room.RoomID).update({"SeenMembers" : tempMembers});
+  }
+}
 
 
 export function CheckRoomContainUserFirebase(roomData, email) {
   let flagFound = false;
+  if (!roomData||!email||!roomData.Members||!roomData.SeenMembers)
+    return false;
+
   Object.values(roomData.Members).forEach((e) => {
     if (e.toUpperCase() === email.toUpperCase()) {
       flagFound = true;
@@ -133,6 +164,49 @@ export async function registerForPushNotificationsAsync() {
 
   return token;
 }
+export function getFriendForChatScr(email){
+  var nameTmp = "";
+  var avaTmp = "";
+  var token = "";
+  var emailTmp = "";
+  var birthdayTmp = "";
+  var genderTmp = "";
+  var phoneTmp = "";
+  var result = {
+    ava: "",
+    name: "",
+    token: "",
+    email: "",
+    birthday: "",
+    gender: "",
+    phone:"",
+    isVirtual:false,
+  };
+  if (email)
+  {
+  UserRef.orderByChild("Email")
+    .equalTo(email)
+    .on("value", (snap) => {
+      snap.forEach((element) => {
+        nameTmp = element.toJSON().Name;
+        avaTmp = element.toJSON().urlAva;
+        token = element.toJSON().Token;
+        emailTmp = element.toJSON().Email;
+        birthdayTmp = element.toJSON().Birthday;
+        genderTmp = element.toJSON().Gender;
+        phoneTmp = element.toJSON().Phone;
+      });
+    });
+  result.ava = avaTmp;
+  result.name = nameTmp;
+  result.email = emailTmp;
+  result.token = token;
+  result.birthday = birthdayTmp;
+  result.gender = genderTmp;
+  result.phone= phoneTmp;}
+  // console.log('result',result)
+  return result;
+};
 export async function sendPushNotification(expoPushToken, dataParse) {
   const message = {
     to: expoPushToken,
