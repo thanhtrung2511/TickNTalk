@@ -19,7 +19,13 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "requireFullScreen": true
+      "requireFullScreen": true,
+      "bundleIdentifier": "com.TickNTalkCoop.TickNTalk",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.TickNTalkCoop.TickNTalk",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
