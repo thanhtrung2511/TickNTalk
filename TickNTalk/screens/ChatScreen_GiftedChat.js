@@ -207,10 +207,48 @@ export class ChatScreen_GiftedChat extends React.Component {
     //     messages: GiftedChat.append(previous.messages,message)
     //   }))
     // );
+
+    this.subscribeOnRoomUpdate();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate = (previousProp, previousState) => {
     AddAndSaveDbSeenMemberToRoom(this.props.curRoom, this.props.loggedInEmail);
+
+    if ((previousState.messages !== this.state.messages) ||
+        (previousProp.curRoom !== this.props.curRoom)
+      )
+    {
+      this.updateListSeenAva();
+    }
+  }
+
+  subscribeOnRoomUpdate(){
+    RoomRef.on("value", (snapshot) => {
+      snapshot.forEach(child => {
+        let room = child.toJSON();
+
+        if(child.key === this.props.curRoom.RoomID) {
+          this.updateListSeenAva(child.toJSON().SeenMembers);
+        }
+      })
+    })
+  }
+
+  updateListSeenAva(seenMembers) {
+    if(!seenMembers)
+      return [];
+
+    let listAva=[];
+    //console.log(this.props.curRoom.Data.SeenMembers);
+
+    Object.values(seenMembers).forEach((e) => {
+      if (e.toUpperCase() !== this.props.loggedInEmail.toUpperCase()) {
+      // console.log(e);
+        listAva.push(getFriendAvaChatScr(e));
+      }
+    })
+
+    this.setState({ listAvaSeen: listAva });
   }
 
   getFriend = () => {
@@ -254,20 +292,7 @@ export class ChatScreen_GiftedChat extends React.Component {
 
       this.setState({ messages: msgs });
     });
-    let listAva=[];
-    //console.log(this.props.curRoom.Data.SeenMembers);
 
-    if(this.props.curRoom && this.props.curRoom.Data && this.props.curRoom.SeenMembers)
-    {
-      Object.values(this.props.curRoom.Data.SeenMembers).forEach((e) => {
-        if (e.toUpperCase() !== this.props.loggedInEmail.toUpperCase()) {
-        // console.log(e);
-          listAva.push(getFriendAvaChatScr(e));
-        }
-      });
-    }
-   // console.log(listAva);
-    this.setState({ listAvaSeen: listAva });
   }
 
   CreateNewRoom(members) {
