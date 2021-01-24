@@ -17,7 +17,7 @@ import {
 import {UserRef} from "../Fire";
 //import { GoogleSignin } from "react-native-google-signin";
 import firebase from "firebase";
-import Expo from 'expo';
+import GoogleSignin from 'expo';
 
 import {
   ChangeEmailAction,
@@ -60,7 +60,7 @@ export class SignInScreen extends React.Component {
   };
   SignInWithGoogle = async () => {
     try {
-      const result = await Expo.Google.logInAsync({
+      const result = await GoogleSignin.logInAsync({
         androidClientId:
           "940541027502-t7ea2uq69ckasdjbh7e86ev4roac5ajq.apps.googleusercontent.com",
         behavior: "web",
@@ -116,7 +116,7 @@ export class SignInScreen extends React.Component {
       <SafeAreaView style={styles.containerLI}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           <View style={{ alignItems: "center" }}>
-            <BasicImage Icon={200} source={require("../assets/Logo.png")} />
+            <BasicImage Icon={200} source={require("../assets/images/Logo.png")} />
             <Text style={styles.hello}>Đăng nhập tài khoản của bạn</Text>
             <View style={{ alignItems: "center" }} justifyContent="center">
               <TextInput

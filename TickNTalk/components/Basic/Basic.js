@@ -10,13 +10,13 @@ import {
 } from "react-native";
 import React, { Component } from "react";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { color } from "react-native-reanimated";
 export const windowWidth = Dimensions.get("window").width;
 export const windowHeight = Dimensions.get("window").height;
 
 //UNIVERSAL SIZE UNIT
 export const sizeFactor = windowWidth / 25.7;
 
+export const androidPaddingSafe=Platform.OS==="android" ?24:0;
 export const colors = {
   red: "#ff3b30",
   darkgrey: "#424242",
@@ -42,7 +42,7 @@ export const colors = {
   fushia: "#FF00FF",
   cyan: "lightblue",
   Darkpink: "#f06292",
-  Lime:"#BFFF00",
+  Lime: "#BFFF00",
   // red: "#ff3b30",
   // orange: "#ff9500",
   // yellow: "#ffcc00",
@@ -96,6 +96,7 @@ export const styles = StyleSheet.create({
     width: windowWidth,
     alignItems: "center",
     backgroundColor: colors.lightpink,
+    paddingTop:androidPaddingSafe,
   },
   container: {
     height: windowHeight * 0.97,
@@ -143,27 +144,27 @@ export const styles = StyleSheet.create({
     marginBottom: sizeFactor * 0.75,
   },
   headerLI: {
-    fontWeight: "800",
+    fontWeight: "bold",
     fontSize: sizeFactor * 2,
     color: colors.Darkpink,
     marginTop: -20,
   },
   header: {
-    fontWeight: "800",
+    fontWeight: "bold",
     fontSize: sizeFactor * 2,
     marginTop: 0,
     color: "whitesmoke",
     paddingVertical: 8,
   },
   mini_header: {
-    fontWeight: "800",
+    fontWeight: "bold",
     width: "80%",
     fontSize: sizeFactor * 2,
     color: colors.darkgrey,
   },
   hello: {
     marginTop: 32,
-    fontWeight: "800",
+    fontWeight: "bold",
     fontSize: 16,
     color: colors.Darkpink,
     marginBottom: 16,
@@ -186,7 +187,7 @@ export const styles = StyleSheet.create({
     width: sizeFactor * 21.7,
     borderRadius: 70 / 3,
     backgroundColor: "whitesmoke",
-    fontWeight: "600",
+    fontWeight: "bold",
     textAlign: "center",
     marginBottom: sizeFactor * 0.5,
   },
@@ -197,7 +198,7 @@ export const styles = StyleSheet.create({
     width: sizeFactor * 19,
     borderRadius: 70 / 3,
     backgroundColor: colors.skin,
-    fontWeight: "600",
+    fontWeight: "bold",
     textAlign: "center",
     marginBottom: sizeFactor * 0.5,
   },
@@ -206,7 +207,7 @@ export const styles = StyleSheet.create({
     marginLeft: sizeFactor * 14,
     color: colors.blue,
     marginTop: 16,
-    fontWeight: "600",
+    fontWeight: "bold",
   },
   Login_button: {
     width: sizeFactor * 15,
@@ -231,7 +232,7 @@ export const styles = StyleSheet.create({
   },
   Login_text: {
     fontSize: sizeFactor * 1.5,
-    fontWeight: "700",
+    fontWeight: "bold",
     color: colors.white,
   },
   Simple_button: {
@@ -243,14 +244,14 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   Simple_text: {
-    fontWeight: "700",
+    fontWeight: "bold",
     fontSize: 16,
     color: colors.black,
   },
   SignText: {
     color: colors.blue,
     marginLeft: 10,
-    fontWeight: "600",
+    fontWeight: "bold",
   },
   Sign: {
     color: colors.black,
@@ -299,7 +300,7 @@ export const styles = StyleSheet.create({
     width: sizeFactor * 17,
     borderRadius: 70 / 3,
     backgroundColor: colors.skin,
-    fontWeight: "600",
+    fontWeight: "bold",
     textAlign: "left",
     marginLeft: sizeFactor * 0.5,
   },
@@ -334,19 +335,25 @@ export const styles = StyleSheet.create({
 });
 export const MessageCard = (props) => {
   return (
-    <TouchableOpacity style={[styles.MessageCard,props.containerStyle]} onPress={props.onPress}>
+    <TouchableOpacity
+    {...props}
+      style={[styles.MessageCard, props.containerStyle]}
+      onPress={props.onPress}
+      enabled={props.touchable}
+    >
       <BasicImage
         Icon={60}
+        Icon={props.ImageSize}
         source={{ uri: props.ImageSource }}
         Round={100}
       ></BasicImage>
       <View
-        style={{
+        style={[{
           paddingTop: 5,
           paddingLeft: 5,
           flexDirection: "column",
           justifyContent: "space-between",
-        }}
+        },props.textContainerStyle]}
       >
         <Text
           style={{
@@ -360,7 +367,7 @@ export const MessageCard = (props) => {
         <Text
           style={{
             width: sizeFactor * 19,
-            fontWeight: props.isRead? "normal" : "bold",
+            fontWeight: props.isRead ? "normal" : "bold",
           }}
           numberOfLines={1}
           ellipsizeMode={"tail"}
@@ -442,6 +449,96 @@ export const ChatMessage_Orther = (props) => {
     </View>
   );
 };
+
+export const RenderRoomInfoCard = (props) => {
+  return (
+      // <View
+      //   style={{
+      //     borderColor: colors.lightpink,
+      //     borderWidth: 2,
+      //     borderRadius: 70 / 5,
+      //     flexDirection: "column",
+      //     paddingVertical: 8,
+      //     paddingHorizontal: 16,
+      //     justifyContent: "space-around",
+      //     shadowOffset: { width: 1, height: 1 },
+      //     shadowOpacity: 0.2,
+      //     borderStyle: "solid",
+      //   }}
+      // >
+         <MessageCard
+         ImageSize={40}
+         touchable={false}
+          ImageSource={props.urlAva ? props.urlAva : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"}
+          Name={props.Name}
+          isRead="true"
+        ></MessageCard>
+     // </View>
+  );
+};
+export const RenderInfoCard = (props) => {
+  return (
+    <View>
+      <View style={{alignItems:"center"}} >
+        <BasicImage
+          //style={{ borderColor: "whitesmoke", borderWidth: 5 }}
+          source={{
+            uri: props.friend.ava
+              ? props.friend.ava
+              : "https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8",
+          }}
+          Icon={150}
+          Round={100}
+        ></BasicImage>
+      </View>
+      <View
+        style={{
+          borderColor: colors.lightpink,
+          borderWidth: 2,
+          borderRadius: 70 / 5,
+          flexDirection: "column",
+          paddingVertical: 8,
+          paddingHorizontal: 16,
+          justifyContent: "space-around",
+          shadowOffset: { width: 1, height: 1 },
+          shadowOpacity: 0.2,
+          borderStyle: "solid",
+        }}
+      >
+        <View
+          style={{ paddingVertical: 8 }}
+          justifyContent="space-between"
+          flexDirection="row"
+        >
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>Họ tên:</Text>
+          <Text style={{ fontSize: 16, fontWeight: "600" }}>
+            {props.friend.name}
+          </Text>
+        </View>
+        <View
+          style={{ paddingVertical: 8 }}
+          justifyContent="space-between"
+          flexDirection="row"
+        >
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>Giới tính:</Text>
+          <Text style={{ fontSize: 16, fontWeight: "600" }}>
+            {props.friend.gender}
+          </Text>
+        </View>
+        <View
+          style={{ paddingVertical: 8 }}
+          justifyContent="space-between"
+          flexDirection="row"
+        >
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>Ngày sinh:</Text>
+          <Text style={{ fontSize: 16, fontWeight: "600" }}>
+            {props.friend.birthday}
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+};
 export const ChatMessage_Mine = (props) => {
   return (
     <View style={{ alignItems: "flex-end", marginTop: 16 }}>
@@ -477,7 +574,7 @@ export const ChatHeader = (props) => {
         onPress={props.goToInfo}
       >
         <BasicImage
-          Icon={35}
+          Icon={40}
           Round={100}
           source={{ uri: props.ImageSource }}
         ></BasicImage>
@@ -485,7 +582,7 @@ export const ChatHeader = (props) => {
         <Text
           style={{
             marginLeft: 16,
-            fontWeight: "800",
+            fontWeight: "bold",
             width: sizeFactor * 10,
             fontSize: sizeFactor,
             color: colors.black,
@@ -504,7 +601,13 @@ export const ChatHeader = (props) => {
       />
       <ButtonIcon
         MaterialFamilyIconName="videocam"
-        onPress={props.Video}
+        onPress={()=>{Alert.alert(
+          'Thông báo',
+          "Chức năng này hiện đang được phát triển, sẽ có trong bản cập nhật tiếp theo",
+          [
+            {text:"Đồng ý",style: "cancel"}
+          ],
+        );}}
         size={24}
         color={colors.black}
       />
@@ -533,7 +636,7 @@ export const LoginBottom = (props) => {
           <Text
             style={{
               marginTop: -10,
-              fontWeight: "700",
+              fontWeight: "bold",
               fontSize: 15,
               color: "black",
             }}
@@ -570,7 +673,7 @@ export const createOneButtonAlert = (props) => {
 export const createTwoButtonAlert = async (props) => {
   Alert.alert("Thông báo", props.Content, [
     {
-      style:"cancel",
+      style: "cancel",
       text: props.cancelBtnText,
       onPress: () => props.onPressCancel,
       style: "cancel",

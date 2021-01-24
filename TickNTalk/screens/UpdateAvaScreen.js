@@ -79,10 +79,6 @@ class UpdateAvaScreen extends React.Component {
     this.pickImage();
   };
 
-  logInWithGoogle = async () => {
-    await firebase.logInWithGoogle();
-  };
-
   uploadProfilePhoto = async (uri) => {
     try {
       //console.log("a");
@@ -91,11 +87,7 @@ class UpdateAvaScreen extends React.Component {
       //const filename = uri.substring(uri.lastIndexOf('/') + 1);
 
       const uploadUri =
-        this.props.typedEmail +
-        "_" +
-        (Platform.OS === "ios" ? uri.replace("file://", "") : uri).substring(
-          uri.lastIndexOf("/") + 1
-        );
+        this.props.typedEmail ;
 
       const imageRef = storage.child(uploadUri);
 
