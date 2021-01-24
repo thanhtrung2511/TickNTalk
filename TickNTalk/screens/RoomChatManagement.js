@@ -46,14 +46,16 @@ export class RoomChatManagements extends React.Component {
   UpdateMember() {}
   Done() {
     this.props.ChangeMemberState(false);
-    this.props.navigation.replace("ChatInf");
+    this.props.navigation.goBack();
   }
   componentDidUpdate = (previousProp, previousState) => {
     if (
       (previousState.listUsers !== this.state.listUsers) ||
-      (previousState.toSearchText !== this.state.toSearchText)
+      (previousState.toSearchText !== this.state.toSearchText)|| 
+      (previousProp.curRoomID!==this.props.curRoomID)||
+       ((previousState.canCreate)&& (!this.state.canCreate)) 
     ) {
-      if (this.state.onCreate)
+      if ((previousState.canCreate)&& (!this.state.canCreate)) {this.ChatScreenNav()}
       this.FilterSearchedUsers(this.state.toSearchText);
     }
   };
@@ -114,8 +116,7 @@ export class RoomChatManagements extends React.Component {
   }
 
   ChatScreenNav = (id) => {
-    //console.log(id);
-    this.props.navigation.navigate("ChatScr");
+    this.props.navigation.replace("ChatScr");
   };
 
   UpdateRoomMember(){
@@ -141,9 +142,8 @@ export class RoomChatManagements extends React.Component {
         RoomID: newRoomDataRef.key,
         Data: newRoom.Data,
       };
-
       await this.props.UpdateRoomID(tempRoom);
-      this.ChatScreenNav(tempRoom);
+      
     
   }
 

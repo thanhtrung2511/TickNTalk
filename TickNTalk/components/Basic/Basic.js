@@ -651,7 +651,7 @@ export const LoginBottom = (props) => {
         </View>
         <ButtonMod
           styleText={{ color: colors.white }}
-          OnPress={props.OnPressGoogle}
+          onPress={props.OnPressGoogle}
           Text={props.TextGoogle}
         ></ButtonMod>
       </View>

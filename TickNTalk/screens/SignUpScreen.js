@@ -113,6 +113,16 @@ export class SignUpScreen extends React.Component {
       this.SignUpWithEmailAndPassword();
     }
   };
+  SignUpWithGoogle(){
+    Alert.alert(
+      "Thông báo",
+      "Tính năng này đang được phát triển và sẽ được cập nhật trong những phiên bản khác",
+      [
+        {text:"Đồng ý", style: "cancel"},
+        {text:"Cũng là đồng ý", style:"cancel"}
+      ]
+    );
+  }
   render() {
     return (
       <SafeAreaView style={styles.containerLI}>

@@ -94,7 +94,7 @@ export class ChatInfo extends React.Component {
   }
   loadGroupMembers(listMem) {
     return (
-      <ScrollView style={{ maxHeight: "30%"}} scrollEnabled>
+      <ScrollView style={{ maxHeight: "40%"}} scrollEnabled>
         <Text style={{ fontWeight: "bold", color: "grey" }}>
           DANH SÁCH THÀNH VIÊN
         </Text>
@@ -222,15 +222,12 @@ export class ChatInfo extends React.Component {
       (previousState.androidName !== this.state.androidName )||
       (previousState.androidName !== this.state.androidName )
     ) {
-      if (!this.state.onEdit) {
+      if ((!this.state.onEdit)&&Platform.OS==="android") {
         //("edit", this.state.androidAva);
            this.updateRoomName(this.props.curRoom, this.state.androidName);
          }
     }
   };
-  componentDidUpdate(previousProp,previousState){
-    
-  }
   async onEdit(room) {
     //console.log("xxxxxxxxxxxxxxxxxxx",room);
     var newRoomData = room; //this.props.curRoom;
@@ -364,12 +361,13 @@ export class ChatInfo extends React.Component {
                 backgroundColor: colors.white,
                 borderRadius: 70 / 5,
                 width: "90%",
+                paddingVertical: 8,
                 height: !this.state.isPairRoom ? "60%" : null,
               }}
               scrollEnabled={false}
               contentContainerStyle={{
-                justifyContent: "space-around",
-                paddingVertical: 8,
+                justifyContent: "flex-start",
+                
               }}
             >
               {!this.state.isPairRoom ? (
@@ -408,7 +406,7 @@ export class ChatInfo extends React.Component {
                     }}
                   >
                     <View
-                      style={{ paddingVertical: 8, marginBottom: 8 }}
+                      style={{ paddingVertical: 8,  }}
                       justifyContent="center"
                       flexDirection="row"
                     >

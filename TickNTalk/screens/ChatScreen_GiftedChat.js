@@ -274,7 +274,7 @@ export class ChatScreen_GiftedChat extends React.Component {
   }
 
   ChatInfoNav = () => {
-    this.props.navigation.navigate("ChatInf");
+    this.props.navigation.replace("ChatInf");
   };
 
   SendMessage(newMessage = []) {
