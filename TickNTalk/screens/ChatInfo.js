@@ -4,7 +4,7 @@ import {
   View,
   SafeAreaView,
   Alert,
-  AlertIOS,
+  TextInput,
   Platform,
   ScrollView,
   TouchableOpacity,
@@ -33,6 +33,7 @@ import "firebase/auth";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 
+const safeAndroid=Platform.OS==="android"?25:0
 export class ChatInfo extends React.Component {
   constructor(props) {
     super(props);
@@ -40,7 +41,8 @@ export class ChatInfo extends React.Component {
     this.state = {
       isPairRoom: false,
       onEdit: false,
-      iosRoomEdit: "",
+      androidName: "",
+      androidAva: "",
     };
   }
 
@@ -91,8 +93,8 @@ export class ChatInfo extends React.Component {
   }
   loadGroupMembers(listMem) {
     return (
-      <View>
-        <Text style={{ fontWeight: "800", color: "grey" }}>
+      <ScrollView>
+        <Text style={{ fontWeight: "800", color: "grey",marginTop:32 }}>
           DANH SÁCH THÀNH VIÊN
         </Text>
         <FlatList
@@ -101,7 +103,7 @@ export class ChatInfo extends React.Component {
             return <RenderRoomInfoCard urlAva={item.ava} Name={item.name} />;
           }}
         ></FlatList>
-      </View>
+      </ScrollView>
     );
   }
 
@@ -121,7 +123,7 @@ export class ChatInfo extends React.Component {
         quality: 0.5,
       });
       if (!result.cancelled) {
-        console.log("before a");
+       // console.log("before a");
         await this.uploadProfilePhoto(result.uri); // not async
       }
     } catch (error) {
@@ -146,13 +148,13 @@ export class ChatInfo extends React.Component {
 
   uploadProfilePhoto = async (uri) => {
     try {
-      console.log("a");
+    //  console.log("a");
       const photo = await this.getBlob(uri);
 
       //const filename = uri.substring(uri.lastIndexOf('/') + 1);
 
-      const uploadUri =
-        this.props.loggedInEmail +
+      const uploadUri =this.props.curRoom.Data.RoomName?this.props.curRoom.Data.RoomName:
+        this.props.ListMember[0].name +
         "_" +
         (Platform.OS === "ios" ? uri.replace("file://", "") : uri).substring(
           uri.lastIndexOf("/") + 1
@@ -162,7 +164,7 @@ export class ChatInfo extends React.Component {
 
       await imageRef.put(photo);
       const url = await imageRef.getDownloadURL();
-      console.log(url);
+     // console.log(url);
       this.EditUrlAva(url);
       return url;
     } catch (error) {
@@ -176,7 +178,7 @@ export class ChatInfo extends React.Component {
 
   EditUrlAva = (url) => {
     var newRoomData = this.props.curRoom;
-    console.log(url, newRoomData);
+    //console.log(url, newRoomData);
     newRoomData.Data.RoomAva = url;
     //console.log(newRoomData);
     // console.log(Ava);
@@ -213,11 +215,31 @@ export class ChatInfo extends React.Component {
       RoomName: name,
     });
   }
-  onEdit(room) {
+  componentDidUpdate = (previousProp, previousState) => {
+    if (
+      previousProp.curRoom !== this.props.curRoom ||
+      previousState.androidName !== this.state.androidName ||
+      previousState.androidName !== this.state.androidName 
+    ) {
+      this.forceUpdate();
+    }
+  };
+  componentDidUpdate(previousProp,previousState){
+    if (!this.state.onEdit) {
+     //("edit", this.state.androidAva);
+        this.updateRoomName(this.props.curRoom, this.state.androidName);
+      }
+  }
+  async onEdit(room) {
     //console.log("xxxxxxxxxxxxxxxxxxx",room);
     var newRoomData = room; //this.props.curRoom;
     if (Platform.OS === "android") {
-      this.setState({ onEdit: !this.state.onEdit });
+          var result;
+          if (this.state.onEdit)
+          result=false;
+          else result=true;
+        this.setState({ onEdit: result});
+    
     } else if (Platform.OS === "ios") {
       ActionSheetIOS.showActionSheetWithOptions(
         {
@@ -252,14 +274,18 @@ export class ChatInfo extends React.Component {
   }
   componentDidMount() {
     var countMember = CountNumberOfMembers(this.props.curRoom);
-    this.setState({ isPairRoom: countMember == 2 });
+    this.setState({
+      isPairRoom: countMember == 2,
+      androidName: this.props.curRoom.Data.RoomName,
+      androidAva: this.props.curRoom.Data.RoomAva,
+    });
   }
   goBack = () => {
     this.props.navigation.goBack();
   };
   render() {
     return (
-      <SafeAreaView style={[styles.containerLI]}>
+      <SafeAreaView style={[styles.containerLI,{paddingTop:safeAndroid}]}>
         <View style={styles.container}>
           <View
             style={{
@@ -287,17 +313,10 @@ export class ChatInfo extends React.Component {
               >
                 {!this.state.isPairRoom ? (
                   <Text style={[styles.header, { fontSize: sizeFactor }]}>
-                    {this.state.onEdit && Platform.OS === "android"
-                      ? "Done"
-                      : "Edit"}
+                    {this.state.onEdit &&Platform.OS==="android"? "Done" : "Edit"}
                   </Text>
                 ) : null}
               </TouchableOpacity>
-              {/* {!this.state.isPairRoom ? (
-                <Text style={[styles.header,{fontSize:sizeFactor*1.5}]} number>
-                  {this.props.curRoom.Data.RoomName}
-                </Text>
-              ) : null} */}
             </View>
           </View>
           <View
@@ -317,14 +336,24 @@ export class ChatInfo extends React.Component {
                 backgroundColor: colors.white,
                 borderRadius: 70 / 5,
                 width: "90%",
-                height: !this.state.isPairRoom ? "30%" : null,
+                height: !this.state.isPairRoom ? "60%" : null,
               }}
-              scrollEnabled={!this.state.isPairRoom}
-              contentContainerStyle={{ justifyContent: "space-around",paddingVertical:8 }}
+              scrollEnabled={false}
+              contentContainerStyle={{
+                justifyContent: "space-around",
+                paddingVertical: 8,
+              }}
             >
               {!this.state.isPairRoom ? (
                 <View>
-                  <View style={{ alignItems: "center" }}>
+                  <TouchableOpacity
+                    style={{ alignItems: "center" }}
+                    onPress={() => {
+                      if (this.state.onEdit) {
+                        this.addProfilePhoto();
+                      }
+                    }}
+                  >
                     <BasicImage
                       //style={{ borderColor: "whitesmoke", borderWidth: 5 }}
                       source={{
@@ -335,7 +364,7 @@ export class ChatInfo extends React.Component {
                       Icon={150}
                       Round={100}
                     ></BasicImage>
-                  </View>
+                  </TouchableOpacity>
                   <View
                     style={{
                       borderColor: colors.lightpink,
@@ -351,13 +380,26 @@ export class ChatInfo extends React.Component {
                     }}
                   >
                     <View
-                      style={{ paddingVertical: 8 }}
+                      style={{ paddingVertical: 8, marginBottom: 8 }}
                       justifyContent="center"
                       flexDirection="row"
                     >
-                      <Text style={{ fontSize: 16, fontWeight:"bold" }}>
-                        {this.props.curRoom.Data.RoomName}
-                      </Text>
+                      {!this.state.onEdit ? (
+                        <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+                          {this.props.curRoom.Data.RoomName}
+                        </Text>
+                      ) : (
+                        <TextInput
+                          enabled={this.state.onEdit}
+                          header="Tên nhóm"
+                          style={styles.input}
+                          value={this.state.androidName}
+                          onChangeText={(text) =>{
+                            
+                            this.setState({ androidName: text })}
+                          }
+                        />
+                      )}
                     </View>
                   </View>
                 </View>
@@ -372,7 +414,7 @@ export class ChatInfo extends React.Component {
           <View
             style={{
               alignItems: "center",
-              height: "30%",
+              height: "20%",
               flexDirection: "column",
               justifyContent: "space-around",
               width: "100%",

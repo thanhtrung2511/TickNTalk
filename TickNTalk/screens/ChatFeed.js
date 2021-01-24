@@ -14,7 +14,7 @@ import {
   windowHeight,
   sizeFactor,
   colors,
-  ButtonIcon,
+  ButtonIcon,androidPaddingSafe,
 } from "../components/Basic/Basic";
 import firebase from "firebase";
 import { SearchBar } from "react-native-elements";
@@ -124,7 +124,16 @@ export class ChatFeed extends React.Component {
     var emailTmp = "";
     var birthdayTmp = "";
     var genderTmp = "";
-    var result = { ava: "", name: "", token: "", email: "",birthday:"",gender:"" };
+    var phoneTmp = "";
+    var result = {
+      ava: "",
+      name: "",
+      token: "",
+      email: "",
+      birthday: "",
+      gender: "",
+      phone:"",
+    };
     UserRef.orderByChild("Email")
       .equalTo(email)
       .on("value", (snap) => {
@@ -135,14 +144,16 @@ export class ChatFeed extends React.Component {
           emailTmp = element.toJSON().Email;
           birthdayTmp = element.toJSON().Birthday;
           genderTmp = element.toJSON().Gender;
+          phoneTmp = element.toJSON().Phone;
         });
       });
     result.ava = avaTmp;
     result.name = nameTmp;
     result.email = emailTmp;
     result.token = token;
-    result.birthday= birthdayTmp;
-    result.gender= genderTmp;
+    result.birthday = birthdayTmp;
+    result.gender = genderTmp;
+    result.phone= phoneTmp;
     // console.log('result',result)
     return result;
   };
@@ -161,7 +172,7 @@ export class ChatFeed extends React.Component {
 
     //   listFriendInfoRoom.push(tmpUser);
     // }
-   // console.log("list", listFriendInfoRoom);
+    // console.log("list", listFriendInfoRoom);
     this.props.ChangeMemberAction(listFriendInfoRoom);
   }
   componentDidMount = () => {
@@ -366,17 +377,20 @@ export class ChatFeed extends React.Component {
     if (isFriendRoom && !title) {
       const friendEmail = GetFriendEmail(room, this.props.loggedInEmail);
       const friend = GetUserByEmail(this.state.listUsers, friendEmail);
-
+      //console.log(friend);
       var userAva;
       if (friend) userAva = friend.urlAva;
       if (!friend) title = "Người dùng TickNTalk";
       else title = friend.Name;
+    } else {
+      userAva = room.Data.RoomAva;
     }
 
     return (
       <MessageCard
         ImageSource={userAva ? userAva : SystemAva}
         Name={title}
+        ImageSize={60}
         LastestChat={latestMsgText}
         //isRead={false}
         isRead={isRead}
@@ -503,9 +517,12 @@ export class ChatFeed extends React.Component {
           data={this.state.filteredStranger}
           renderItem={({ item, index }) => {
             let title = item.Name;
-
+            let ava = item.urlAva;
             if (!title) {
               title = "Người dùng TickNTalk";
+            }
+            if (!ava) {
+              ava = "../assets/images/Logo.png";
             }
 
             const members = [this.props.loggedInEmail, item.Email];
@@ -514,8 +531,9 @@ export class ChatFeed extends React.Component {
             return (
               <Text>
                 <MessageCard
-                  ImageSource="https://firebasestorage.googleapis.com/v0/b/chatapp-demo-c52a3.appspot.com/o/Logo.png?alt=media&token=af1ca6b3-9770-445b-b9ef-5f37c305e6b8"
+                  ImageSource={ava}
                   Name={title}
+                  ImageSize={60}
                   LastestChat="Nhắn tin để kết bạn!"
                   isRead="true"
                   onPress={() => {
@@ -529,13 +547,13 @@ export class ChatFeed extends React.Component {
       </View>
     );
   }
-
   render() {
     return (
       <SafeAreaView style={styles.containerLI}>
-        <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <KeyboardAvoidingView style={styles.container} behavior="auto">
           <View
             style={{
+              marginTop:-androidPaddingSafe-4.3,
               backgroundColor: colors.lightpink,
               width: "100%",
               alignItems: "center",
@@ -545,6 +563,7 @@ export class ChatFeed extends React.Component {
               style={{ width: "90%" }}
               justifyContent="space-between"
               flexDirection="row"
+              alignItems="center"
             >
               <Text style={styles.header}>{this.state.headerText}</Text>
               <ButtonIcon

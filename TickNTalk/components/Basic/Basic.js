@@ -10,13 +10,13 @@ import {
 } from "react-native";
 import React, { Component } from "react";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { color } from "react-native-reanimated";
 export const windowWidth = Dimensions.get("window").width;
 export const windowHeight = Dimensions.get("window").height;
 
 //UNIVERSAL SIZE UNIT
 export const sizeFactor = windowWidth / 25.7;
 
+export const androidPaddingSafe=Platform.OS==="android" ?24:0;
 export const colors = {
   red: "#ff3b30",
   darkgrey: "#424242",
@@ -96,6 +96,7 @@ export const styles = StyleSheet.create({
     width: windowWidth,
     alignItems: "center",
     backgroundColor: colors.lightpink,
+    paddingTop:androidPaddingSafe,
   },
   container: {
     height: windowHeight * 0.97,
@@ -143,27 +144,27 @@ export const styles = StyleSheet.create({
     marginBottom: sizeFactor * 0.75,
   },
   headerLI: {
-    fontWeight: "800",
+    fontWeight: "bold",
     fontSize: sizeFactor * 2,
     color: colors.Darkpink,
     marginTop: -20,
   },
   header: {
-    fontWeight: "800",
+    fontWeight: "bold",
     fontSize: sizeFactor * 2,
     marginTop: 0,
     color: "whitesmoke",
     paddingVertical: 8,
   },
   mini_header: {
-    fontWeight: "800",
+    fontWeight: "bold",
     width: "80%",
     fontSize: sizeFactor * 2,
     color: colors.darkgrey,
   },
   hello: {
     marginTop: 32,
-    fontWeight: "800",
+    fontWeight: "bold",
     fontSize: 16,
     color: colors.Darkpink,
     marginBottom: 16,
@@ -186,7 +187,7 @@ export const styles = StyleSheet.create({
     width: sizeFactor * 21.7,
     borderRadius: 70 / 3,
     backgroundColor: "whitesmoke",
-    fontWeight: "600",
+    fontWeight: "bold",
     textAlign: "center",
     marginBottom: sizeFactor * 0.5,
   },
@@ -197,7 +198,7 @@ export const styles = StyleSheet.create({
     width: sizeFactor * 19,
     borderRadius: 70 / 3,
     backgroundColor: colors.skin,
-    fontWeight: "600",
+    fontWeight: "bold",
     textAlign: "center",
     marginBottom: sizeFactor * 0.5,
   },
@@ -206,7 +207,7 @@ export const styles = StyleSheet.create({
     marginLeft: sizeFactor * 14,
     color: colors.blue,
     marginTop: 16,
-    fontWeight: "600",
+    fontWeight: "bold",
   },
   Login_button: {
     width: sizeFactor * 15,
@@ -231,7 +232,7 @@ export const styles = StyleSheet.create({
   },
   Login_text: {
     fontSize: sizeFactor * 1.5,
-    fontWeight: "700",
+    fontWeight: "bold",
     color: colors.white,
   },
   Simple_button: {
@@ -243,14 +244,14 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   Simple_text: {
-    fontWeight: "700",
+    fontWeight: "bold",
     fontSize: 16,
     color: colors.black,
   },
   SignText: {
     color: colors.blue,
     marginLeft: 10,
-    fontWeight: "600",
+    fontWeight: "bold",
   },
   Sign: {
     color: colors.black,
@@ -299,7 +300,7 @@ export const styles = StyleSheet.create({
     width: sizeFactor * 17,
     borderRadius: 70 / 3,
     backgroundColor: colors.skin,
-    fontWeight: "600",
+    fontWeight: "bold",
     textAlign: "left",
     marginLeft: sizeFactor * 0.5,
   },
@@ -335,6 +336,7 @@ export const styles = StyleSheet.create({
 export const MessageCard = (props) => {
   return (
     <TouchableOpacity
+    {...props}
       style={[styles.MessageCard, props.containerStyle]}
       onPress={props.onPress}
       enabled={props.touchable}
@@ -346,12 +348,12 @@ export const MessageCard = (props) => {
         Round={100}
       ></BasicImage>
       <View
-        style={{
+        style={[{
           paddingTop: 5,
           paddingLeft: 5,
           flexDirection: "column",
           justifyContent: "space-between",
-        }}
+        },props.textContainerStyle]}
       >
         <Text
           style={{
@@ -508,7 +510,7 @@ export const RenderInfoCard = (props) => {
           justifyContent="space-between"
           flexDirection="row"
         >
-          <Text style={{ fontSize: 16, fontWeight: "800" }}>Họ tên:</Text>
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>Họ tên:</Text>
           <Text style={{ fontSize: 16, fontWeight: "600" }}>
             {props.friend.name}
           </Text>
@@ -518,7 +520,7 @@ export const RenderInfoCard = (props) => {
           justifyContent="space-between"
           flexDirection="row"
         >
-          <Text style={{ fontSize: 16, fontWeight: "800" }}>Giới tính:</Text>
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>Giới tính:</Text>
           <Text style={{ fontSize: 16, fontWeight: "600" }}>
             {props.friend.gender}
           </Text>
@@ -528,7 +530,7 @@ export const RenderInfoCard = (props) => {
           justifyContent="space-between"
           flexDirection="row"
         >
-          <Text style={{ fontSize: 16, fontWeight: "800" }}>Ngày sinh:</Text>
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>Ngày sinh:</Text>
           <Text style={{ fontSize: 16, fontWeight: "600" }}>
             {props.friend.birthday}
           </Text>
@@ -580,7 +582,7 @@ export const ChatHeader = (props) => {
         <Text
           style={{
             marginLeft: 16,
-            fontWeight: "800",
+            fontWeight: "bold",
             width: sizeFactor * 10,
             fontSize: sizeFactor,
             color: colors.black,
@@ -599,7 +601,13 @@ export const ChatHeader = (props) => {
       />
       <ButtonIcon
         MaterialFamilyIconName="videocam"
-        onPress={props.Video}
+        onPress={()=>{Alert.alert(
+          'Thông báo',
+          "Chức năng này hiện đang được phát triển, sẽ có trong bản cập nhật tiếp theo",
+          [
+            {text:"Đồng ý",style: "cancel"}
+          ],
+        );}}
         size={24}
         color={colors.black}
       />
@@ -628,7 +636,7 @@ export const LoginBottom = (props) => {
           <Text
             style={{
               marginTop: -10,
-              fontWeight: "700",
+              fontWeight: "bold",
               fontSize: 15,
               color: "black",
             }}

@@ -11,7 +11,7 @@
       "backgroundColor": "#ffffff"
     },
     "notification": {
-      "icon": "./assets/Logo.png"
+      "icon": "./assets/images/Logo.png"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
