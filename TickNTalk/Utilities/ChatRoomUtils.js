@@ -16,7 +16,11 @@ export function GetFriendEmail(friendRoom, loggedInEmail) {
 export function GetRoomFriendEmail(groupRoom, loggedInEmail) {
   let listUserRoomNotIncludeCurrent = [];
   if ((!groupRoom )||!loggedInEmail)
-  return;
+    return;
+
+  if (!groupRoom.Data.Members)
+    return;
+
   Object.values(groupRoom.Data.Members).forEach((e) => {
     {
     if (e.toUpperCase() !== loggedInEmail.toUpperCase())
@@ -36,8 +40,16 @@ export function GetUserByEmail(listUsers, email) {
 
 export function CheckRoomContainUser(room, email) {
   if ((!room )||!email)
-  return false;
+    return false;
   let flagFound = false;
+
+  if(!room)
+    return false;
+  if(!room.Data)
+    return false;
+  if(!room.Data.Members)
+    return false;
+
   Object.values(room.Data.Members).forEach((e) => {
     if (e.toUpperCase() === email.toUpperCase()) {
       flagFound = true;
@@ -95,6 +107,9 @@ export function CheckRoomContainUserFirebase(roomData, email) {
 
 export function CountNumberOfMembers(room) {
   if (!room ) return 0;
+  if (!room.Data) return 0;
+  if (!room.Data.Members) return 0;
+
   return Object.values(room.Data.Members).length;
 }
 

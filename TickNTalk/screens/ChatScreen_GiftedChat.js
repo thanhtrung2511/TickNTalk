@@ -256,12 +256,16 @@ export class ChatScreen_GiftedChat extends React.Component {
     });
     let listAva=[];
     //console.log(this.props.curRoom.Data.SeenMembers);
-    Object.values(this.props.curRoom.Data.SeenMembers).forEach((e) => {
-      if (e.toUpperCase() !== this.props.loggedInEmail.toUpperCase()) {
-       // console.log(e);
-        listAva.push(getFriendAvaChatScr(e));
-      }
-    });
+
+    if(this.props.curRoom && this.props.curRoom.Data && this.props.curRoom.SeenMembers)
+    {
+      Object.values(this.props.curRoom.Data.SeenMembers).forEach((e) => {
+        if (e.toUpperCase() !== this.props.loggedInEmail.toUpperCase()) {
+        // console.log(e);
+          listAva.push(getFriendAvaChatScr(e));
+        }
+      });
+    }
    // console.log(listAva);
     this.setState({ listAvaSeen: listAva });
   }

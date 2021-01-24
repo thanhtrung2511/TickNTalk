@@ -164,6 +164,14 @@ export class ChatFeed extends React.Component {
   async SubscribeFriendForChatScr(room) {
     // var listFriendEmailRoom=GetRoomFriendEmail(this.props.curRoomID,this.props.loggedInEmail);
     var listFriendInfoRoom = [];
+
+    if(!room)
+      return;
+    if(!room.Data)
+      return;
+    if(!room.Data.Members)
+      return;
+
     // console.log("room",room);
     Object.values(room.Data.Members).forEach((e) => {
       if (e.toUpperCase() !== this.props.loggedInEmail.toUpperCase()) {
