@@ -225,10 +225,10 @@ export class ChatFeed extends React.Component {
 
   componentDidUpdate = (previousProp, previousState) => {
     if (
-      previousState.listMessages !== this.state.listMessages ||
-      previousState.listRooms !== this.state.listRooms ||
-      previousState.listUsers !== this.state.listUsers ||
-      previousState.toSearchText !== this.state.toSearchText
+    (previousState.listMessages !== this.state.listMessages )||
+      (previousState.listRooms !== this.state.listRooms )||
+      (previousState.listUsers !== this.state.listUsers )||
+      (previousState.toSearchText !== this.state.toSearchText)
     ) {
       this.MyRefresh();
     }
@@ -356,14 +356,14 @@ export class ChatFeed extends React.Component {
   async SortChatRoomsByTime(listRooms) {
     await listRooms.sort((a, b) => {
       if (
-        a &&
-        b &&
-        a.LatestMessage &&
-        b.LatestMessage &&
-        a.LatestMessage.Data &&
-        b.LatestMessage.Data &&
-        a.LatestMessage.Data.createdAt &&
-        b.LatestMessage.Data.createdAt
+        (a) &&
+        (b) &&
+        (a.LatestMessage) &&
+        (b.LatestMessage )&&
+        (a.LatestMessage.Data) &&
+        (b.LatestMessage.Data) &&
+        (a.LatestMessage.Data.createdAt )&&
+        (b.LatestMessage.Data.createdAt)
       )
         return a.LatestMessage.Data.createdAt < b.LatestMessage.Data.createdAt;
       else return false;

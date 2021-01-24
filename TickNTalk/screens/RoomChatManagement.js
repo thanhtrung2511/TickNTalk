@@ -40,6 +40,7 @@ export class RoomChatManagements extends React.Component {
       canCreate: this.props.curState,
     });
     //console.log(this.props.memberList);
+    //console.log(this.props.curState);
     if (this.props.curState) this.getUserList(this.props.memberList);
   }
   UpdateMember() {}
@@ -49,9 +50,10 @@ export class RoomChatManagements extends React.Component {
   }
   componentDidUpdate = (previousProp, previousState) => {
     if (
-      previousState.listUsers !== this.state.listUsers ||
-      previousState.toSearchText !== this.state.toSearchText
+      (previousState.listUsers !== this.state.listUsers) ||
+      (previousState.toSearchText !== this.state.toSearchText)
     ) {
+      if (this.state.onCreate)
       this.FilterSearchedUsers(this.state.toSearchText);
     }
   };
@@ -68,6 +70,7 @@ export class RoomChatManagements extends React.Component {
 
   // CuteTN
   FilterSearchedUsers(toSearchText) {
+    //console.log(JSON.stringify(this.state.listUsers));
     let users = this.state.listUsers
       .map((user) => {
         // let tempUser = JSON.parse(JSON.stringify(user));
@@ -118,7 +121,7 @@ export class RoomChatManagements extends React.Component {
   UpdateRoomMember(){
    
       // 
-      console.log(this.props.curRoomID);
+      //console.log(this.props.curRoomID);
       let members=this.GetSelectedMembersEmail();
       members.push(this.props.loggedInEmail);
       // RoomRef.child(this.props.curRoomID.RoomID).once("value").then(function (snapshot) {
@@ -175,8 +178,9 @@ export class RoomChatManagements extends React.Component {
             tmpList[j].email.toUpperCase()
           )
             tmpArr[i].Checked = true;
+      userList=tmpArr;
     }
-    this.setState({ listUsers: tmpArr });
+    this.setState({ listUsers: userList });
     // this.renderAllUser();
   }
 

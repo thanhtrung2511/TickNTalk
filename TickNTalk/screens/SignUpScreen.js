@@ -93,9 +93,9 @@ export class SignUpScreen extends React.Component {
   };
   CheckAccount = () => {
     if (
-      this.props.typedEmail != "" &&
-      this.state.typedPassword != "" &&
-      this.state.typedRepassword != ""
+      (this.props.typedEmail != "") &&
+      (this.state.typedPassword != "" )&&
+      (this.state.typedRepassword != "")
     ) {
       this.state.typedPassword.toString() !==
       this.state.typedRepassword.toString()

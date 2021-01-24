@@ -35,9 +35,9 @@ export class ChangePass extends React.Component {
 
   Change_pass = () => {
     if (
-      this.state.newPassword != '' &&
-      this.state.currentPassword != '' &&
-      this.state.Repassword != ''
+      (this.state.newPassword != '') &&
+      (this.state.currentPassword != '')&&
+      (this.state.Repassword != '')
     ) {
       this.reauthenticate (this.state.currentPassword)
         .then (() => {

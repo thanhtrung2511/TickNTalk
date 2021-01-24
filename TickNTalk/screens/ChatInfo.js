@@ -218,9 +218,9 @@ export class ChatInfo extends React.Component {
   }
   componentDidUpdate = (previousProp, previousState) => {
     if (
-      previousProp.curRoom !== this.props.curRoom ||
-      previousState.androidName !== this.state.androidName ||
-      previousState.androidName !== this.state.androidName 
+      (previousProp.curRoom !== this.props.curRoom) ||
+      (previousState.androidName !== this.state.androidName )||
+      (previousState.androidName !== this.state.androidName )
     ) {
       if (!this.state.onEdit) {
         //("edit", this.state.androidAva);
@@ -294,7 +294,7 @@ export class ChatInfo extends React.Component {
         break;
       }
     }
-    if (countMember!==2&&!checkVirtual)
+    if ((countMember!==2)&&(!checkVirtual))
     {
     var list=this.props.listMember;
     var thisuser = getFriendForChatScr(this.props.loggedInEmail);
