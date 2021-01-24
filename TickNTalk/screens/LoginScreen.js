@@ -77,7 +77,7 @@ export class LoginScreen extends React.Component {
 
     return (
       <SafeAreaView
-        style={[styles.containerLI, { backgroundColor: "whitesmoke" }]}
+        style={[styles.containerLI]}
       >
         <View style={{ alignItems: "center" }}>
           <View style={{ marginTop: 32, alignItems: "center" }}>
